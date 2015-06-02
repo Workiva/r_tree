@@ -51,7 +51,7 @@ main() {
         expect(node.size, equals(0));
       });
 
-      test('converting and empty NonLeafNode to a LeafNode', () {
+      test('converting an empty NonLeafNode to a LeafNode', () {
         NonLeafNode parentNode = new NonLeafNode(3);
         NonLeafNode node = new NonLeafNode(3);
         node.parent = parentNode;
