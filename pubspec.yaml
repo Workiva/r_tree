@@ -1,0 +1,4 @@
+name: r_tree
+dev_dependencies:
+  benchmark_harness: any
+  unittest: ">=0.11.4 <0.12.0"
