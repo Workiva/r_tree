@@ -166,6 +166,15 @@ main() {
 
         items = tree.search(new Rectangle(0, 0, 50, 50));
         expect(items.length, equals(0));
+
+        //test inserting after removal to ensure new root leaf node functions correctly
+        tree.insert(new RTreeDatum<String>(new Rectangle(0, 0, 1, 1), 'New Initial Item'));
+
+        items = tree.search(new Rectangle(0, 0, 50, 50));
+
+        items.forEach((datum) {
+          expect(datum.value, equals('New Initial Item'));
+        });
       });
     });
   });

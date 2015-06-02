@@ -78,6 +78,10 @@ class NonLeafNode extends Node {
   removeChild(Node child) {
     super.removeChild(child);
     child.parent = null;
+
+    if (_childNodes.length == 0) {
+      _convertToLeafNode();
+    }
   }
 
   clearChildren() {
@@ -89,7 +93,7 @@ class NonLeafNode extends Node {
     num bestCost = double.INFINITY;
     num tentativeCost;
     Node bestNode;
-    
+
     _childNodes.forEach((Node child) {
       tentativeCost = child.expansionCost(item);
       if (tentativeCost < bestCost) {
@@ -99,5 +103,15 @@ class NonLeafNode extends Node {
     });
     
     return bestNode;
+  }
+
+  _convertToLeafNode() {
+    var nonLeafParent = parent as NonLeafNode;
+    if (nonLeafParent == null) return;
+
+    var newLeafNode = new LeafNode(this.branchFactor);
+    newLeafNode.include(this);
+    nonLeafParent.removeChild(this);
+    nonLeafParent.addChild(newLeafNode);
   }
 }

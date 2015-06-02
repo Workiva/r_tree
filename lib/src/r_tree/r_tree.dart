@@ -24,13 +24,16 @@ class RTree<E> {
     if (branchFactor < 3) {
       throw new ArgumentError('branchFactor must be greater than 2');
     }
-    
-    _root = new LeafNode(branchFactor);
     _branchFactor = branchFactor;
+    _resetRoot();
   }
   
   remove(RTreeDatum<E> item) {
     _root.remove(item);
+
+    if (_root.children.length == 0) {
+      _resetRoot();
+    }
   }
   
   insert(RTreeDatum<E> item) {
@@ -39,6 +42,10 @@ class RTree<E> {
     if (splitNode != null) {
       _growTree(_root, splitNode);
     }
+  }
+
+  _resetRoot() {
+    _root = new LeafNode(_branchFactor);
   }
 
   // Returns all items whose rectangles overlap the @searchRect

@@ -50,6 +50,31 @@ main() {
         expect(node.rect, equals(null));
         expect(node.size, equals(0));
       });
+
+      test('converting and empty NonLeafNode to a LeafNode', () {
+        NonLeafNode parentNode = new NonLeafNode(3);
+        NonLeafNode node = new NonLeafNode(3);
+        node.parent = parentNode;
+        parentNode.addChild(node);
+        LeafNode leaf = new LeafNode(3);
+        node.addChild(leaf);
+
+        var datum1 = new RTreeDatum(new Rectangle(0, 0, 1, 1), '');
+        var datum2 = new RTreeDatum(new Rectangle(0, 0, 1, 2), '');
+        node.insert(datum1);
+        node.insert(datum2);
+
+        parentNode.children.forEach((node) {
+          expect(node, new isInstanceOf<NonLeafNode>());
+        });
+
+        node.remove(datum1);
+        node.remove(datum2);
+
+        parentNode.children.forEach((node) {
+          expect(node, new isInstanceOf<LeafNode>());
+        });
+      });
     });
   });
 }

@@ -63,6 +63,8 @@ abstract class Node extends RTreeContributor {
   }
   
   updateBoundingRect() {
+    if (children.length == 0) return;
+
     _minimumBoundingRect = null;
     
     children.forEach((RTreeContributor child) {
