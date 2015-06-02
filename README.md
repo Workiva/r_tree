@@ -1,4 +1,4 @@
-#RTree
+#RTree [![Build Status](https://travis-ci.org/Workiva/r_tree.svg)](https://travis-ci.org/Workiva/r_tree)
 
 A recursive RTree library written in Dart.
 
