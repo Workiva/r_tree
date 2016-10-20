@@ -16,6 +16,24 @@ main() {
         
         expect(items.length, equals(1));
         expect(items.elementAt(0).value, equals('Item 1'));
+
+        items.forEach((item) {
+          tree.insert(new RTreeDatum<String>(new Rectangle(0, 0, 1, 1), 'Item 2'));
+          tree.insert(new RTreeDatum<String>(new Rectangle(0, 0, 1, 1), 'Item 3'));
+          tree.insert(new RTreeDatum<String>(new Rectangle(0, 0, 1, 1), 'Item 4'));
+          tree.insert(new RTreeDatum<String>(new Rectangle(0, 0, 1, 1), 'Item 5'));
+
+        });
+
+        items = tree.search(item.rect);
+        expect(items.length, equals(5));
+        
+        items.forEach((item) {
+          tree.remove(item);
+        });
+        
+        items = tree.search((item.rect));
+        expect(items.isEmpty, isTrue);
       });
 
       test('search for 1 cell in large format ranges', () {
