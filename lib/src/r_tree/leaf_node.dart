@@ -23,7 +23,7 @@ class LeafNode<E> extends Node<E> {
   LeafNode(int branchFactor)
     : super(branchFactor);
 
-  Node createNewNode() {
+  Node<E> createNewNode() {
     return new LeafNode<E>(branchFactor);
   }
   
