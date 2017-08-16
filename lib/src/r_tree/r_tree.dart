@@ -17,7 +17,7 @@
  part of r_tree;
 
 class RTree<E> {
-  Node _root;
+  Node<E> _root;
   int _branchFactor;
   
   RTree([int branchFactor = 16]) {
@@ -37,7 +37,7 @@ class RTree<E> {
   }
   
   insert(RTreeDatum<E> item) {
-    Node splitNode = _root.insert(item);
+    Node<E> splitNode = _root.insert(item);
     
     if (splitNode != null) {
       _growTree(_root, splitNode);
@@ -45,21 +45,21 @@ class RTree<E> {
   }
 
   _resetRoot() {
-    _root = new LeafNode(_branchFactor);
+    _root = new LeafNode<E>(_branchFactor);
   }
 
   // Returns all items whose rectangles overlap the @searchRect
   //  Note: Rectangles that share only a border are not considered to overlap
   Iterable<RTreeDatum<E>> search(Rectangle searchRect) {
-    if (_root is LeafNode) {
-      return _root.search(searchRect).toList() as List<RTreeDatum<E>>;
+    if (_root is LeafNode<E>) {
+      return _root.search(searchRect).toList();
     }
     
     return _root.search(searchRect);
   }
   
   _growTree(Node node1, Node node2) {
-    NonLeafNode newRoot = new NonLeafNode(_branchFactor);
+    NonLeafNode<E> newRoot = new NonLeafNode<E>(_branchFactor);
     newRoot.addChild(node1);
     newRoot.addChild(node2);
     _root = newRoot;

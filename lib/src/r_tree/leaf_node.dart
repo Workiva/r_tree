@@ -16,27 +16,27 @@
 
  part of r_tree;
 
-class LeafNode extends Node {
-  List<RTreeDatum> _items = [];
-  List<RTreeDatum> get children => _items;
+class LeafNode<E> extends Node<E> {
+  List<RTreeDatum<E>> _items = [];
+  List<RTreeDatum<E>> get children => _items;
 
   LeafNode(int branchFactor)
     : super(branchFactor);
 
   Node createNewNode() {
-    return new LeafNode(branchFactor);
+    return new LeafNode<E>(branchFactor);
   }
   
-  Iterable<RTreeDatum> search(Rectangle searchRect) {
-    return _items.where((RTreeDatum item) => item.overlaps(searchRect));
+  Iterable<RTreeDatum<E>> search(Rectangle searchRect) {
+    return _items.where((RTreeDatum<E> item) => item.overlaps(searchRect));
   }
 
-  Node insert(RTreeDatum item) {
+  Node<E> insert(RTreeDatum<E> item) {
     addChild(item);
     return splitIfNecessary();
   }
 
-  remove(RTreeDatum item) {
+  remove(RTreeDatum<E> item) {
     removeChild(item);
   }
 

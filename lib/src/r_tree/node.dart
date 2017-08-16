@@ -16,18 +16,18 @@
 
 part of r_tree;
 
-abstract class Node extends RTreeContributor {
+abstract class Node<E> extends RTreeContributor {
   final int branchFactor;
 
-  Node parent;
+  Node<E> parent;
   Rectangle _minimumBoundingRect;
   Rectangle get rect => _minimumBoundingRect;
   
   Node(this.branchFactor);
 
-  Iterable<RTreeDatum> search(Rectangle searchRect);
-  Node insert(RTreeDatum item);
-  remove(RTreeDatum item);
+  Iterable<RTreeDatum<E>> search(Rectangle searchRect);
+  Node insert(RTreeDatum<E> item);
+  remove(RTreeDatum<E> item);
   clearChildren();
   List<RTreeContributor> get children;
   Node createNewNode();
@@ -72,9 +72,9 @@ abstract class Node extends RTreeContributor {
     });
   }
   
-  Node splitIfNecessary() => size > branchFactor ? _split() : null;
+  Node<E> splitIfNecessary() => size > branchFactor ? _split() : null;
   
-  Node _split() {
+  Node<E> _split() {
     _Seeds seeds = _pickSeeds();
     
     removeChild(seeds.seed1);
@@ -84,7 +84,7 @@ abstract class Node extends RTreeContributor {
     clearChildren();
     addChild(seeds.seed1);
     
-    Node splitNode = createNewNode();
+    Node<E> splitNode = createNewNode();
     splitNode.addChild(seeds.seed2);
     
     _reassignRemainingChildren(remainingChildren, splitNode);
@@ -92,7 +92,7 @@ abstract class Node extends RTreeContributor {
     return splitNode;
   }
 
-  _reassignRemainingChildren(List<RTreeContributor> remainingChildren, Node splitNode) {
+  _reassignRemainingChildren(List<RTreeContributor> remainingChildren, Node<E> splitNode) {
     remainingChildren.forEach((RTreeContributor child) {
       num thisExpansionCost = expansionCost(child);
       num splitExpansionCost = splitNode.expansionCost(child);
