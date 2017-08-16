@@ -16,21 +16,21 @@
 
  part of r_tree;
 
-class NonLeafNode extends Node {
-  List<Node> _childNodes = [];
-  List<Node> get children => _childNodes;
+class NonLeafNode<E> extends Node<E> {
+  List<Node<E>> _childNodes = [];
+  List<Node<E>> get children => _childNodes;
 
   NonLeafNode(int branchFactor) 
     : super(branchFactor);
 
-  Node createNewNode() {
-    return new NonLeafNode(branchFactor);
+  Node<E> createNewNode() {
+    return new NonLeafNode<E>(branchFactor);
   }
 
-  Iterable<RTreeDatum> search(Rectangle searchRect) {
-    List<RTreeDatum> overlappingLeafs = [];
+  Iterable<RTreeDatum<E>> search(Rectangle searchRect) {
+    List<RTreeDatum<E>> overlappingLeafs = [];
     
-    _childNodes.forEach((Node childNode) {
+    _childNodes.forEach((Node<E> childNode) {
       if (childNode.overlaps(searchRect)) {
         overlappingLeafs.addAll(childNode.search(searchRect));
       }
@@ -39,11 +39,11 @@ class NonLeafNode extends Node {
     return overlappingLeafs;
   }
 
-  Node insert(RTreeDatum item) {
+  Node<E> insert(RTreeDatum<E> item) {
     include(item);
     
-    Node bestNode = _getBestNodeForInsert(item);
-    Node splitNode = bestNode.insert(item);
+    Node<E> bestNode = _getBestNodeForInsert(item);
+    Node<E> splitNode = bestNode.insert(item);
 
     if (splitNode != null) {
       addChild(splitNode);
@@ -52,10 +52,10 @@ class NonLeafNode extends Node {
     return splitIfNecessary();
   }
 
-  remove(RTreeDatum item) {
-    List<Node> childrenToRemove = [];
+  remove(RTreeDatum<E> item) {
+    List<Node<E>> childrenToRemove = [];
     
-    _childNodes.forEach((Node childNode) {
+    _childNodes.forEach((Node<E> childNode) {
       if (childNode.overlaps(item.rect)) {
         childNode.remove(item);
         
@@ -65,17 +65,17 @@ class NonLeafNode extends Node {
       }
     });
     
-    childrenToRemove.forEach((Node child) {
+    childrenToRemove.forEach((Node<E> child) {
       removeChild(child);
     });
   }
   
-  addChild(Node child) {
+  addChild(Node<E> child) {
     super.addChild(child);
     child.parent = this;
   }
 
-  removeChild(Node child) {
+  removeChild(Node<E> child) {
     super.removeChild(child);
     child.parent = null;
 
@@ -89,12 +89,12 @@ class NonLeafNode extends Node {
     _minimumBoundingRect = null;
   }
 
-  Node _getBestNodeForInsert(RTreeDatum item) {
+  Node<E> _getBestNodeForInsert(RTreeDatum<E> item) {
     num bestCost = double.INFINITY;
     num tentativeCost;
-    Node bestNode;
+    Node<E> bestNode;
 
-    _childNodes.forEach((Node child) {
+    _childNodes.forEach((Node<E> child) {
       tentativeCost = child.expansionCost(item);
       if (tentativeCost < bestCost) {
         bestCost = tentativeCost;
@@ -106,10 +106,10 @@ class NonLeafNode extends Node {
   }
 
   _convertToLeafNode() {
-    var nonLeafParent = parent as NonLeafNode;
+    var nonLeafParent = parent as NonLeafNode<E>;
     if (nonLeafParent == null) return;
 
-    var newLeafNode = new LeafNode(this.branchFactor);
+    var newLeafNode = new LeafNode<E>(this.branchFactor);
     newLeafNode.include(this);
     nonLeafParent.removeChild(this);
     nonLeafParent.addChild(newLeafNode);
