@@ -34,12 +34,12 @@ abstract class Node extends RTreeContributor {
   
   int get size => children.length;
 
-  addChild(RTreeContributor child) {
+  addChild(covariant RTreeContributor child) {
     include(child);
     children.add(child);
   }
 
-  removeChild(RTreeContributor child) {
+  removeChild(covariant RTreeContributor child) {
     children.remove(child);
     updateBoundingRect();
   }
