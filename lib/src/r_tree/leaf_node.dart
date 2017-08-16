@@ -14,19 +14,18 @@
  * limitations under the License.
  */
 
- part of r_tree;
+part of r_tree;
 
 class LeafNode<E> extends Node<E> {
   List<RTreeDatum<E>> _items = [];
   List<RTreeDatum<E>> get children => _items;
 
-  LeafNode(int branchFactor)
-    : super(branchFactor);
+  LeafNode(int branchFactor) : super(branchFactor);
 
   Node<E> createNewNode() {
     return new LeafNode<E>(branchFactor);
   }
-  
+
   Iterable<RTreeDatum<E>> search(Rectangle searchRect) {
     return _items.where((RTreeDatum<E> item) => item.overlaps(searchRect));
   }

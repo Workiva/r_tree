@@ -1,8 +1,9 @@
 library node_test;
 
-import 'package:r_tree/r_tree.dart';
-import 'package:unittest/unittest.dart';
 import 'dart:math';
+
+import 'package:r_tree/r_tree.dart';
+import 'package:test/test.dart';
 
 main() {
   group('Node', () {
@@ -20,7 +21,7 @@ main() {
         expect(leafNode.size, equals(4));
         expect(leafNode.splitIfNecessary(), equals(null));
       });
-      
+
       test('test that split correctly splits a column', () {
         LeafNode leafNode = new LeafNode(3);
         Map itemMap = new Map();
@@ -30,11 +31,11 @@ main() {
           itemMap[itemId] = new RTreeDatum<String>(new Rectangle(0, i, 1, 1), itemId);
           leafNode.addChild(itemMap[itemId]);
         }
-        
+
         expect(leafNode.size, equals(4));
-        
+
         LeafNode splitNode = leafNode.splitIfNecessary();
-        
+
         Iterable<RTreeDatum> items = leafNode.search(new Rectangle(0, 0, 1, 10));
         expect(items.length, equals(leafNode.size));
         expect(leafNode.size, equals(2));
@@ -102,13 +103,13 @@ main() {
         expect(items.contains(itemMap['Item 3']), equals(true));
       });
     });
-    
+
     group('expansionCost', () {
       test('expansionCost correctly calculated', () {
         LeafNode node = new LeafNode(3);
-        
+
         expect(node.expansionCost(new RTreeDatum(new Rectangle(0, 0, 1, 1), '')), equals(1));
-        
+
         node.addChild(new RTreeDatum(new Rectangle(0, 0, 1, 1), ''));
 
         expect(node.expansionCost(new RTreeDatum(new Rectangle(0, 0, 1, 1), '')), equals(0));

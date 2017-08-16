@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
- part of r_tree;
+part of r_tree;
 
 class RTreeDatum<E> extends RTreeContributor {
   final Rectangle rect;
   final E value;
-  
+
   RTreeDatum(Rectangle this.rect, E this.value);
 }

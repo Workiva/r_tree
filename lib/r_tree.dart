@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
- library r_tree;
+library r_tree;
 
 import 'dart:math';
 
