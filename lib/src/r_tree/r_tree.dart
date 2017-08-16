@@ -58,7 +58,7 @@ class RTree<E> {
     return _root.search(searchRect);
   }
   
-  _growTree(Node node1, Node node2) {
+  _growTree(Node<E> node1, Node<E> node2) {
     NonLeafNode<E> newRoot = new NonLeafNode<E>(_branchFactor);
     newRoot.addChild(node1);
     newRoot.addChild(node2);

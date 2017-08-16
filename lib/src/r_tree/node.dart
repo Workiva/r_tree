@@ -26,11 +26,11 @@ abstract class Node<E> extends RTreeContributor {
   Node(this.branchFactor);
 
   Iterable<RTreeDatum<E>> search(Rectangle searchRect);
-  Node insert(RTreeDatum<E> item);
+  Node<E> insert(RTreeDatum<E> item);
   remove(RTreeDatum<E> item);
   clearChildren();
   List<RTreeContributor> get children;
-  Node createNewNode();
+  Node<E> createNewNode();
   
   int get size => children.length;
 
