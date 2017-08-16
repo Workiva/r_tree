@@ -29,7 +29,6 @@ class InsertBenchmark extends BenchmarkBase {
   }
 
   void run() {
-    Iterable<RTreeDatum<String>> items;
     Random rand = new Random();
     for (int i = 0; i < 5000; i++) {
       int x = rand.nextInt(100000);
@@ -137,10 +136,9 @@ class SearchBenchmark2 extends BenchmarkBase {
   }
 
   void run() {
-    Iterable<RTreeDatum<String>> items;
     for (int i = 0; i < 100; i++) {
       for (int j = 0; j < 50; j++) {
-        items = tree.search(new Rectangle(i, j, 1, 1));
+        tree.search(new Rectangle(i, j, 1, 1));
       }
     }
   }
