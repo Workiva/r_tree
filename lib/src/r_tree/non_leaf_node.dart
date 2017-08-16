@@ -14,14 +14,13 @@
  * limitations under the License.
  */
 
- part of r_tree;
+part of r_tree;
 
 class NonLeafNode<E> extends Node<E> {
   List<Node<E>> _childNodes = [];
   List<Node<E>> get children => _childNodes;
 
-  NonLeafNode(int branchFactor) 
-    : super(branchFactor);
+  NonLeafNode(int branchFactor) : super(branchFactor);
 
   Node<E> createNewNode() {
     return new NonLeafNode<E>(branchFactor);
@@ -29,19 +28,19 @@ class NonLeafNode<E> extends Node<E> {
 
   Iterable<RTreeDatum<E>> search(Rectangle searchRect) {
     List<RTreeDatum<E>> overlappingLeafs = [];
-    
+
     _childNodes.forEach((Node<E> childNode) {
       if (childNode.overlaps(searchRect)) {
         overlappingLeafs.addAll(childNode.search(searchRect));
       }
     });
-    
+
     return overlappingLeafs;
   }
 
   Node<E> insert(RTreeDatum<E> item) {
     include(item);
-    
+
     Node<E> bestNode = _getBestNodeForInsert(item);
     Node<E> splitNode = bestNode.insert(item);
 
@@ -54,22 +53,22 @@ class NonLeafNode<E> extends Node<E> {
 
   remove(RTreeDatum<E> item) {
     List<Node<E>> childrenToRemove = [];
-    
+
     _childNodes.forEach((Node<E> childNode) {
       if (childNode.overlaps(item.rect)) {
         childNode.remove(item);
-        
+
         if (childNode.size == 0) {
           childrenToRemove.add(childNode);
         }
       }
     });
-    
+
     childrenToRemove.forEach((Node<E> child) {
       removeChild(child);
     });
   }
-  
+
   addChild(Node<E> child) {
     super.addChild(child);
     child.parent = this;
@@ -101,7 +100,7 @@ class NonLeafNode<E> extends Node<E> {
         bestNode = child;
       }
     });
-    
+
     return bestNode;
   }
 

@@ -44,8 +44,7 @@ class InsertBenchmark extends BenchmarkBase {
     tree = new RTree<String>(BRANCH_FACTOR);
   }
 
-  void teardown() {
-  }
+  void teardown() {}
 }
 
 class RemoveBenchmark extends BenchmarkBase {
@@ -74,19 +73,20 @@ class RemoveBenchmark extends BenchmarkBase {
         if (items.length <= i) {
           items.add([]);
         }
-        
+
         Rectangle rect = new Rectangle(i, j, 1, 1);
         items[i].add(new RTreeDatum<String>(rect, 'item $i:$j'));
       }
     }
   }
 
-  void teardown() {
-  }
+  void teardown() {}
 }
 
 class SearchBenchmark1 extends BenchmarkBase {
-  SearchBenchmark1() : super("Search 5000 items. (500 rectangles, 10 items each) Find all 10 items for each of the 500 rectangles.");
+  SearchBenchmark1()
+      : super(
+            "Search 5000 items. (500 rectangles, 10 items each) Find all 10 items for each of the 500 rectangles.");
 
   RTree<String> tree;
 
@@ -122,15 +122,16 @@ class SearchBenchmark1 extends BenchmarkBase {
     }
   }
 
-  void teardown() {
-  }
+  void teardown() {}
 }
 
 class SearchBenchmark2 extends BenchmarkBase {
-  SearchBenchmark2() : super("Search 30000 items. (10000 rectangles. 3 items each) Find all 3 items for 5000 of the rectangles.");
+  SearchBenchmark2()
+      : super(
+            "Search 30000 items. (10000 rectangles. 3 items each) Find all 3 items for 5000 of the rectangles.");
 
   RTree<String> tree;
-  
+
   static void main() {
     new SearchBenchmark2().report();
   }
@@ -156,6 +157,5 @@ class SearchBenchmark2 extends BenchmarkBase {
     }
   }
 
-  void teardown() {
-  }
+  void teardown() {}
 }

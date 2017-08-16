@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
- part of r_tree;
+part of r_tree;
 
 class RTree<E> {
   Node<E> _root;
   int _branchFactor;
-  
+
   RTree([int branchFactor = 16]) {
     if (branchFactor < 3) {
       throw new ArgumentError('branchFactor must be greater than 2');
@@ -27,7 +27,7 @@ class RTree<E> {
     _branchFactor = branchFactor;
     _resetRoot();
   }
-  
+
   remove(RTreeDatum<E> item) {
     _root.remove(item);
 
@@ -35,10 +35,10 @@ class RTree<E> {
       _resetRoot();
     }
   }
-  
+
   insert(RTreeDatum<E> item) {
     Node<E> splitNode = _root.insert(item);
-    
+
     if (splitNode != null) {
       _growTree(_root, splitNode);
     }
@@ -54,10 +54,10 @@ class RTree<E> {
     if (_root is LeafNode<E>) {
       return _root.search(searchRect).toList();
     }
-    
+
     return _root.search(searchRect);
   }
-  
+
   _growTree(Node<E> node1, Node<E> node2) {
     NonLeafNode<E> newRoot = new NonLeafNode<E>(_branchFactor);
     newRoot.addChild(node1);

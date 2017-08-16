@@ -1,6 +1,12 @@
-packages
 .idea/
 *.iml
 *.iws
 
+# dart
+.packages
+.pub
+packages
 pubspec.lock
+
+# coverage
+/coverage/
