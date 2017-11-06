@@ -1,5 +1,5 @@
 name: r_tree
-version: 1.0.2
+version: 1.0.3
 description: 'A recursive RTree library written in Dart.'
 authors:
   - Taylor Anderson <taylor.anderson@workiva.com>
