@@ -4,6 +4,15 @@ A recursive RTree library written in Dart.
 
 "R-trees are tree data structures used for spatial access methods, i.e., for indexing multi-dimensional information such as geographical coordinates, rectangles or polygons." - http://en.wikipedia.org/wiki/R-tree
 
+## Benchmarks
+
+Run the benchmarks in the command line (Dart VM) using:
+```
+dart benchmark/benchmarks.dart
+```
+
+You can also run them in a browser using dart2js using `pub serve benchmark` or `pub build benchmark` and then serving them with your http server of choice.  Click the run button and observe the output in the browser console.
+
 ## API
 
 -  *RTree* ( [ Number **branch_factor** ] )
