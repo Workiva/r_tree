@@ -4,7 +4,8 @@ import 'benchmarks.dart' as benchmarks;
 
 main() {
   querySelector('#runButton').onClick.listen((_) {
-    print('Re-running');
+    print('Running benchmark..');
     benchmarks.main();
+    print('Benchmarks complete');
   });
 }

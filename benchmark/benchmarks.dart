@@ -16,6 +16,8 @@ class RTreeBenchmark {
     RemoveBenchmark.main();
     SearchBenchmark1.main();
     SearchBenchmark2.main();
+    SearchBenchmark1.main(iterateAll: true);
+    SearchBenchmark2.main(iterateAll: true);
   }
 }
 
@@ -84,20 +86,26 @@ class RemoveBenchmark extends BenchmarkBase {
 }
 
 class SearchBenchmark1 extends BenchmarkBase {
-  SearchBenchmark1()
+  final bool iterateAll;
+  SearchBenchmark1({this.iterateAll: false})
       : super(
-            "Search 5000 items. (500 rectangles, 10 items each) Find all 10 items for each of the 500 rectangles.");
+            "Search ${iterateAll ? 'and iterate ' : ''}5000 items. (500 rectangles, 10 items each) Find all 10 items for each of the 500 rectangles.");
 
   RTree<String> tree;
 
-  static void main() {
-    new SearchBenchmark1().report();
+  static void main({bool iterateAll: false}) {
+    new SearchBenchmark1(iterateAll: iterateAll).report();
   }
 
   void run() {
     for (int i = 0; i < 10; i++) {
       for (int j = 0; j < 50; j++) {
-        tree.search(new Rectangle(i, j, 1, 1));
+        var results = tree.search(new Rectangle(i, j, 1, 1));
+        if (iterateAll) {
+          for (var result in results) {
+            // nothing to do here, just iterating over every result once
+          }
+        }
       }
     }
   }
@@ -126,20 +134,27 @@ class SearchBenchmark1 extends BenchmarkBase {
 }
 
 class SearchBenchmark2 extends BenchmarkBase {
-  SearchBenchmark2()
+  final bool iterateAll;
+
+  SearchBenchmark2({this.iterateAll: false})
       : super(
-            "Search 30000 items. (10000 rectangles. 3 items each) Find all 3 items for 5000 of the rectangles.");
+            "Search ${iterateAll ? 'and iterate ' : ''}30000 items. (10000 rectangles. 3 items each) Find all 3 items for 5000 of the rectangles.");
 
   RTree<String> tree;
 
-  static void main() {
-    new SearchBenchmark2().report();
+  static void main({bool iterateAll: false}) {
+    new SearchBenchmark2(iterateAll: iterateAll).report();
   }
 
   void run() {
     for (int i = 0; i < 100; i++) {
       for (int j = 0; j < 50; j++) {
-        tree.search(new Rectangle(i, j, 1, 1));
+        var results = tree.search(new Rectangle(i, j, 1, 1));
+        if (iterateAll) {
+          for (var result in results) {
+            // nothing to do here, just iterating over every result once
+          }
+        }
       }
     }
   }
