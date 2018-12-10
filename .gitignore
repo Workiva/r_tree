@@ -7,6 +7,8 @@
 .pub
 packages
 pubspec.lock
+doc
+build
 
 # coverage
 /coverage/

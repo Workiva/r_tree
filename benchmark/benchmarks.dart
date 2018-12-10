@@ -2,7 +2,7 @@ import 'dart:math';
 
 import 'package:benchmark_harness/benchmark_harness.dart';
 
-import '../lib/r_tree.dart';
+import 'package:r_tree/r_tree.dart';
 
 final int BRANCH_FACTOR = 16;
 
