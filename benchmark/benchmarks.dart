@@ -7,28 +7,27 @@ import 'package:r_tree/r_tree.dart';
 final int BRANCH_FACTOR = 16;
 
 main() {
-  RTreeBenchmark.main();
+  print('Running benchmark...');
+  var collector = new ScoreCollector();
+  new InsertBenchmark(collector).report();
+  new RemoveBenchmark(collector).report();
+  new SearchBenchmark1(collector).report();
+  new SearchBenchmark2(collector).report();
+  new SearchBenchmark1(collector, iterateAll: true).report();
+  new SearchBenchmark2(collector, iterateAll: true).report();
+
+  var output = '\nName\tResult (microseconds)\n';
+  collector.collected.forEach((String name, double value) {
+    output += '$name\t$value\n';
+  });
+
+  print(output);
 }
 
-class RTreeBenchmark {
-  static void main() {
-    InsertBenchmark.main();
-    RemoveBenchmark.main();
-    SearchBenchmark1.main();
-    SearchBenchmark2.main();
-    SearchBenchmark1.main(iterateAll: true);
-    SearchBenchmark2.main(iterateAll: true);
-  }
-}
-
-class InsertBenchmark extends BenchmarkBase {
-  InsertBenchmark() : super("Insert 5000 items with random rectangles.");
+class InsertBenchmark extends RTreeBenchmarkBase {
+  InsertBenchmark(ScoreCollector collector) : super("Insert 5k", collector);
 
   RTree<String> tree;
-
-  static void main() {
-    new InsertBenchmark().report();
-  }
 
   void run() {
     Random rand = new Random();
@@ -49,15 +48,11 @@ class InsertBenchmark extends BenchmarkBase {
   void teardown() {}
 }
 
-class RemoveBenchmark extends BenchmarkBase {
-  RemoveBenchmark() : super("Remove 5000 items from a tree of 10000 items.");
+class RemoveBenchmark extends RTreeBenchmarkBase {
+  RemoveBenchmark(ScoreCollector collector) : super("Remove 5k", collector);
 
   RTree<String> tree;
   List<List<RTreeDatum>> items = [];
-
-  static void main() {
-    new RemoveBenchmark().report();
-  }
 
   void run() {
     for (int i = 0; i < 100; i++) {
@@ -85,17 +80,12 @@ class RemoveBenchmark extends BenchmarkBase {
   void teardown() {}
 }
 
-class SearchBenchmark1 extends BenchmarkBase {
+class SearchBenchmark1 extends RTreeBenchmarkBase {
   final bool iterateAll;
-  SearchBenchmark1({this.iterateAll: false})
-      : super(
-            "Search ${iterateAll ? 'and iterate ' : ''}5000 items. (500 rectangles, 10 items each) Find all 10 items for each of the 500 rectangles.");
+  SearchBenchmark1(ScoreCollector collector, {this.iterateAll: false})
+      : super("Search${iterateAll ? '/Iterate' : ''} 5k", collector);
 
   RTree<String> tree;
-
-  static void main({bool iterateAll: false}) {
-    new SearchBenchmark1(iterateAll: iterateAll).report();
-  }
 
   void run() {
     for (int i = 0; i < 10; i++) {
@@ -133,18 +123,13 @@ class SearchBenchmark1 extends BenchmarkBase {
   void teardown() {}
 }
 
-class SearchBenchmark2 extends BenchmarkBase {
+class SearchBenchmark2 extends RTreeBenchmarkBase {
   final bool iterateAll;
 
-  SearchBenchmark2({this.iterateAll: false})
-      : super(
-            "Search ${iterateAll ? 'and iterate ' : ''}30000 items. (10000 rectangles. 3 items each) Find all 3 items for 5000 of the rectangles.");
+  SearchBenchmark2(ScoreCollector collector, {this.iterateAll: false})
+      : super("Search${iterateAll ? '/Iterate' : ''} 30k", collector);
 
   RTree<String> tree;
-
-  static void main({bool iterateAll: false}) {
-    new SearchBenchmark2(iterateAll: iterateAll).report();
-  }
 
   void run() {
     for (int i = 0; i < 100; i++) {
@@ -173,4 +158,31 @@ class SearchBenchmark2 extends BenchmarkBase {
   }
 
   void teardown() {}
+}
+
+class RTreeBenchmarkBase extends BenchmarkBase {
+  final int iterations;
+
+  RTreeBenchmarkBase(String name, ScoreCollector collector, {this.iterations: 100})
+      : super(name, emitter: collector);
+
+  @override
+  void exercise() {
+    for (int i = 0; i < iterations; i++) {
+      run();
+    }
+  }
+}
+
+class ScoreCollector extends ScoreEmitter {
+  Map<String, double> collected = {};
+
+  @override
+  void emit(String testName, double value) {
+    if (collected.containsKey(testName)) {
+      throw new StateError('Already collected results for $testName');
+    }
+
+    collected[testName] = value;
+  }
 }
