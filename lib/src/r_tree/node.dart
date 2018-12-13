@@ -68,9 +68,9 @@ abstract class Node<E> extends RTreeContributor {
 
     _minimumBoundingRect = null;
 
-    children.forEach((RTreeContributor child) {
+    for (var child in children) {
       include(child);
-    });
+    }
   }
 
   Node<E> splitIfNecessary() => size > branchFactor ? _split() : null;
@@ -94,7 +94,7 @@ abstract class Node<E> extends RTreeContributor {
   }
 
   _reassignRemainingChildren(List<RTreeContributor> remainingChildren, Node<E> splitNode) {
-    remainingChildren.forEach((RTreeContributor child) {
+    for (var child in remainingChildren) {
       num thisExpansionCost = expansionCost(child);
       num splitExpansionCost = splitNode.expansionCost(child);
 
@@ -107,7 +107,7 @@ abstract class Node<E> extends RTreeContributor {
       } else {
         splitNode.addChild(child);
       }
-    });
+    }
   }
 
   _Seeds _pickSeeds() {
@@ -119,12 +119,12 @@ abstract class Node<E> extends RTreeContributor {
     RTreeContributor topmost = children.elementAt(0);
     RTreeContributor bottommost = children.elementAt(0);
 
-    children.forEach((RTreeContributor child) {
+    for (var child in children) {
       if (child.rect.right < leftmost.rect.right) leftmost = child;
       if (child.rect.left > rightmost.rect.left) rightmost = child;
       if (child.rect.top > bottommost.rect.top) bottommost = child;
       if (child.rect.bottom < topmost.rect.bottom) topmost = child;
-    });
+    }
 
     RTreeContributor a, b, c, d;
     if (_horizontalDifference(leftmost, rightmost) > _verticalDifference(topmost, bottommost)) {

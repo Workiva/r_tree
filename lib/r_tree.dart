@@ -14,6 +14,9 @@
  * limitations under the License.
  */
 
+/// A recursive RTree library written in Dart.
+///
+/// "R-trees are tree data structures used for spatial access methods, i.e., for indexing multi-dimensional information such as geographical coordinates, rectangles or polygons." - http://en.wikipedia.org/wiki/R-tree
 library r_tree;
 
 import 'dart:math';

@@ -29,11 +29,11 @@ class NonLeafNode<E> extends Node<E> {
   Iterable<RTreeDatum<E>> search(Rectangle searchRect) {
     List<RTreeDatum<E>> overlappingLeafs = [];
 
-    _childNodes.forEach((Node<E> childNode) {
+    for (var childNode in _childNodes) {
       if (childNode.overlaps(searchRect)) {
         overlappingLeafs.addAll(childNode.search(searchRect));
       }
-    });
+    }
 
     return overlappingLeafs;
   }
@@ -54,7 +54,7 @@ class NonLeafNode<E> extends Node<E> {
   remove(RTreeDatum<E> item) {
     List<Node<E>> childrenToRemove = [];
 
-    _childNodes.forEach((Node<E> childNode) {
+    for (var childNode in _childNodes) {
       if (childNode.overlaps(item.rect)) {
         childNode.remove(item);
 
@@ -62,11 +62,11 @@ class NonLeafNode<E> extends Node<E> {
           childrenToRemove.add(childNode);
         }
       }
-    });
+    }
 
-    childrenToRemove.forEach((Node<E> child) {
+    for (var child in childrenToRemove) {
       removeChild(child);
-    });
+    }
   }
 
   addChild(Node<E> child) {
@@ -93,13 +93,13 @@ class NonLeafNode<E> extends Node<E> {
     num tentativeCost;
     Node<E> bestNode;
 
-    _childNodes.forEach((Node<E> child) {
+    for (var child in _childNodes) {
       tentativeCost = child.expansionCost(item);
       if (tentativeCost < bestCost) {
         bestCost = tentativeCost;
         bestNode = child;
       }
-    });
+    }
 
     return bestNode;
   }
