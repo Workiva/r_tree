@@ -13,7 +13,7 @@ main() {
         RTreeDatum<String> item = new RTreeDatum<String>(new Rectangle(0, 0, 1, 1), 'Item 1');
 
         tree.insert(item);
-        Iterable<RTreeDatum<String>> items = tree.search(item.rect);
+        var items = tree.search(item.rect);
 
         expect(items.length, equals(1));
         expect(items.elementAt(0).value, equals('Item 1'));
@@ -46,7 +46,7 @@ main() {
           tree.insert(itemMap[itemId]);
         }
 
-        Iterable<RTreeDatum<String>> items = tree.search(new Rectangle(0, 0, 1, 3)); // A1:A3
+        var items = tree.search(new Rectangle(0, 0, 1, 3)); // A1:A3
         expect(items.length, equals(1));
         expect(items.contains(itemMap['Item 0']), equals(true));
 
@@ -73,7 +73,7 @@ main() {
           tree.insert(itemMap[itemId]);
         }
 
-        Iterable<RTreeDatum<String>> items = tree.search(new Rectangle(0, 2, 1, 1));
+        var items = tree.search(new Rectangle(0, 2, 1, 1));
         expect(items.length, equals(1));
         expect(items.contains(itemMap['Item 2']), equals(true));
 
@@ -102,7 +102,7 @@ main() {
           }
         }
 
-        Iterable<RTreeDatum<String>> items = tree.search(new Rectangle(31, 27, 1, 1));
+        var items = tree.search(new Rectangle(31, 27, 1, 1));
         expect(items.length, equals(1));
         expect(items.elementAt(0).value, equals('Item 31:27'));
 
@@ -119,7 +119,7 @@ main() {
         tree.insert(item);
         tree.insert(item);
 
-        Iterable<RTreeDatum<String>> items = tree.search(item.rect);
+        var items = tree.search(item.rect);
         expect(items.length, equals(2));
 
         tree.remove(item);
@@ -147,7 +147,7 @@ main() {
           }
         }
 
-        Iterable<RTreeDatum<String>> items = tree.search(itemMap['Item 0:0'].rect);
+        var items = tree.search(itemMap['Item 0:0'].rect);
         expect(items.length, equals(1));
 
         tree.remove(itemMap['Item 0:0']);
@@ -176,7 +176,7 @@ main() {
           }
         }
 
-        Iterable<RTreeDatum<String>> items = tree.search(new Rectangle(0, 0, 50, 50));
+        var items = tree.search(new Rectangle(0, 0, 50, 50));
         expect(items.length, equals(2500));
 
         data.forEach((RTreeDatum item) {
