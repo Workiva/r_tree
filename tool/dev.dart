@@ -26,8 +26,7 @@ Future<Null> main(List<String> args) async {
     ..entryPoints = ['benchmark/', 'lib/', 'test/'];
   
   config.format
-    ..paths = ['benchmark/', 'lib/', 'test/']
-    ..lineLength = 100;
+    ..paths = ['benchmark/', 'lib/', 'test/'];
 
   await dev(args);
 }

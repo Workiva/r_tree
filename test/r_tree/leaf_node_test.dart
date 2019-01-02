@@ -31,7 +31,8 @@ main() {
         expect(leaf.rect, equals(new Rectangle(0, 0, 1, 1)));
         expect(leaf.size, equals(1));
 
-        RTreeDatum nextChild = new RTreeDatum(new Rectangle(1, 1, 1, 1), 'Item 1');
+        RTreeDatum nextChild =
+            new RTreeDatum(new Rectangle(1, 1, 1, 1), 'Item 1');
         leaf.addChild(nextChild);
 
         expect(leaf.rect, equals(new Rectangle(0, 0, 2, 2)));

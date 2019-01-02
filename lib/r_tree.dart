@@ -16,7 +16,14 @@
 
 /// A recursive RTree library written in Dart.
 ///
-/// "R-trees are tree data structures used for spatial access methods, i.e., for indexing multi-dimensional information such as geographical coordinates, rectangles or polygons." - http://en.wikipedia.org/wiki/R-tree
+/// This R-tree implementation is used to two and query two-dimensional data.
+/// Items are inserted and balanced via the RTree class and can then be queried
+/// by Rectangle.  The balancing can be tweaked by modifying the branch factor
+/// of the RTree.
+///
+/// "R-trees are tree data structures used for spatial access methods, i.e., for
+/// indexing multi-dimensional information such as geographical coordinates,
+/// rectangles or polygons." - http://en.wikipedia.org/wiki/R-tree
 library r_tree;
 
 import 'dart:math';
