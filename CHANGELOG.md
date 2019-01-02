@@ -1,3 +1,7 @@
+## [1.0.6](https://github.com/Workiva/r_tree/compare/1.0.5...1.0.6)
+
+- Added docstrings, example app, and this file!
+
 ## [1.0.5](https://github.com/Workiva/r_tree/compare/1.0.4...1.0.5)
 
 - Dart 2 support (still supports Dart 1, too)
