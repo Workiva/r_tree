@@ -10,7 +10,8 @@ main() {
     group('Insert/Search', () {
       test('insert 1 item', () {
         RTree tree = new RTree(3);
-        RTreeDatum<String> item = new RTreeDatum<String>(new Rectangle(0, 0, 1, 1), 'Item 1');
+        RTreeDatum<String> item =
+            new RTreeDatum<String>(new Rectangle(0, 0, 1, 1), 'Item 1');
 
         tree.insert(item);
         var items = tree.search(item.rect);
@@ -19,10 +20,14 @@ main() {
         expect(items.elementAt(0).value, equals('Item 1'));
 
         items.forEach((item) {
-          tree.insert(new RTreeDatum<String>(new Rectangle(0, 0, 1, 1), 'Item 2'));
-          tree.insert(new RTreeDatum<String>(new Rectangle(0, 0, 1, 1), 'Item 3'));
-          tree.insert(new RTreeDatum<String>(new Rectangle(0, 0, 1, 1), 'Item 4'));
-          tree.insert(new RTreeDatum<String>(new Rectangle(0, 0, 1, 1), 'Item 5'));
+          tree.insert(
+              new RTreeDatum<String>(new Rectangle(0, 0, 1, 1), 'Item 2'));
+          tree.insert(
+              new RTreeDatum<String>(new Rectangle(0, 0, 1, 1), 'Item 3'));
+          tree.insert(
+              new RTreeDatum<String>(new Rectangle(0, 0, 1, 1), 'Item 4'));
+          tree.insert(
+              new RTreeDatum<String>(new Rectangle(0, 0, 1, 1), 'Item 5'));
         });
 
         items = tree.search(item.rect);
@@ -42,7 +47,8 @@ main() {
 
         for (int i = 0; i < 10; i++) {
           String itemId = 'Item $i';
-          itemMap[itemId] = new RTreeDatum<String>(new Rectangle(i, 0, 10 - i, 10), itemId);
+          itemMap[itemId] =
+              new RTreeDatum<String>(new Rectangle(i, 0, 10 - i, 10), itemId);
           tree.insert(itemMap[itemId]);
         }
 
@@ -69,7 +75,8 @@ main() {
 
         for (int i = 0; i < 5; i++) {
           String itemId = 'Item $i';
-          itemMap[itemId] = new RTreeDatum<String>(new Rectangle(0, i, 1, 1), itemId);
+          itemMap[itemId] =
+              new RTreeDatum<String>(new Rectangle(0, i, 1, 1), itemId);
           tree.insert(itemMap[itemId]);
         }
 
@@ -114,7 +121,8 @@ main() {
     group('Remove', () {
       test('remove should only remove first occurance of item', () {
         RTree tree = new RTree(3);
-        RTreeDatum<String> item = new RTreeDatum<String>(new Rectangle(0, 0, 1, 1), 'Item 1');
+        RTreeDatum<String> item =
+            new RTreeDatum<String>(new Rectangle(0, 0, 1, 1), 'Item 1');
 
         tree.insert(item);
         tree.insert(item);
@@ -142,7 +150,8 @@ main() {
         for (int i = 0; i < 50; i++) {
           for (int j = 0; j < 50; j++) {
             String itemId = 'Item $i:$j';
-            itemMap[itemId] = new RTreeDatum<String>(new Rectangle(i, j, 1, 1), itemId);
+            itemMap[itemId] =
+                new RTreeDatum<String>(new Rectangle(i, j, 1, 1), itemId);
             tree.insert(itemMap[itemId]);
           }
         }
@@ -170,7 +179,8 @@ main() {
 
         for (int i = 0; i < 50; i++) {
           for (int j = 0; j < 50; j++) {
-            RTreeDatum item = new RTreeDatum<String>(new Rectangle(i, j, 1, 1), 'Item $i:$j');
+            RTreeDatum item =
+                new RTreeDatum<String>(new Rectangle(i, j, 1, 1), 'Item $i:$j');
             data.add(item);
             tree.insert(item);
           }
@@ -187,7 +197,8 @@ main() {
         expect(items.length, equals(0));
 
         //test inserting after removal to ensure new root leaf node functions correctly
-        tree.insert(new RTreeDatum<String>(new Rectangle(0, 0, 1, 1), 'New Initial Item'));
+        tree.insert(new RTreeDatum<String>(
+            new Rectangle(0, 0, 1, 1), 'New Initial Item'));
 
         items = tree.search(new Rectangle(0, 0, 50, 50));
 

@@ -16,6 +16,8 @@
 
 part of r_tree;
 
+/// A [Node] that is a leaf node of the tree.  These are created automatically
+/// by [RTree] when inserting/removing items from the tree.
 class LeafNode<E> extends Node<E> {
   List<RTreeDatum<E>> _items = [];
   List<RTreeDatum<E>> get children => _items;

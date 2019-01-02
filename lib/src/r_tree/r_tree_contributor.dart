@@ -16,7 +16,7 @@
 
 part of r_tree;
 
-// All objects that are used to build an RTree must extend RTreeContributor
+/// The base definition of an object that exists in an [RTree]
 abstract class RTreeContributor {
   Rectangle get rect;
 

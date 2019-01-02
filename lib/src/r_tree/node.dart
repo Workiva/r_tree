@@ -16,36 +16,57 @@
 
 part of r_tree;
 
+/// A [Node] is an entry in the [RTree] for a particular rectangle.  This is an
+/// abstract class, see [LeafNode] and [NonLeafNode] for more information.
 abstract class Node<E> extends RTreeContributor {
+  /// The branch factor this node is configured with, which determines when the node should split
   final int branchFactor;
 
+  /// Parent node of this node, or null if this is the root node
   Node<E> parent;
+
   Rectangle _minimumBoundingRect;
+
+  /// Returns the rectangle this Node covers
   Rectangle get rect => _minimumBoundingRect;
 
   Node(this.branchFactor);
 
+  /// Returns an iterable of all items within [searchRect]
   Iterable<RTreeDatum<E>> search(Rectangle searchRect);
+
+  /// Inserts [item] into this node
   Node<E> insert(RTreeDatum<E> item);
+
+  /// Removes [item] from this node
   remove(RTreeDatum<E> item);
+
+  /// Remove all children from this node
   clearChildren();
+
+  /// Returns a list of all items in this node
   List<RTreeContributor> get children;
+
+  /// Factory method for creating a new node (used when splitting the node)
   Node<E> createNewNode();
 
+  /// The size of the node is its child count
   int get size => children.length;
 
+  /// Adds [child] to this node
   addChild(covariant RTreeContributor child) {
     include(child);
     children.add(child);
   }
 
+  /// Removes [child] from this node
   removeChild(covariant RTreeContributor child) {
     children.remove(child);
     updateBoundingRect();
   }
 
-  // Calculates the cost (increase to _minimumBoundingRect's area)
-  // of adding a new @item to this Node
+  /// Calculates the cost (increase to _minimumBoundingRect's area)
+  /// of adding a new @item to this Node
   num expansionCost(RTreeContributor item) {
     if (_minimumBoundingRect == null) {
       return _area(item.rect);
@@ -55,14 +76,17 @@ abstract class Node<E> extends RTreeContributor {
     return _area(newRect) - _area(_minimumBoundingRect);
   }
 
-  num _area(Rectangle rect) => (rect.right - rect.left) * (rect.bottom - rect.top);
+  num _area(Rectangle rect) =>
+      (rect.right - rect.left) * (rect.bottom - rect.top);
 
-  // Adds the rectangle containing @item to this Node's _minimumBoundingRectangle
+  /// Adds the rectangle containing [item] to this node's covered rectangle
   include(RTreeContributor item) {
-    _minimumBoundingRect =
-        _minimumBoundingRect == null ? item.rect : _minimumBoundingRect.boundingBox(item.rect);
+    _minimumBoundingRect = _minimumBoundingRect == null
+        ? item.rect
+        : _minimumBoundingRect.boundingBox(item.rect);
   }
 
+  /// Recalculated the bounding rectangle of this node
   updateBoundingRect() {
     if (children.length == 0) return;
 
@@ -73,6 +97,7 @@ abstract class Node<E> extends RTreeContributor {
     }
   }
 
+  /// Determines if this node needs to be split and returns a new [Node] if so, otherwise returns null
   Node<E> splitIfNecessary() => size > branchFactor ? _split() : null;
 
   Node<E> _split() {
@@ -93,7 +118,8 @@ abstract class Node<E> extends RTreeContributor {
     return splitNode;
   }
 
-  _reassignRemainingChildren(List<RTreeContributor> remainingChildren, Node<E> splitNode) {
+  _reassignRemainingChildren(
+      List<RTreeContributor> remainingChildren, Node<E> splitNode) {
     for (var child in remainingChildren) {
       num thisExpansionCost = expansionCost(child);
       num splitExpansionCost = splitNode.expansionCost(child);
@@ -127,7 +153,8 @@ abstract class Node<E> extends RTreeContributor {
     }
 
     RTreeContributor a, b, c, d;
-    if (_horizontalDifference(leftmost, rightmost) > _verticalDifference(topmost, bottommost)) {
+    if (_horizontalDifference(leftmost, rightmost) >
+        _verticalDifference(topmost, bottommost)) {
       a = leftmost;
       b = rightmost;
       c = bottommost;
@@ -153,10 +180,12 @@ abstract class Node<E> extends RTreeContributor {
     return new _Seeds(seed1, seed2);
   }
 
-  num _horizontalDifference(RTreeContributor leftmost, RTreeContributor rightmost) =>
+  num _horizontalDifference(
+          RTreeContributor leftmost, RTreeContributor rightmost) =>
       (rightmost.rect.left - leftmost.rect.right).abs();
 
-  num _verticalDifference(RTreeContributor topmost, RTreeContributor bottommost) =>
+  num _verticalDifference(
+          RTreeContributor topmost, RTreeContributor bottommost) =>
       (topmost.rect.bottom - bottommost.rect.top).abs();
 }
 

@@ -16,6 +16,7 @@
 
 part of r_tree;
 
+/// A two dimensional index of data that allows querying by rectangular areas
 class RTree<E> {
   Node<E> _root;
   int _branchFactor;

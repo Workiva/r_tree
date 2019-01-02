@@ -23,11 +23,10 @@ Future<Null> main(List<String> args) async {
   config.analyze
     ..strong = true
     ..fatalLints = true
-    ..entryPoints = ['benchmark/', 'lib/', 'test/'];
+    ..entryPoints = ['benchmark/', 'lib/', 'test/', 'example/'];
   
   config.format
-    ..paths = ['benchmark/', 'lib/', 'test/']
-    ..lineLength = 100;
+    ..paths = ['benchmark/', 'lib/', 'test/', 'example/'];
 
   await dev(args);
 }

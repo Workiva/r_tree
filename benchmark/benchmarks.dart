@@ -36,7 +36,8 @@ class InsertBenchmark extends RTreeBenchmarkBase {
       int y = rand.nextInt(100000);
       int height = rand.nextInt(100);
       int width = rand.nextInt(100);
-      RTreeDatum item = new RTreeDatum(new Rectangle(x, y, width, height), 'item $i');
+      RTreeDatum item =
+          new RTreeDatum(new Rectangle(x, y, width, height), 'item $i');
       tree.insert(item);
     }
   }
@@ -163,7 +164,8 @@ class SearchBenchmark2 extends RTreeBenchmarkBase {
 class RTreeBenchmarkBase extends BenchmarkBase {
   final int iterations;
 
-  RTreeBenchmarkBase(String name, ScoreCollector collector, {this.iterations: 100})
+  RTreeBenchmarkBase(String name, ScoreCollector collector,
+      {this.iterations: 100})
       : super(name, emitter: collector);
 
   @override
