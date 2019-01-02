@@ -1,6 +1,6 @@
 name: r_tree
 version: 1.0.5
-description: A recursive RTree library written in Dart.
+description: R-tree implementation to index and query two-dimensional data
 author: Taylor Anderson <taylor.anderson@workiva.com>
 homepage: https://github.com/Workiva/r_tree
 
