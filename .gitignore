@@ -9,6 +9,7 @@ packages
 pubspec.lock
 doc
 build
+.dart_tool
 
 # coverage
 /coverage/
