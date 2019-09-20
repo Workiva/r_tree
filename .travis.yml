@@ -2,8 +2,9 @@ language: dart
 dart:
   - 1.24.3
   - stable
+before_install:
+  - ./pub2get.sh
 script:
-  - pub get
   - pub run dart_dev format --check
   - pub run dart_dev analyze
   - pub run test
