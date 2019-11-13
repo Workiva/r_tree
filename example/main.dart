@@ -3,9 +3,9 @@ import 'dart:html';
 import 'package:r_tree/r_tree.dart';
 
 Future main() async {
-  var rtree = new RTree<String>();
+  var rtree = RTree<String>();
   var app = querySelector('#app');
-  var canvas = new CanvasElement(width: 640, height: 480);
+  var canvas = CanvasElement(width: 640, height: 480);
   app.append(canvas);
   canvas.context2D
     ..fillStyle = '#ccc'
@@ -28,7 +28,7 @@ Future main() async {
         ((event.client.x - boundingRect.left) + target.scrollLeft).floor();
     var endY = ((event.client.y - boundingRect.top) + target.scrollTop).floor();
 
-    var rectangle = new Rectangle(startX, startY, endX - startX, endY - startY);
+    var rectangle = Rectangle(startX, startY, endX - startX, endY - startY);
 
     if (currentBrush == 'search') {
       var resultList = querySelector('#results');
@@ -48,17 +48,15 @@ Future main() async {
           default:
             print('no match for ${match.value}');
         }
-        resultList
-            .append(new LIElement()..innerHtml = '$color at ${match.rect}');
+        resultList.append(LIElement()..innerHtml = '$color at ${match.rect}');
       }
       if (resultList.children.isEmpty) {
-        resultList
-            .append(new LIElement()..innerHtml = 'No results in $rectangle');
+        resultList.append(LIElement()..innerHtml = 'No results in $rectangle');
       }
     } else {
       canvas.context2D.fillStyle = currentBrush;
       canvas.context2D.fillRect(startX, startY, endX - startX, endY - startY);
-      rtree.insert(new RTreeDatum(rectangle, currentBrush));
+      rtree.insert(RTreeDatum(rectangle, currentBrush));
     }
   });
 

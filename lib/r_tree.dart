@@ -27,7 +27,6 @@
 library r_tree;
 
 import 'dart:math';
-import 'package:dart2_constant/core.dart' as core_constant;
 
 part 'src/r_tree/leaf_node.dart';
 part 'src/r_tree/non_leaf_node.dart';

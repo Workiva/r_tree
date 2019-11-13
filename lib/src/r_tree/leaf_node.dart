@@ -25,7 +25,7 @@ class LeafNode<E> extends Node<E> {
   LeafNode(int branchFactor) : super(branchFactor);
 
   Node<E> createNewNode() {
-    return new LeafNode<E>(branchFactor);
+    return LeafNode<E>(branchFactor);
   }
 
   Iterable<RTreeDatum<E>> search(Rectangle searchRect) {
