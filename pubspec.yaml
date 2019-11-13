@@ -7,7 +7,6 @@ homepage: https://github.com/Workiva/r_tree
 environment:
   sdk: '>=1.24.3 <3.0.0'
 dependencies:
-  dart2_constant: ^1.0.0
 dev_dependencies:
   benchmark_harness: any
   build_runner: ">=0.6.0 <2.0.0"

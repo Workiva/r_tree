@@ -91,7 +91,7 @@ class NonLeafNode<E> extends Node<E> {
   }
 
   Node<E> _getBestNodeForInsert(RTreeDatum<E> item) {
-    num bestCost = core_constant.double.infinity;
+    num bestCost = double.infinity;
     num tentativeCost;
     Node<E> bestNode;
 
