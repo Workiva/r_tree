@@ -83,7 +83,7 @@ class RemoveBenchmark extends RTreeBenchmarkBase {
 
 class SearchBenchmark1 extends RTreeBenchmarkBase {
   final bool iterateAll;
-  SearchBenchmark1(ScoreCollector collector, {this.iterateAll: false})
+  SearchBenchmark1(ScoreCollector collector, {this.iterateAll = false})
       : super("Search${iterateAll ? '/Iterate' : ''} 5k", collector);
 
   RTree<String> tree;
@@ -127,7 +127,7 @@ class SearchBenchmark1 extends RTreeBenchmarkBase {
 class SearchBenchmark2 extends RTreeBenchmarkBase {
   final bool iterateAll;
 
-  SearchBenchmark2(ScoreCollector collector, {this.iterateAll: false})
+  SearchBenchmark2(ScoreCollector collector, {this.iterateAll = false})
       : super("Search${iterateAll ? '/Iterate' : ''} 30k", collector);
 
   RTree<String> tree;
@@ -165,7 +165,7 @@ class RTreeBenchmarkBase extends BenchmarkBase {
   final int iterations;
 
   RTreeBenchmarkBase(String name, ScoreCollector collector,
-      {this.iterations: 100})
+      {this.iterations = 100})
       : super(name, emitter: collector);
 
   @override
