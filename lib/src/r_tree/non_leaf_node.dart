@@ -28,7 +28,8 @@ class NonLeafNode<E> extends Node<E> {
     return new NonLeafNode<E>(branchFactor);
   }
 
-  Iterable<RTreeDatum<E>> search(Rectangle searchRect, bool Function(E item) shouldInclude) {
+  Iterable<RTreeDatum<E>> search(
+      Rectangle searchRect, bool Function(E item) shouldInclude) {
     List<RTreeDatum<E>> overlappingLeafs = [];
 
     for (var childNode in _childNodes) {

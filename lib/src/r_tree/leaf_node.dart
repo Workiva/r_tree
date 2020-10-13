@@ -28,8 +28,10 @@ class LeafNode<E> extends Node<E> {
     return new LeafNode<E>(branchFactor);
   }
 
-  Iterable<RTreeDatum<E>> search(Rectangle searchRect, bool Function(E item) shouldInclude) {
-    return _items.where((RTreeDatum<E> item) => shouldInclude(item.value) && item.overlaps(searchRect));
+  Iterable<RTreeDatum<E>> search(
+      Rectangle searchRect, bool Function(E item) shouldInclude) {
+    return _items.where((RTreeDatum<E> item) =>
+        shouldInclude(item.value) && item.overlaps(searchRect));
   }
 
   Node<E> insert(RTreeDatum<E> item) {

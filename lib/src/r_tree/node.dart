@@ -33,7 +33,8 @@ abstract class Node<E> extends RTreeContributor {
   Node(this.branchFactor);
 
   /// Returns an iterable of all items within [searchRect]
-  Iterable<RTreeDatum<E>> search(Rectangle searchRect, bool Function(E item) shouldInclude);
+  Iterable<RTreeDatum<E>> search(
+      Rectangle searchRect, bool Function(E item) shouldInclude);
 
   /// Inserts [item] into this node
   Node<E> insert(RTreeDatum<E> item);
