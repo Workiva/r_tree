@@ -42,7 +42,8 @@ main() {
 
         expect(leaf.rect, equals(new Rectangle(0, 0, 1, 1)));
         expect(leaf.size, equals(1));
-        expect(leaf.search(new Rectangle(1, 1, 1, 1)).length, equals(0));
+        expect(leaf.search(new Rectangle(1, 1, 1, 1), (_) => true).length,
+            equals(0));
 
         leaf.clearChildren();
 

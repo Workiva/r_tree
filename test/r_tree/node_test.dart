@@ -39,13 +39,13 @@ main() {
         LeafNode splitNode = leafNode.splitIfNecessary();
 
         Iterable<RTreeDatum> items =
-            leafNode.search(new Rectangle(0, 0, 1, 10));
+            leafNode.search(new Rectangle(0, 0, 1, 10), (_) => true);
         expect(items.length, equals(leafNode.size));
         expect(leafNode.size, equals(2));
         expect(items.contains(itemMap['Item 0']), equals(true));
         expect(items.contains(itemMap['Item 1']), equals(true));
 
-        items = splitNode.search(new Rectangle(0, 0, 1, 10));
+        items = splitNode.search(new Rectangle(0, 0, 1, 10), (_) => true);
         expect(items.length, equals(splitNode.size));
         expect(splitNode.size, equals(2));
         expect(items.contains(itemMap['Item 2']), equals(true));
@@ -68,13 +68,13 @@ main() {
         LeafNode splitNode = leafNode.splitIfNecessary();
 
         Iterable<RTreeDatum> items =
-            leafNode.search(new Rectangle(0, 0, 10, 1));
+            leafNode.search(new Rectangle(0, 0, 10, 1), (_) => true);
         expect(items.length, equals(leafNode.size));
         expect(leafNode.size, equals(2));
         expect(items.contains(itemMap['Item 0']), equals(true));
         expect(items.contains(itemMap['Item 1']), equals(true));
 
-        items = splitNode.search(new Rectangle(0, 0, 10, 1));
+        items = splitNode.search(new Rectangle(0, 0, 10, 1), (_) => true);
         expect(items.length, equals(splitNode.size));
         expect(splitNode.size, equals(2));
         expect(items.contains(itemMap['Item 2']), equals(true));
@@ -97,13 +97,13 @@ main() {
         LeafNode splitNode = leafNode.splitIfNecessary();
 
         Iterable<RTreeDatum> items =
-            leafNode.search(new Rectangle(0, 0, 10, 1));
+            leafNode.search(new Rectangle(0, 0, 10, 1), (_) => true);
         expect(items.length, equals(leafNode.size));
         expect(leafNode.size, equals(2));
         expect(items.contains(itemMap['Item 0']), equals(true));
         expect(items.contains(itemMap['Item 1']), equals(true));
 
-        items = splitNode.search(new Rectangle(0, 0, 10, 1));
+        items = splitNode.search(new Rectangle(0, 0, 10, 1), (_) => true);
         expect(items.length, equals(splitNode.size));
         expect(splitNode.size, equals(2));
         expect(items.contains(itemMap['Item 2']), equals(true));

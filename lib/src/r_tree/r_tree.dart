@@ -51,12 +51,15 @@ class RTree<E> {
 
   // Returns all items whose rectangles overlap the @searchRect
   //  Note: Rectangles that share only a border are not considered to overlap
-  Iterable<RTreeDatum<E>> search(Rectangle searchRect) {
+  Iterable<RTreeDatum<E>> search(Rectangle searchRect,
+      {bool Function(E item) shouldInclude}) {
+    shouldInclude ??= (_) => true;
+
     if (_root is LeafNode<E>) {
-      return _root.search(searchRect).toList();
+      return _root.search(searchRect, shouldInclude).toList();
     }
 
-    return _root.search(searchRect);
+    return _root.search(searchRect, shouldInclude);
   }
 
   _growTree(Node<E> node1, Node<E> node2) {
