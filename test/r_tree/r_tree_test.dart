@@ -14,7 +14,10 @@ main() {
             new RTreeDatum<String>(new Rectangle(0, 0, 1, 1), 'Item 1');
 
         tree.insert(item);
-        var items = tree.search(item.rect);
+        var items = tree.search(item.rect, (_) => false);
+        expect(items, isEmpty);
+
+        items = tree.search(item.rect);
 
         expect(items.length, equals(1));
         expect(items.elementAt(0).value, equals('Item 1'));
