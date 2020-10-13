@@ -1,3 +1,7 @@
+## [1.1.0](https://github.com/Workiva/r_tree/compare/1.0.6...1.1.0)
+
+- Added support for filtering search results
+
 ## [1.0.6](https://github.com/Workiva/r_tree/compare/1.0.5...1.0.6)
 
 - Added docstrings, example app, and this file!
