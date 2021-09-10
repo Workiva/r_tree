@@ -1,4 +1,4 @@
-FROM google/dart:2.5 as dart2
+FROM google/dart:2.13.4 as dart2
 
 FROM google/dart:1.24.3
 WORKDIR /build/
