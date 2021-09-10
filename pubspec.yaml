@@ -1,5 +1,5 @@
 name: r_tree
-version: 1.0.6
+version: 1.1.0
 description: R-tree implementation to index and query two-dimensional data
 author: Taylor Anderson <taylor.anderson@workiva.com>
 homepage: https://github.com/Workiva/r_tree
