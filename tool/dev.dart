@@ -1,4 +1,3 @@
-
 // Copyright 2017 Workiva Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -24,9 +23,8 @@ Future<Null> main(List<String> args) async {
     ..strong = true
     ..fatalLints = true
     ..entryPoints = ['benchmark/', 'lib/', 'test/', 'example/'];
-  
-  config.format
-    ..paths = ['benchmark/', 'lib/', 'test/', 'example/'];
+
+  config.format..paths = ['benchmark/', 'lib/', 'test/', 'example/'];
 
   await dev(args);
 }
