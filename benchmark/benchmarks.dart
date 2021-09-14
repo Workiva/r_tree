@@ -92,6 +92,7 @@ class SearchBenchmark1 extends RTreeBenchmarkBase {
       for (int j = 0; j < 50; j++) {
         var results = tree.search(Rectangle(i, j, 1, 1));
         if (iterateAll) {
+          // ignore: unused_local_variable
           for (var result in results) {
             // nothing to do here, just iterating over every result once
           }
@@ -136,6 +137,7 @@ class SearchBenchmark2 extends RTreeBenchmarkBase {
       for (int j = 0; j < 50; j++) {
         var results = tree.search(Rectangle(i, j, 1, 1));
         if (iterateAll) {
+          // ignore: unused_local_variable
           for (var result in results) {
             // nothing to do here, just iterating over every result once
           }

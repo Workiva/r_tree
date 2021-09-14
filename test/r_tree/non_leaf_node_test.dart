@@ -67,14 +67,14 @@ main() {
         node.insert(datum2);
 
         parentNode.children.forEach((node) {
-          expect(node, isInstanceOf<NonLeafNode>());
+          expect(node, isA<NonLeafNode>());
         });
 
         node.remove(datum1);
         node.remove(datum2);
 
         parentNode.children.forEach((node) {
-          expect(node, isInstanceOf<LeafNode>());
+          expect(node, isA<LeafNode>());
         });
       });
     });
