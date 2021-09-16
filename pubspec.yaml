@@ -5,7 +5,7 @@ author: Taylor Anderson <taylor.anderson@workiva.com>
 homepage: https://github.com/Workiva/r_tree
 
 environment:
-  sdk: '>=1.24.3 <3.0.0'
+  sdk: ">=2.11.0 <3.0.0"
 dependencies:
   dart2_constant: ^1.0.0
 dev_dependencies:
