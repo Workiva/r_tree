@@ -1,7 +1,8 @@
 import 'package:dart_dev/dart_dev.dart';
-import 'package:dart_dev_workiva/dart_dev_workiva.dart';
 
-final config = {
-  ...workivaConfig,
+final Map<String, DevTool> config = {
+  'analyze': AnalyzeTool()..analyzerArgs,
+  'format': FormatTool(),
+  'test': TestTool(),
   'serve': WebdevServeTool()..buildArgs = ['example'],
-}
+};
