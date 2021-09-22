@@ -25,7 +25,7 @@ class NonLeafNode<E> extends Node<E> {
   NonLeafNode(int branchFactor) : super(branchFactor);
 
   Node<E> createNewNode() {
-    return new NonLeafNode<E>(branchFactor);
+    return NonLeafNode<E>(branchFactor);
   }
 
   Iterable<RTreeDatum<E>> search(
@@ -92,7 +92,7 @@ class NonLeafNode<E> extends Node<E> {
   }
 
   Node<E> _getBestNodeForInsert(RTreeDatum<E> item) {
-    num bestCost = core_constant.double.infinity;
+    num bestCost = double.infinity;
     num tentativeCost;
     Node<E> bestNode;
 
@@ -111,7 +111,7 @@ class NonLeafNode<E> extends Node<E> {
     var nonLeafParent = parent as NonLeafNode<E>;
     if (nonLeafParent == null) return;
 
-    var newLeafNode = new LeafNode<E>(this.branchFactor);
+    var newLeafNode = LeafNode<E>(this.branchFactor);
     newLeafNode.include(this);
     nonLeafParent.removeChild(this);
     nonLeafParent.addChild(newLeafNode);
