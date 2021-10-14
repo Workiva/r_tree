@@ -178,7 +178,7 @@ abstract class Node<E> extends RTreeContributor {
       seed2 = children.elementAt(1);
     }
 
-    return new _Seeds(seed1, seed2);
+    return _Seeds(seed1, seed2);
   }
 
   num _horizontalDifference(

@@ -23,7 +23,7 @@ class RTree<E> {
 
   RTree([int branchFactor = 16]) {
     if (branchFactor < 3) {
-      throw new ArgumentError('branchFactor must be greater than 2');
+      throw ArgumentError('branchFactor must be greater than 2');
     }
     _branchFactor = branchFactor;
     _resetRoot();
@@ -46,7 +46,7 @@ class RTree<E> {
   }
 
   _resetRoot() {
-    _root = new LeafNode<E>(_branchFactor);
+    _root = LeafNode<E>(_branchFactor);
   }
 
   // Returns all items whose rectangles overlap the @searchRect
@@ -63,7 +63,7 @@ class RTree<E> {
   }
 
   _growTree(Node<E> node1, Node<E> node2) {
-    NonLeafNode<E> newRoot = new NonLeafNode<E>(_branchFactor);
+    NonLeafNode<E> newRoot = NonLeafNode<E>(_branchFactor);
     newRoot.addChild(node1);
     newRoot.addChild(node2);
     _root = newRoot;
