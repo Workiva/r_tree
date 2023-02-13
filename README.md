@@ -8,7 +8,7 @@ A recursive RTree library written in Dart. This R-tree implementation is used to
 
 Run the example app for a visual demonstration of the RTree
 ```
-pub serve example
+webdev serve example:8080
 ```
 Navigate to `http://localhost:8080`.  A canvas is drawn, click & drag on the canvas to add rectangles of various colors to your RTree, then click the search button and click & drag over an area of the canvas to search it for rectangles.
 
@@ -19,4 +19,4 @@ Run the benchmarks in the command line (Dart VM) using:
 dart benchmark/benchmarks.dart
 ```
 
-You can also run them in a browser using dart2js using `pub serve benchmark` or `pub build benchmark` and then serving them with your http server of choice.  Click the run button and observe the output in the browser console.
+You can also run them in a browser using dart2js using `webdev serve benchmark` or `webdev build benchmark` and then serving them with your http server of choice.  Click the run button and observe the output in the browser console.

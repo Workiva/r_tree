@@ -36,7 +36,8 @@ class InsertBenchmark extends RTreeBenchmarkBase {
       int y = rand.nextInt(100000);
       int height = rand.nextInt(100);
       int width = rand.nextInt(100);
-      RTreeDatum item = RTreeDatum(Rectangle(x, y, width, height), 'item $i');
+      RTreeDatum item =
+          RTreeDatum<String>(Rectangle(x, y, width, height), 'item $i');
       tree.insert(item);
     }
   }
