@@ -55,7 +55,8 @@ Future main() async {
       }
     } else {
       canvas.context2D.fillStyle = currentBrush;
-      canvas.context2D.fillRect(startX!, startY!, endX - startX!, endY - startY!);
+      canvas.context2D
+          .fillRect(startX!, startY!, endX - startX!, endY - startY!);
       rtree.insert(RTreeDatum(rectangle, currentBrush));
     }
   });
