@@ -19,27 +19,27 @@ part of r_tree;
 /// A [Node] that is a leaf node of the tree.  These are created automatically
 /// by [RTree] when inserting/removing items from the tree.
 class LeafNode<E> extends Node<E> {
-  List<RTreeDatum<E>> _items = [];
-  List<RTreeDatum<E>> get children => _items;
+  List<RTreeDatum<E>?> _items = [];
+  List<RTreeDatum<E>?> get children => _items;
 
-  LeafNode(int branchFactor) : super(branchFactor);
+  LeafNode(int? branchFactor) : super(branchFactor);
 
   Node<E> createNewNode() {
     return LeafNode<E>(branchFactor);
   }
 
-  Iterable<RTreeDatum<E>> search(
-      Rectangle searchRect, bool Function(E item) shouldInclude) {
-    return _items.where((RTreeDatum<E> item) =>
-        item.overlaps(searchRect) && shouldInclude(item.value));
+  Iterable<RTreeDatum<E>?> search(
+      Rectangle? searchRect, bool Function(E item) shouldInclude) {
+    return _items.where((RTreeDatum<E>? item) =>
+        item!.overlaps(searchRect!) && shouldInclude(item.value));
   }
 
-  Node<E> insert(RTreeDatum<E> item) {
+  Node<E>? insert(RTreeDatum<E>? item) {
     addChild(item);
     return splitIfNecessary();
   }
 
-  remove(RTreeDatum<E> item) {
+  remove(RTreeDatum<E>? item) {
     removeChild(item);
   }
 

@@ -18,7 +18,7 @@ part of r_tree;
 
 /// The base definition of an object that exists in an [RTree]
 abstract class RTreeContributor {
-  Rectangle get rect;
+  Rectangle? get rect;
 
   // Calculate if otherRect overlaps with the current rectangle
   //
@@ -26,9 +26,9 @@ abstract class RTreeContributor {
   // the inequalities are strict and do not allow for equivalences. This means
   // that the two rectangles are not considered overlapping if they share an edge.
   bool overlaps(Rectangle otherRect) {
-    return (rect.left < otherRect.left + otherRect.width &&
-        otherRect.left < rect.left + rect.width &&
-        rect.top < otherRect.top + otherRect.height &&
-        otherRect.top < rect.top + rect.height);
+    return (rect!.left < otherRect.left + otherRect.width &&
+        otherRect.left < rect!.left + rect!.width &&
+        rect!.top < otherRect.top + otherRect.height &&
+        otherRect.top < rect!.top + rect!.height);
   }
 }

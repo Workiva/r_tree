@@ -19,21 +19,21 @@ part of r_tree;
 /// A [Node] that is not a leaf end of the [RTree]. These are created automatically
 /// by [RTree] when inserting/removing items from the tree.
 class NonLeafNode<E> extends Node<E> {
-  List<Node<E>> _childNodes = [];
-  List<Node<E>> get children => _childNodes;
+  List<Node<E>?> _childNodes = [];
+  List<Node<E>?> get children => _childNodes;
 
-  NonLeafNode(int branchFactor) : super(branchFactor);
+  NonLeafNode(int? branchFactor) : super(branchFactor);
 
   Node<E> createNewNode() {
     return NonLeafNode<E>(branchFactor);
   }
 
-  Iterable<RTreeDatum<E>> search(
-      Rectangle searchRect, bool Function(E item) shouldInclude) {
-    List<RTreeDatum<E>> overlappingLeafs = [];
+  Iterable<RTreeDatum<E>?> search(
+      Rectangle? searchRect, bool Function(E item) shouldInclude) {
+    List<RTreeDatum<E>?> overlappingLeafs = [];
 
     for (var childNode in _childNodes) {
-      if (childNode.overlaps(searchRect)) {
+      if (childNode!.overlaps(searchRect!)) {
         overlappingLeafs.addAll(childNode.search(searchRect, shouldInclude));
       }
     }
@@ -41,11 +41,11 @@ class NonLeafNode<E> extends Node<E> {
     return overlappingLeafs;
   }
 
-  Node<E> insert(RTreeDatum<E> item) {
+  Node<E>? insert(RTreeDatum<E>? item) {
     include(item);
 
-    Node<E> bestNode = _getBestNodeForInsert(item);
-    Node<E> splitNode = bestNode.insert(item);
+    Node<E> bestNode = _getBestNodeForInsert(item)!;
+    Node<E>? splitNode = bestNode.insert(item);
 
     if (splitNode != null) {
       addChild(splitNode);
@@ -54,11 +54,11 @@ class NonLeafNode<E> extends Node<E> {
     return splitIfNecessary();
   }
 
-  remove(RTreeDatum<E> item) {
-    List<Node<E>> childrenToRemove = [];
+  remove(RTreeDatum<E>? item) {
+    List<Node<E>?> childrenToRemove = [];
 
     for (var childNode in _childNodes) {
-      if (childNode.overlaps(item.rect)) {
+      if (childNode!.overlaps(item!.rect)) {
         childNode.remove(item);
 
         if (childNode.size == 0) {
@@ -68,7 +68,7 @@ class NonLeafNode<E> extends Node<E> {
     }
 
     for (var child in childrenToRemove) {
-      removeChild(child);
+      removeChild(child!);
     }
   }
 
@@ -91,13 +91,13 @@ class NonLeafNode<E> extends Node<E> {
     _minimumBoundingRect = null;
   }
 
-  Node<E> _getBestNodeForInsert(RTreeDatum<E> item) {
+  Node<E>? _getBestNodeForInsert(RTreeDatum<E>? item) {
     num bestCost = double.infinity;
     num tentativeCost;
-    Node<E> bestNode;
+    Node<E>? bestNode;
 
     for (var child in _childNodes) {
-      tentativeCost = child.expansionCost(item);
+      tentativeCost = child!.expansionCost(item);
       if (tentativeCost < bestCost) {
         bestCost = tentativeCost;
         bestNode = child;
@@ -108,7 +108,7 @@ class NonLeafNode<E> extends Node<E> {
   }
 
   _convertToLeafNode() {
-    var nonLeafParent = parent as NonLeafNode<E>;
+    var nonLeafParent = parent as NonLeafNode<E>?;
     if (nonLeafParent == null) return;
 
     var newLeafNode = LeafNode<E>(this.branchFactor);

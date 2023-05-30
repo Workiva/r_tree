@@ -20,7 +20,7 @@ main() {
         items = tree.search(item.rect);
 
         expect(items.length, equals(1));
-        expect(items.elementAt(0).value, equals('Item 1'));
+        expect(items.elementAt(0)!.value, equals('Item 1'));
 
         items.forEach((item) {
           tree.insert(RTreeDatum<String>(Rectangle(0, 0, 1, 1), 'Item 2'));
@@ -109,7 +109,7 @@ main() {
 
         var items = tree.search(Rectangle(31, 27, 1, 1));
         expect(items.length, equals(1));
-        expect(items.elementAt(0).value, equals('Item 31:27'));
+        expect(items.elementAt(0)!.value, equals('Item 31:27'));
 
         items = tree.search(Rectangle(0, 0, 2, 50));
         expect(items.length, equals(100));
@@ -200,7 +200,7 @@ main() {
         items = tree.search(Rectangle(0, 0, 50, 50));
 
         items.forEach((datum) {
-          expect(datum.value, equals('New Initial Item'));
+          expect(datum!.value, equals('New Initial Item'));
         });
       });
     });
