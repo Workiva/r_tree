@@ -26,9 +26,9 @@ abstract class RTreeContributor {
   // the inequalities are strict and do not allow for equivalences. This means
   // that the two rectangles are not considered overlapping if they share an edge.
   bool overlaps(Rectangle otherRect) {
-    return (rect!.left < otherRect.left + otherRect.width &&
-        otherRect.left < rect!.left + rect!.width &&
-        rect!.top < otherRect.top + otherRect.height &&
-        otherRect.top < rect!.top + rect!.height);
+    return (rect?.lezft ?? 0) < otherRect.left + otherRect.width &&
+        otherRect.left < (rect?.left ?? 0) + (rect?.width ?? 0) &&
+        (rect?.top ?? 0) < otherRect.top + otherRect.height &&
+        otherRect.top < (rect?.top ?? 0) + (rect?.height ?? 0);
   }
 }

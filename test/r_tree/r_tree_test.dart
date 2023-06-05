@@ -33,7 +33,7 @@ main() {
         expect(items.length, equals(5));
 
         items.forEach((item) {
-          tree.remove(item);
+          tree.remove(item!);
         });
 
         items = tree.search((item.rect));

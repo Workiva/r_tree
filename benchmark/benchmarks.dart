@@ -38,7 +38,7 @@ class InsertBenchmark extends RTreeBenchmarkBase {
       int width = rand.nextInt(100);
       RTreeDatum item =
           RTreeDatum<String>(Rectangle(x, y, width, height), 'item $i');
-      tree.insert(item as RTreeDatum<String>?);
+      tree.insert(item as RTreeDatum<String>);
     }
   }
 
@@ -58,7 +58,7 @@ class RemoveBenchmark extends RTreeBenchmarkBase {
   void run() {
     for (int i = 0; i < 100; i++) {
       for (int j = 0; j < 50; j++) {
-        tree.remove(items[i][j] as RTreeDatum<String>?);
+        tree.remove(items[i][j] as RTreeDatum<String>);
       }
     }
   }

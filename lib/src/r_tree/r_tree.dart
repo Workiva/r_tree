@@ -18,18 +18,17 @@ part of r_tree;
 
 /// A two dimensional index of data that allows querying by rectangular areas
 class RTree<E> {
-  late Node<E> _root;
-  int? _branchFactor;
+  int _branchFactor = 16;
+  late Node<E> _root = LeafNode<E>(_branchFactor);
 
   RTree([int branchFactor = 16]) {
     if (branchFactor < 3) {
       throw ArgumentError('branchFactor must be greater than 2');
     }
-    _branchFactor = branchFactor;
     _resetRoot();
   }
 
-  remove(RTreeDatum<E>? item) {
+  remove(RTreeDatum<E> item) {
     _root.remove(item);
 
     if (_root.children.length == 0) {
@@ -37,7 +36,7 @@ class RTree<E> {
     }
   }
 
-  insert(RTreeDatum<E>? item) {
+  insert(RTreeDatum<E> item) {
     Node<E>? splitNode = _root.insert(item);
 
     if (splitNode != null) {
