@@ -34,7 +34,7 @@ abstract class Node<E> extends RTreeContributor {
 
   /// Returns an iterable of all items within [searchRect]
   Iterable<RTreeDatum<E>> search(
-      Rectangle? searchRect, bool Function(E item) shouldInclude);
+      Rectangle searchRect, bool Function(E item)? shouldInclude);
 
   /// Inserts [item] into this node
   Node<E>? insert(RTreeDatum<E> item);

@@ -30,15 +30,15 @@ class InsertBenchmark extends RTreeBenchmarkBase {
   late RTree<String> tree;
 
   void run() {
-    Random rand = Random();
+    final rand = Random();
     for (int i = 0; i < 5000; i++) {
       int x = rand.nextInt(100000);
       int y = rand.nextInt(100000);
       int height = rand.nextInt(100);
       int width = rand.nextInt(100);
-      RTreeDatum item =
+      final item =
           RTreeDatum<String>(Rectangle(x, y, width, height), 'item $i');
-      tree.insert(item as RTreeDatum<String>);
+      tree.insert(item);
     }
   }
 
@@ -53,12 +53,12 @@ class RemoveBenchmark extends RTreeBenchmarkBase {
   RemoveBenchmark(ScoreCollector collector) : super("Remove 5k", collector);
 
   late RTree<String> tree;
-  List<List<RTreeDatum>> items = [];
+  final items = <List<RTreeDatum<String>>>[];
 
   void run() {
     for (int i = 0; i < 100; i++) {
       for (int j = 0; j < 50; j++) {
-        tree.remove(items[i][j] as RTreeDatum<String>);
+        tree.remove(items[i][j]);
       }
     }
   }

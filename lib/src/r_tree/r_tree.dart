@@ -37,7 +37,7 @@ class RTree<E> {
   }
 
   insert(RTreeDatum<E> item) {
-    Node<E>? splitNode = _root.insert(item);
+    final splitNode = _root.insert(item);
 
     if (splitNode != null) {
       _growTree(_root, splitNode);
@@ -50,7 +50,7 @@ class RTree<E> {
 
   // Returns all items whose rectangles overlap the @searchRect
   //  Note: Rectangles that share only a border are not considered to overlap
-  Iterable<RTreeDatum<E>?> search(Rectangle? searchRect,
+  Iterable<RTreeDatum<E>?> search(Rectangle searchRect,
       {bool Function(E item)? shouldInclude}) {
     shouldInclude ??= (_) => true;
 

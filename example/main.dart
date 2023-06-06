@@ -33,7 +33,7 @@ Future main() async {
     if (currentBrush == 'search') {
       var resultList = querySelector('#results')!;
       resultList.children = [];
-      for (RTreeDatum? match in rtree.search(rectangle)) {
+      for (final match in rtree.search(rectangle)) {
         var color = '';
         switch (match!.value) {
           case red:
