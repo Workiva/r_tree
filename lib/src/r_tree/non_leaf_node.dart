@@ -44,7 +44,7 @@ class NonLeafNode<E> extends Node<E> {
   Node<E>? insert(RTreeDatum<E> item) {
     include(item);
 
-    Node<E> bestNode = _getBestNodeForInsert(item)!;
+    Node<E> bestNode = _getBestNodeForInsert(item);
     Node<E>? splitNode = bestNode.insert(item);
 
     if (splitNode != null) {
