@@ -16,9 +16,19 @@ main() {
   SearchBenchmark1(collector, iterateAll: true).report();
   SearchBenchmark2(collector, iterateAll: true).report();
 
-  var output = '\nName\tResult (microseconds)\n';
+  var longestName = collector.collected.keys
+      .reduce(
+          (value, element) => value.length > element.length ? value : element)
+      .length;
+  var tab = '     ';
+  var nameHeading = 'Name';
+  var heading =
+      '$nameHeading${' ' * (longestName - nameHeading.length)}${tab}Result (microseconds)';
+  var separator = '-' * heading.length;
+  var output = '\n$heading\n$separator\n';
   collector.collected.forEach((String name, double value) {
-    output += '$name\t$value\n';
+    name += (' ' * (longestName - name.length));
+    output += '$name$tab$value\n';
   });
 
   print(output);
