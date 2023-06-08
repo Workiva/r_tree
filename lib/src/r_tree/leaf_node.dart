@@ -46,6 +46,6 @@ class LeafNode<E> extends Node<E> {
 
   clearChildren() {
     _items = [];
-    _minimumBoundingRect = null;
+    _minimumBoundingRect = Rectangle(0, 0, 0, 0);
   }
 }

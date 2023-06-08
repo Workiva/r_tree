@@ -23,7 +23,7 @@ main() {
       test('adding/clearing children updates the rect', () {
         NonLeafNode node = NonLeafNode(3);
 
-        expect(node.rect, equals(null));
+        expect(node.rect, equals(Rectangle(0, 0, 0, 0)));
         expect(node.size, equals(0));
 
         LeafNode leaf = LeafNode(3);
@@ -49,7 +49,7 @@ main() {
 
         node.clearChildren();
 
-        expect(node.rect, equals(null));
+        expect(node.rect, equals(Rectangle(0, 0, 0, 0)));
         expect(node.size, equals(0));
       });
 
