@@ -20,15 +20,22 @@ main() {
       .reduce(
           (value, element) => value.length > element.length ? value : element)
       .length;
-  var tab = '     ';
+  var longestValue = collector.collected.values
+      .reduce((value, element) =>
+          value.toStringAsFixed(2).length > element.toStringAsFixed(2).length
+              ? value
+              : element)
+      .toStringAsFixed(2);
   var nameHeading = 'Name';
   var heading =
-      '$nameHeading${' ' * (longestName - nameHeading.length)}${tab}Result (microseconds)';
-  var separator = '-' * heading.length;
+      '$nameHeading${' ' * (longestName - nameHeading.length)}\tResult (microseconds)';
+  var separator = '-' * (heading.length + 5);
   var output = '\n$heading\n$separator\n';
   collector.collected.forEach((String name, double value) {
     name += (' ' * (longestName - name.length));
-    output += '$name$tab$value\n';
+    var valueString = value.toStringAsFixed(2);
+    output +=
+        '$name\t${' ' * (longestValue.length - valueString.length)}${valueString}\n';
   });
 
   print(output);
