@@ -87,9 +87,8 @@ abstract class Node<E> extends RTreeContributor {
 
   /// Adds the rectangle containing [item] to this node's covered rectangle
   include(RTreeContributor item) {
-    _minimumBoundingRect = _minimumBoundingRect == null
-        ? item.rect
-        : rect.boundingBox(item.rect);
+    _minimumBoundingRect =
+        _minimumBoundingRect == null ? item.rect : rect.boundingBox(item.rect);
   }
 
   /// Recalculated the bounding rectangle of this node
