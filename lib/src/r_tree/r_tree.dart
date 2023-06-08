@@ -18,8 +18,8 @@ part of r_tree;
 
 /// A two dimensional index of data that allows querying by rectangular areas
 class RTree<E> {
-  int _branchFactor = 16;
-  late Node<E> _root = LeafNode<E>(_branchFactor);
+  late int _branchFactor;
+  late Node<E> _root;
 
   RTree([int branchFactor = 16]) {
     if (branchFactor < 3) {
