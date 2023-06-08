@@ -35,7 +35,7 @@ Future main() async {
       resultList.children = [];
       for (final match in rtree.search(rectangle)) {
         var color = '';
-        switch (match!.value) {
+        switch (match.value) {
           case red:
             color = 'Red';
             break;
