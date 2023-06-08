@@ -10,6 +10,7 @@ main() {
   print('Running benchmark...');
   var collector = ScoreCollector();
   InsertBenchmark(collector).report();
+  LoadBenchmark(collector).report();
   RemoveBenchmark(collector).report();
   SearchBenchmark1(collector).report();
   SearchBenchmark2(collector).report();
@@ -45,9 +46,17 @@ class InsertBenchmark extends RTreeBenchmarkBase {
   InsertBenchmark(ScoreCollector collector) : super("Insert 5k", collector);
 
   RTree<String> tree;
+  List<RTreeDatum<String>> datum;
 
   void run() {
+    for (var data in datum) {
+      tree.insert(data);
+    }
+  }
+
+  void setup() {
     Random rand = Random();
+    datum = <RTreeDatum<String>>[];
     for (int i = 0; i < 5000; i++) {
       int x = rand.nextInt(100000);
       int y = rand.nextInt(100000);
@@ -55,11 +64,36 @@ class InsertBenchmark extends RTreeBenchmarkBase {
       int width = rand.nextInt(100);
       RTreeDatum item =
           RTreeDatum<String>(Rectangle(x, y, width, height), 'item $i');
-      tree.insert(item);
+      datum.add(item);
     }
+    tree = RTree<String>(BRANCH_FACTOR);
+  }
+
+  void teardown() {}
+}
+
+class LoadBenchmark extends RTreeBenchmarkBase {
+  LoadBenchmark(ScoreCollector collector) : super("Load 5k ", collector);
+
+  RTree<String> tree;
+  List<RTreeDatum<String>> datum;
+
+  void run() {
+    tree.load(datum);
   }
 
   void setup() {
+    Random rand = Random();
+    datum = <RTreeDatum<String>>[];
+    for (int i = 0; i < 5000; i++) {
+      int x = rand.nextInt(100000);
+      int y = rand.nextInt(100000);
+      int height = rand.nextInt(100);
+      int width = rand.nextInt(100);
+      RTreeDatum item =
+          RTreeDatum<String>(Rectangle(x, y, width, height), 'item $i');
+      datum.add(item);
+    }
     tree = RTree<String>(BRANCH_FACTOR);
   }
 

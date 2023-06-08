@@ -45,6 +45,10 @@ class RTree<E> {
     }
   }
 
+  load(Iterable<RTreeDatum<E>> items) {
+    items.forEach(insert);
+  }
+
   _resetRoot() {
     _root = LeafNode<E>(_branchFactor);
   }
