@@ -11,15 +11,51 @@ Future main() async {
     ..fillStyle = '#ccc'
     ..fillRect(0, 0, 640, 480);
 
-  int startX, startY;
+  int startX, startY, proposedX, proposedY;
+  final draw = () {
+    canvas.context2D.clearRect(0, 0, 700, 500);
+    canvas.context2D.strokeStyle = '';
+    rtree.search(Rectangle(0, 0, 700, 500)).forEach((node) {
+      canvas.context2D.fillStyle = node.value;
+      canvas.context2D.fillRect(
+          node.rect.left, node.rect.top, node.rect.width, node.rect.height);
+    });
+
+    if (proposedX != null && proposedY != null) {
+      canvas.context2D.fillStyle = '';
+      canvas.context2D.strokeStyle = 'black';
+      canvas.context2D
+          .strokeRect(startX, startY, proposedX - startX, proposedY - startY);
+    }
+  };
+
+  var isDrawing = false;
   canvas.onMouseDown.listen((MouseEvent event) {
     var target = event.currentTarget as HtmlElement;
     var boundingRect = target.getBoundingClientRect();
+    isDrawing = true;
+    proposedX = null;
+    proposedY = null;
+
     startX = ((event.client.x - boundingRect.left) + target.scrollLeft).floor();
     startY = ((event.client.y - boundingRect.top) + target.scrollTop).floor();
   });
 
+  canvas.onMouseMove.listen((MouseEvent event) {
+    if (!isDrawing || startX == null || startY == null) return;
+
+    var target = event.currentTarget as HtmlElement;
+    var boundingRect = target.getBoundingClientRect();
+    proposedX =
+        ((event.client.x - boundingRect.left) + target.scrollLeft).floor();
+    proposedY =
+        ((event.client.y - boundingRect.top) + target.scrollTop).floor();
+
+    draw();
+  });
+
   canvas.onMouseUp.listen((MouseEvent event) {
+    isDrawing = false;
     if (startX == null || startY == null) return;
 
     var target = event.currentTarget as HtmlElement;
@@ -28,8 +64,8 @@ Future main() async {
         ((event.client.x - boundingRect.left) + target.scrollLeft).floor();
     var endY = ((event.client.y - boundingRect.top) + target.scrollTop).floor();
 
-    var rectangle = Rectangle(startX, startY, endX - startX, endY - startY);
-
+    var rectangle =
+        Rectangle.fromPoints(Point(startX, startY), Point(endX, endY));
     if (currentBrush == 'search') {
       var resultList = querySelector('#results');
       resultList.children = [];
@@ -54,16 +90,40 @@ Future main() async {
         resultList.append(LIElement()..innerHtml = 'No results in $rectangle');
       }
     } else {
-      canvas.context2D.fillStyle = currentBrush;
-      canvas.context2D.fillRect(startX, startY, endX - startX, endY - startY);
       rtree.insert(RTreeDatum(rectangle, currentBrush));
     }
+
+    draw();
   });
 
-  querySelector('#red').onClick.listen((_) => currentBrush = '$red');
-  querySelector('#green').onClick.listen((_) => currentBrush = '$green');
-  querySelector('#blue').onClick.listen((_) => currentBrush = '$blue');
-  querySelector('#search').onClick.listen((_) => currentBrush = 'search');
+  final redButton = querySelector('#red');
+  final greenButton = querySelector('#green');
+  final blueButton = querySelector('#blue');
+  final searchButton = querySelector('#search');
+  final allButtons = [redButton, greenButton, blueButton, searchButton];
+  final resetAllButtons = () => allButtons.forEach((element) {
+        element.style.background = '';
+      });
+  redButton.onClick.listen((_) {
+    resetAllButtons();
+    currentBrush = '$red';
+    redButton.style.background = 'darkgray';
+  });
+  greenButton.onClick.listen((_) {
+    resetAllButtons();
+    currentBrush = '$green';
+    greenButton.style.background = 'darkgray';
+  });
+  blueButton.onClick.listen((_) {
+    resetAllButtons();
+    currentBrush = '$blue';
+    blueButton.style.background = 'darkgray';
+  });
+  searchButton.onClick.listen((_) {
+    resetAllButtons();
+    currentBrush = 'search';
+    searchButton.style.background = 'darkgray';
+  });
 }
 
 const String alpha = '88';
