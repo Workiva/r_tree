@@ -41,13 +41,7 @@ abstract class Node<E> extends RTreeContributor {
   Iterable<RTreeDatum<E>> search(
       Rectangle searchRect, bool Function(E item)? shouldInclude);
 
-  /**
-   * Inserts the given RTreeDatum into the node. If the insertion causes a split to occur,
-   * the split node will be returned.
-   *
-   * @param item The RTreeDatum to insert.
-   * @return The split node if a split occurred, otherwise null.
-   */
+  /// Inserts [item] into the node. If the insertion causes a split to occur, the split node will be returned, otherwise null is returned.
   Node<E>? insert(RTreeDatum<E> item);
 
   /// Removes [item] from this node
@@ -100,7 +94,7 @@ abstract class Node<E> extends RTreeContributor {
 
   /// Recalculated the bounding rectangle of this node
   Rectangle updateBoundingRect() {
-    if (children.length == 0) {
+    if (children.isEmpty) {
       return Rectangle(0, 0, 0, 0);
     } else {
       _minimumBoundingRect = Rectangle(0, 0, 0, 0);
