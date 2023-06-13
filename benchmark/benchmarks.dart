@@ -124,7 +124,9 @@ class RemoveBenchmark extends RTreeBenchmarkBase {
         }
 
         Rectangle rect = Rectangle(i, j, 1, 1);
-        items[i].add(RTreeDatum<String>(rect, 'item $i:$j'));
+        final datum = RTreeDatum<String>(rect, 'item $i:$j');
+        items[i].add(datum);
+        tree.insert(datum);
       }
     }
   }
