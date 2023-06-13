@@ -6,6 +6,10 @@
 </head>
 <body>
 <div id="app"></div>
+<button id="insert">Generate and insert (one-by-one)</button>
+<button id="load">Generate and load (bulk)</button>
+<button id="clear">Clear</button>
+
 <div>
 	<p>Click a button to switch paint brush, then click & drag to paint a rectangle, which is inserted into the RTree.  Use search to query the RTree.</p>
 	<button id="red">Red</button>
@@ -16,6 +20,8 @@
 <ol id="results">
 	<li>Add rectangles and then use search to populate the results list</li>
 </ol>
+<button id="graphviz">Generate GraphViz</button> <button id="copy">Copy Results</button>
+<pre id="output"></pre>
 <script type="application/javascript" src="/main.dart.js"></script>
 </body>
 </html>

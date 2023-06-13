@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:html';
+import 'dart:math';
 import 'package:r_tree/r_tree.dart';
 
 Future main() async {
@@ -124,10 +125,60 @@ Future main() async {
     currentBrush = 'search';
     searchButton.style.background = 'darkgray';
   });
+
+  final makeDataset = () {
+    Random rand = Random();
+    var datum = <RTreeDatum<String>>[];
+    for (int i = 0; i < 300; i++) {
+      int startX = rand.nextInt((canvas.width / 2).floor());
+      int endX = rand.nextInt((canvas.width / 2).floor()) * 2;
+      int startY = rand.nextInt((canvas.height / 2).floor());
+      int endY = rand.nextInt((canvas.width / 2).floor()) * 2;
+      int color = rand.nextInt(2);
+      var item = RTreeDatum(
+          Rectangle.fromPoints(Point(startX, startY), Point(endX, endY)),
+          colors[color]);
+      datum.add(item);
+    }
+    return datum;
+  };
+
+  querySelector('#insert').onClick.listen((_) {
+    makeDataset().forEach(rtree.insert);
+    draw();
+  });
+
+  querySelector('#load').onClick.listen((_) {
+    rtree.load(makeDataset());
+    draw();
+  });
+
+  querySelector('#clear').onClick.listen((_) {
+    rtree = RTree<String>();
+    draw();
+  });
+
+  querySelector('#graphviz').onClick.listen((_) {
+    var output = querySelector('#output') as PreElement;
+    output.innerHtml = rtree.toGraphViz();
+  });
+
+  querySelector('#copy').onClick.listen((_) async {
+    try {
+      await window.navigator.clipboard
+          .writeText((querySelector('#output') as PreElement).innerText);
+      querySelector('#copy').style.background = 'green';
+      await Future.delayed(Duration(milliseconds: 350));
+      querySelector('#copy').style.background = '';
+    } catch (err) {
+      querySelector('#copy').style.background = 'red';
+    }
+  });
 }
 
 const String alpha = '88';
 const String red = '#ff0000$alpha';
 const String green = '#00ff00$alpha';
 const String blue = '#0000ff$alpha';
+const colors = [red, green, blue];
 String currentBrush = '$red';
