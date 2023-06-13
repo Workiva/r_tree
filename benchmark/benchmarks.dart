@@ -49,6 +49,7 @@ class InsertBenchmark extends RTreeBenchmarkBase {
   List<RTreeDatum<String>> datum;
 
   void run() {
+    tree = RTree<String>(BRANCH_FACTOR);
     for (var data in datum) {
       tree.insert(data);
     }
@@ -66,7 +67,6 @@ class InsertBenchmark extends RTreeBenchmarkBase {
           RTreeDatum<String>(Rectangle(x, y, width, height), 'item $i');
       datum.add(item);
     }
-    tree = RTree<String>(BRANCH_FACTOR);
   }
 
   void teardown() {}
@@ -79,6 +79,7 @@ class LoadBenchmark extends RTreeBenchmarkBase {
   List<RTreeDatum<String>> datum;
 
   void run() {
+    tree = RTree<String>(BRANCH_FACTOR);
     tree.load(datum);
   }
 
@@ -94,7 +95,6 @@ class LoadBenchmark extends RTreeBenchmarkBase {
           RTreeDatum<String>(Rectangle(x, y, width, height), 'item $i');
       datum.add(item);
     }
-    tree = RTree<String>(BRANCH_FACTOR);
   }
 
   void teardown() {}
