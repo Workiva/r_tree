@@ -29,6 +29,69 @@ class RTree<E> {
     _resetRoot();
   }
 
+  String toGraphViz() {
+    var output = StringBuffer('''digraph r_tree {
+    root [
+        color="gray"
+        label="root"
+    ]
+    ''');
+    _graphVizRecurse(_root, 'root', 'root', output);
+
+    output.write('}');
+
+    return output.toString();
+  }
+
+  void _graphVizRecurse(
+      Node node, String parent, String identifierPrefix, StringBuffer buffer) {
+    for (var i = 0; i < node.children.length; i++) {
+      var child = node.children[i];
+      if (child is LeafNode) {
+        var id = "${identifierPrefix}LeafNode$i";
+        buffer.write('''
+      $id [
+        color="green"
+        label="LeafNode$i"
+      ]
+      $parent -> $id
+''');
+        for (var j = 0; j < child.children.length; j++) {
+          var leafChild = child.children[j];
+          var childId = "${id}LeafChild$j";
+          buffer.write('''
+"$childId" [
+  color="orange"
+  label="${leafChild.value}"
+]
+$id -> "$childId"
+''');
+        }
+      } else if (child is NonLeafNode) {
+        var id = "${identifierPrefix}ChildNode$i";
+        buffer.write('''
+ $id [
+  color="brown"
+  label="ChildNode$i"
+ ]
+ $parent -> $id
+''');
+        _graphVizRecurse(child, id, id, buffer);
+      } else if (child is RTreeDatum) {
+        var id = "${identifierPrefix}Datum$i";
+        buffer.write('''
+"$id" [
+  color="orange"
+  label="${child.value}"
+]
+$parent -> "$id"
+''');
+      }
+    }
+  }
+
+  Node<E> get root => _root;
+
   remove(RTreeDatum<E> item) {
     _root.remove(item);
 
