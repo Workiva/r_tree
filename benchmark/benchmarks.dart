@@ -13,9 +13,11 @@ main() {
   LoadBenchmark(collector).report();
   RemoveBenchmark(collector).report();
   SearchBenchmark1(collector).report();
-  SearchBenchmark2(collector).report();
   SearchBenchmark1(collector, iterateAll: true).report();
+  SearchBenchmark1(collector, iterateAll: true, useLoad: true).report();
+  SearchBenchmark2(collector).report();
   SearchBenchmark2(collector, iterateAll: true).report();
+  SearchBenchmark2(collector, iterateAll: true, useLoad: true).report();
 
   var longestName = collector.collected.keys
       .reduce(
@@ -135,9 +137,17 @@ class RemoveBenchmark extends RTreeBenchmarkBase {
 }
 
 class SearchBenchmark1 extends RTreeBenchmarkBase {
+  /// Allows comparing search performance if the results are iterated or not.
   final bool iterateAll;
-  SearchBenchmark1(ScoreCollector collector, {this.iterateAll = false})
-      : super("Search${iterateAll ? '/Iterate' : ''} 5k", collector);
+
+  /// Allows comparing search performance between trees built out via insert or load
+  final bool useLoad;
+
+  SearchBenchmark1(ScoreCollector collector,
+      {this.iterateAll = false, this.useLoad = false})
+      : super(
+            "Search${iterateAll ? '/Iterate' : ''} ${useLoad ? 'using Load' : ''} 5k",
+            collector);
 
   RTree<String> tree;
 
@@ -158,20 +168,27 @@ class SearchBenchmark1 extends RTreeBenchmarkBase {
   void setup() {
     tree = RTree(BRANCH_FACTOR);
 
+    var datum = <RTreeDatum<String>>[];
     for (int i = 0; i < 10; i++) {
       for (int j = 0; j < 50; j++) {
         Rectangle rect = Rectangle(i, j, 1, 1);
-        tree.insert(RTreeDatum<String>(rect, 'item1'));
-        tree.insert(RTreeDatum<String>(rect, 'item2'));
-        tree.insert(RTreeDatum<String>(rect, 'item3'));
-        tree.insert(RTreeDatum<String>(rect, 'item4'));
-        tree.insert(RTreeDatum<String>(rect, 'item5'));
-        tree.insert(RTreeDatum<String>(rect, 'item6'));
-        tree.insert(RTreeDatum<String>(rect, 'item7'));
-        tree.insert(RTreeDatum<String>(rect, 'item8'));
-        tree.insert(RTreeDatum<String>(rect, 'item9'));
-        tree.insert(RTreeDatum<String>(rect, 'item10'));
+        datum.add(RTreeDatum<String>(rect, 'item1'));
+        datum.add(RTreeDatum<String>(rect, 'item2'));
+        datum.add(RTreeDatum<String>(rect, 'item3'));
+        datum.add(RTreeDatum<String>(rect, 'item4'));
+        datum.add(RTreeDatum<String>(rect, 'item5'));
+        datum.add(RTreeDatum<String>(rect, 'item6'));
+        datum.add(RTreeDatum<String>(rect, 'item7'));
+        datum.add(RTreeDatum<String>(rect, 'item8'));
+        datum.add(RTreeDatum<String>(rect, 'item9'));
+        datum.add(RTreeDatum<String>(rect, 'item10'));
       }
+    }
+
+    if (useLoad) {
+      tree.load(datum);
+    } else {
+      datum.forEach(tree.insert);
     }
   }
 
@@ -179,10 +196,17 @@ class SearchBenchmark1 extends RTreeBenchmarkBase {
 }
 
 class SearchBenchmark2 extends RTreeBenchmarkBase {
+  /// Allows comparing search performance if the results are iterated or not.
   final bool iterateAll;
 
-  SearchBenchmark2(ScoreCollector collector, {this.iterateAll = false})
-      : super("Search${iterateAll ? '/Iterate' : ''} 30k", collector);
+  /// Allows comparing search performance between trees built out via insert or load
+  final bool useLoad;
+
+  SearchBenchmark2(ScoreCollector collector,
+      {this.iterateAll = false, this.useLoad = false})
+      : super(
+            "Search${iterateAll ? '/Iterate' : ''} ${useLoad ? 'using Load' : ''} 30k",
+            collector);
 
   RTree<String> tree;
 
@@ -203,13 +227,20 @@ class SearchBenchmark2 extends RTreeBenchmarkBase {
   void setup() {
     tree = RTree<String>(BRANCH_FACTOR);
 
+    var datum = <RTreeDatum<String>>[];
     for (int i = 0; i < 100; i++) {
       for (int j = 0; j < 100; j++) {
         Rectangle rect = Rectangle(i, j, 1, 1);
-        tree.insert(RTreeDatum<String>(rect, 'item1 $i:$j'));
-        tree.insert(RTreeDatum<String>(rect, 'item2 $i:$j'));
-        tree.insert(RTreeDatum<String>(rect, 'item3 $i:$j'));
+        datum.add(RTreeDatum<String>(rect, 'item1 $i:$j'));
+        datum.add(RTreeDatum<String>(rect, 'item2 $i:$j'));
+        datum.add(RTreeDatum<String>(rect, 'item3 $i:$j'));
       }
+    }
+
+    if (useLoad) {
+      tree.load(datum);
+    } else {
+      datum.forEach(tree.insert);
     }
   }
 
