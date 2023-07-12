@@ -77,8 +77,8 @@ class InsertBenchmark extends RTreeBenchmarkBase {
 class LoadBenchmark extends RTreeBenchmarkBase {
   LoadBenchmark(ScoreCollector collector) : super("Load 5k ", collector);
 
-  RTree<String> tree;
-  List<RTreeDatum<String>> datum;
+  late RTree<String> tree;
+  late List<RTreeDatum<String>> datum;
 
   void run() {
     tree = RTree<String>(BRANCH_FACTOR);
@@ -93,7 +93,7 @@ class LoadBenchmark extends RTreeBenchmarkBase {
       int y = rand.nextInt(100000);
       int height = rand.nextInt(100);
       int width = rand.nextInt(100);
-      RTreeDatum item =
+      final item =
           RTreeDatum<String>(Rectangle(x, y, width, height), 'item $i');
       datum.add(item);
     }
