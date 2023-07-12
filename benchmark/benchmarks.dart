@@ -47,8 +47,8 @@ main() {
 class InsertBenchmark extends RTreeBenchmarkBase {
   InsertBenchmark(ScoreCollector collector) : super("Insert 5k", collector);
 
-  RTree<String> tree;
-  List<RTreeDatum<String>> datum;
+  late RTree<String> tree;
+  late List<RTreeDatum<String>> datum;
 
   void run() {
     tree = RTree<String>(BRANCH_FACTOR);
@@ -65,7 +65,7 @@ class InsertBenchmark extends RTreeBenchmarkBase {
       int y = rand.nextInt(100000);
       int height = rand.nextInt(100);
       int width = rand.nextInt(100);
-      RTreeDatum item =
+      final item =
           RTreeDatum<String>(Rectangle(x, y, width, height), 'item $i');
       datum.add(item);
     }
@@ -105,8 +105,8 @@ class LoadBenchmark extends RTreeBenchmarkBase {
 class RemoveBenchmark extends RTreeBenchmarkBase {
   RemoveBenchmark(ScoreCollector collector) : super("Remove 5k", collector);
 
-  RTree<String> tree;
-  List<List<RTreeDatum>> items = [];
+  late RTree<String> tree;
+  final items = <List<RTreeDatum<String>>>[];
 
   void run() {
     for (int i = 0; i < 100; i++) {
@@ -149,7 +149,7 @@ class SearchBenchmark1 extends RTreeBenchmarkBase {
             "Search${iterateAll ? '/Iterate' : ''} ${useLoad ? 'using Load' : ''} 5k",
             collector);
 
-  RTree<String> tree;
+  late RTree<String> tree;
 
   void run() {
     for (int i = 0; i < 10; i++) {
@@ -208,7 +208,7 @@ class SearchBenchmark2 extends RTreeBenchmarkBase {
             "Search${iterateAll ? '/Iterate' : ''} ${useLoad ? 'using Load' : ''} 30k",
             collector);
 
-  RTree<String> tree;
+  late RTree<String> tree;
 
   void run() {
     for (int i = 0; i < 100; i++) {

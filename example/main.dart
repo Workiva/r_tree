@@ -5,14 +5,14 @@ import 'package:r_tree/r_tree.dart';
 
 Future main() async {
   var rtree = RTree<String>();
-  var app = querySelector('#app');
+  var app = querySelector('#app')!;
   var canvas = CanvasElement(width: 640, height: 480);
   app.append(canvas);
   canvas.context2D
     ..fillStyle = '#ccc'
     ..fillRect(0, 0, 640, 480);
 
-  int startX, startY, proposedX, proposedY;
+  int? startX, startY, proposedX, proposedY;
   final draw = () {
     canvas.context2D.clearRect(0, 0, 700, 500);
     canvas.context2D.strokeStyle = '';
@@ -25,8 +25,8 @@ Future main() async {
     if (proposedX != null && proposedY != null) {
       canvas.context2D.fillStyle = '';
       canvas.context2D.strokeStyle = 'black';
-      canvas.context2D
-          .strokeRect(startX, startY, proposedX - startX, proposedY - startY);
+      canvas.context2D.strokeRect(
+          startX!, startY!, proposedX! - startX!, proposedY! - startY!);
     }
   };
 
@@ -66,11 +66,11 @@ Future main() async {
     var endY = ((event.client.y - boundingRect.top) + target.scrollTop).floor();
 
     var rectangle =
-        Rectangle.fromPoints(Point(startX, startY), Point(endX, endY));
+        Rectangle.fromPoints(Point(startX!, startY!), Point(endX, endY));
     if (currentBrush == 'search') {
-      var resultList = querySelector('#results');
+      var resultList = querySelector('#results')!;
       resultList.children = [];
-      for (RTreeDatum match in rtree.search(rectangle)) {
+      for (final match in rtree.search(rectangle)) {
         var color = '';
         switch (match.value) {
           case red:
@@ -97,10 +97,10 @@ Future main() async {
     draw();
   });
 
-  final redButton = querySelector('#red');
-  final greenButton = querySelector('#green');
-  final blueButton = querySelector('#blue');
-  final searchButton = querySelector('#search');
+  final redButton = querySelector('#red')!;
+  final greenButton = querySelector('#green')!;
+  final blueButton = querySelector('#blue')!;
+  final searchButton = querySelector('#search')!;
   final allButtons = [redButton, greenButton, blueButton, searchButton];
   final resetAllButtons = () => allButtons.forEach((element) {
         element.style.background = '';
@@ -130,10 +130,10 @@ Future main() async {
     Random rand = Random();
     var datum = <RTreeDatum<String>>[];
     for (int i = 0; i < 300; i++) {
-      int startX = rand.nextInt((canvas.width / 2).floor());
-      int endX = rand.nextInt((canvas.width / 2).floor()) * 2;
-      int startY = rand.nextInt((canvas.height / 2).floor());
-      int endY = rand.nextInt((canvas.width / 2).floor()) * 2;
+      int startX = rand.nextInt((canvas.width! / 2).floor());
+      int endX = rand.nextInt((canvas.width! / 2).floor()) * 2;
+      int startY = rand.nextInt((canvas.height! / 2).floor());
+      int endY = rand.nextInt((canvas.width! / 2).floor()) * 2;
       int color = rand.nextInt(2);
       var item = RTreeDatum(
           Rectangle.fromPoints(Point(startX, startY), Point(endX, endY)),
@@ -143,35 +143,35 @@ Future main() async {
     return datum;
   };
 
-  querySelector('#insert').onClick.listen((_) {
+  querySelector('#insert')!.onClick.listen((_) {
     makeDataset().forEach(rtree.insert);
     draw();
   });
 
-  querySelector('#load').onClick.listen((_) {
+  querySelector('#load')!.onClick.listen((_) {
     rtree.load(makeDataset());
     draw();
   });
 
-  querySelector('#clear').onClick.listen((_) {
+  querySelector('#clear')!.onClick.listen((_) {
     rtree = RTree<String>();
     draw();
   });
 
-  querySelector('#graphviz').onClick.listen((_) {
+  querySelector('#graphviz')!.onClick.listen((_) {
     var output = querySelector('#output') as PreElement;
     output.innerHtml = rtree.toGraphViz();
   });
 
-  querySelector('#copy').onClick.listen((_) async {
+  querySelector('#copy')!.onClick.listen((_) async {
     try {
       await window.navigator.clipboard
-          .writeText((querySelector('#output') as PreElement).innerText);
-      querySelector('#copy').style.background = 'green';
+          ?.writeText((querySelector('#output') as PreElement).innerText);
+      querySelector('#copy')!.style.background = 'green';
       await Future.delayed(Duration(milliseconds: 350));
-      querySelector('#copy').style.background = '';
+      querySelector('#copy')!.style.background = '';
     } catch (err) {
-      querySelector('#copy').style.background = 'red';
+      querySelector('#copy')!.style.background = 'red';
     }
   });
 }

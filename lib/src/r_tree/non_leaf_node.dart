@@ -29,7 +29,7 @@ class NonLeafNode<E> extends Node<E> {
   }
 
   Iterable<RTreeDatum<E>> search(
-      Rectangle searchRect, bool Function(E item) shouldInclude) {
+      Rectangle searchRect, bool Function(E item)? shouldInclude) {
     List<RTreeDatum<E>> overlappingLeafs = [];
 
     for (var childNode in _childNodes) {
@@ -41,11 +41,11 @@ class NonLeafNode<E> extends Node<E> {
     return overlappingLeafs;
   }
 
-  Node<E> insert(RTreeDatum<E> item) {
+  Node<E>? insert(RTreeDatum<E> item) {
     include(item);
 
     Node<E> bestNode = _getBestNodeForInsert(item);
-    Node<E> splitNode = bestNode.insert(item);
+    Node<E>? splitNode = bestNode.insert(item);
 
     if (splitNode != null) {
       addChild(splitNode);
@@ -88,16 +88,15 @@ class NonLeafNode<E> extends Node<E> {
 
   clearChildren() {
     _childNodes = [];
-    _minimumBoundingRect = null;
+    _minimumBoundingRect = Rectangle(0, 0, 0, 0);
   }
 
   Node<E> _getBestNodeForInsert(RTreeDatum<E> item) {
-    num bestCost = double.infinity;
-    num tentativeCost;
-    Node<E> bestNode;
+    Node<E> bestNode = _childNodes.first;
+    num bestCost = bestNode.expansionCost(item);
 
-    for (var child in _childNodes) {
-      tentativeCost = child.expansionCost(item);
+    for (var child in _childNodes.skip(1)) {
+      final tentativeCost = child.expansionCost(item);
       if (tentativeCost < bestCost) {
         bestCost = tentativeCost;
         bestNode = child;
@@ -108,7 +107,7 @@ class NonLeafNode<E> extends Node<E> {
   }
 
   _convertToLeafNode() {
-    var nonLeafParent = parent as NonLeafNode<E>;
+    var nonLeafParent = parent as NonLeafNode<E>?;
     if (nonLeafParent == null) return;
 
     var newLeafNode = LeafNode<E>(this.branchFactor);

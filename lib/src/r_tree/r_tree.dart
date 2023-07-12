@@ -18,14 +18,13 @@ part of r_tree;
 
 /// A two dimensional index of data that allows querying by rectangular areas
 class RTree<E> {
-  Node<E> _root;
   int _branchFactor;
+  late Node<E> _root;
 
-  RTree([int branchFactor = 16]) {
+  RTree([int branchFactor = 16]) : _branchFactor = branchFactor {
     if (branchFactor < 3) {
       throw ArgumentError('branchFactor must be greater than 2');
     }
-    _branchFactor = branchFactor;
     _resetRoot();
   }
 
@@ -101,7 +100,7 @@ $parent -> "$id"
   }
 
   insert(RTreeDatum<E> item) {
-    Node<E> splitNode = _root.insert(item);
+    final splitNode = _root.insert(item);
 
     if (splitNode != null) {
       _growTree(_root, splitNode);
@@ -119,7 +118,7 @@ $parent -> "$id"
   // Returns all items whose rectangles overlap the @searchRect
   //  Note: Rectangles that share only a border are not considered to overlap
   Iterable<RTreeDatum<E>> search(Rectangle searchRect,
-      {bool Function(E item) shouldInclude}) {
+      {bool Function(E item)? shouldInclude}) {
     shouldInclude ??= (_) => true;
 
     if (_root is LeafNode<E>) {

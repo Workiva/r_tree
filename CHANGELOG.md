@@ -1,3 +1,7 @@
+## [2.0.0](https://github.com/Workiva/r_tree/compare/1.1.0...2.0.0)
+
+- Null safety migration
+
 ## [1.1.0](https://github.com/Workiva/r_tree/compare/1.0.6...1.1.0)
 
 - Added support for filtering search results
