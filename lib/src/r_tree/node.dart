@@ -22,6 +22,9 @@ abstract class Node<E> extends RTreeContributor {
   /// The branch factor this node is configured with, which determines when the node should split
   final int branchFactor;
 
+  /// Height of the node, where 1 is a leaf node
+  int height = 1;
+
   /// Parent node of this node, or null if this is the root node
   Node<E>? parent;
 
@@ -82,8 +85,9 @@ abstract class Node<E> extends RTreeContributor {
     return _area(newRect) - _area(rect);
   }
 
-  num _area(Rectangle rect) =>
-      (rect.right - rect.left) * (rect.bottom - rect.top);
+  num area() => _area(rect);
+
+  num get margin => (rect.right - rect.left) + (rect.bottom - rect.top);
 
   /// Adds the rectangle containing [item] to this node's covered rectangle
   include(RTreeContributor item) {
@@ -105,6 +109,10 @@ abstract class Node<E> extends RTreeContributor {
     return _minimumBoundingRect;
   }
 
+  extend(Rectangle b) {
+    _minimumBoundingRect = _minimumBoundingRect.boundingBox(b);
+  }
+
   /// Determines if this node needs to be split and returns a new [Node] if so, otherwise returns null
   Node<E>? splitIfNecessary() => size > branchFactor ? _split() : null;
 
@@ -119,6 +127,7 @@ abstract class Node<E> extends RTreeContributor {
     addChild(seeds.seed1);
 
     Node<E> splitNode = createNewNode();
+    splitNode.height = height + 1;
     splitNode.addChild(seeds.seed2);
 
     _reassignRemainingChildren(remainingChildren, splitNode);
@@ -126,7 +135,7 @@ abstract class Node<E> extends RTreeContributor {
     return splitNode;
   }
 
-  _reassignRemainingChildren(
+  void _reassignRemainingChildren(
       List<RTreeContributor> remainingChildren, Node<E> splitNode) {
     for (var child in remainingChildren) {
       num thisExpansionCost = expansionCost(child);
@@ -203,3 +212,6 @@ class _Seeds {
 
   const _Seeds(this.seed1, this.seed2);
 }
+
+num _area(Rectangle rect) =>
+    (rect.right - rect.left) * (rect.bottom - rect.top);

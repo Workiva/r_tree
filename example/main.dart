@@ -160,7 +160,8 @@ Future main() async {
 
   querySelector('#graphviz')!.onClick.listen((_) {
     var output = querySelector('#output') as PreElement;
-    output.innerHtml = rtree.toGraphViz();
+
+    output.innerHtml = toGraphViz(rtree.currentRootNode);
   });
 
   querySelector('#copy')!.onClick.listen((_) async {
@@ -182,3 +183,64 @@ const String green = '#00ff00$alpha';
 const String blue = '#0000ff$alpha';
 const colors = [red, green, blue];
 String currentBrush = '$red';
+
+String toGraphViz(Node root) {
+  var output = StringBuffer('''digraph r_tree {
+    root [
+        color="gray"
+        label="root"
+    ]
+    ''');
+  _graphVizRecurse(root, 'root', 'root', output);
+
+  output.write('}');
+
+  return output.toString();
+}
+
+void _graphVizRecurse(
+    Node node, String parent, String identifierPrefix, StringBuffer buffer) {
+  for (var i = 0; i < node.children.length; i++) {
+    var child = node.children[i];
+    if (child is LeafNode) {
+      var id = "${identifierPrefix}LeafNode$i";
+      buffer.write('''
+      $id [
+        color="green"
+        label="LeafNode$i"
+      ]
+      $parent -> $id
+''');
+      for (var j = 0; j < child.children.length; j++) {
+        var leafChild = child.children[j];
+        var childId = "${id}LeafChild$j";
+        buffer.write('''
+"$childId" [
+  color="orange"
+  label="${leafChild.value}"
+]
+$id -> "$childId"
+''');
+      }
+    } else if (child is NonLeafNode) {
+      var id = "${identifierPrefix}ChildNode$i";
+      buffer.write('''
+ $id [
+  color="brown"
+  label="ChildNode$i"
+ ]
+ $parent -> $id
+''');
+      _graphVizRecurse(child, id, id, buffer);
+    } else if (child is RTreeDatum) {
+      var id = "${identifierPrefix}Datum$i";
+      buffer.write('''
+"$id" [
+  color="orange"
+  label="${child.value}"
+]
+$parent -> "$id"
+''');
+    }
+  }
+}

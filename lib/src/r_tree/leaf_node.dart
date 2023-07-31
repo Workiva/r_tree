@@ -22,7 +22,20 @@ class LeafNode<E> extends Node<E> {
   List<RTreeDatum<E>> _items = [];
   List<RTreeDatum<E>> get children => _items;
 
-  LeafNode(int branchFactor) : super(branchFactor);
+  LeafNode(int branchFactor, {List<RTreeDatum<E>>? initialItems})
+      : super(branchFactor) {
+    if (initialItems != null) {
+      if (initialItems.length > branchFactor) {
+        throw ArgumentError.value('too many items');
+      }
+      _items = initialItems;
+
+      updateBoundingRect();
+    }
+  }
+
+  @override
+  int get height => 1;
 
   Node<E> createNewNode() {
     return LeafNode<E>(branchFactor);

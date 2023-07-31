@@ -45,7 +45,7 @@ main() {
           toAdd.forEach(tree.insert);
         }),
         _InsertCase('load', (RTree tree, Iterable<RTreeDatum<String>> toAdd) {
-          tree.load(toAdd);
+          tree.load(toAdd.toList());
         })
       ];
 

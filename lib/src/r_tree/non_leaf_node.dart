@@ -22,7 +22,16 @@ class NonLeafNode<E> extends Node<E> {
   List<Node<E>> _childNodes = [];
   List<Node<E>> get children => _childNodes;
 
-  NonLeafNode(int branchFactor) : super(branchFactor);
+  NonLeafNode(int branchFactor, {List<Node<E>>? initialChildNodes})
+      : super(branchFactor) {
+    if (initialChildNodes != null) {
+      if (initialChildNodes.length > branchFactor) {
+        throw ArgumentError.value('too many items');
+      }
+      _childNodes = initialChildNodes;
+      updateBoundingRect();
+    }
+  }
 
   Node<E> createNewNode() {
     return NonLeafNode<E>(branchFactor);

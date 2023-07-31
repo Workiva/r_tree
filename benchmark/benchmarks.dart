@@ -4,20 +4,31 @@ import 'package:benchmark_harness/benchmark_harness.dart';
 
 import 'package:r_tree/r_tree.dart';
 
-final int BRANCH_FACTOR = 16;
-
+final int branchFactor = 8;
+final int randomSeed = 3;
 main() {
-  print('Running benchmark...');
+  print('Running benchmarks...');
   var collector = ScoreCollector();
-  InsertBenchmark(collector).report();
-  LoadBenchmark(collector).report();
+  InsertBenchmark(collector, totalItems: 100).report();
+  InsertBenchmark(collector, totalItems: 1000).report();
+  InsertBenchmark(collector, totalItems: 10000).report();
+
+  LoadBenchmark(collector, totalItems: 100).report();
+  LoadBenchmark(collector, totalItems: 1000).report();
+  LoadBenchmark(collector, totalItems: 10000).report();
+
   RemoveBenchmark(collector).report();
-  SearchBenchmark1(collector).report();
-  SearchBenchmark1(collector, iterateAll: true).report();
-  SearchBenchmark1(collector, iterateAll: true, useLoad: true).report();
-  SearchBenchmark2(collector).report();
-  SearchBenchmark2(collector, iterateAll: true).report();
-  SearchBenchmark2(collector, iterateAll: true, useLoad: true).report();
+
+  SearchBenchmark(collector, totalItems: 100, iterateAll: true).report();
+  SearchBenchmark(collector, totalItems: 1000, iterateAll: true).report();
+  SearchBenchmark(collector, totalItems: 10000, iterateAll: true).report();
+
+  SearchBenchmark(collector, totalItems: 100, iterateAll: true, useLoad: true)
+      .report();
+  SearchBenchmark(collector, totalItems: 1000, iterateAll: true, useLoad: true)
+      .report();
+  SearchBenchmark(collector, totalItems: 10000, iterateAll: true, useLoad: true)
+      .report();
 
   var longestName = collector.collected.keys
       .reduce(
@@ -45,24 +56,27 @@ main() {
 }
 
 class InsertBenchmark extends RTreeBenchmarkBase {
-  InsertBenchmark(ScoreCollector collector) : super("Insert 5k", collector);
+  final int totalItems;
+
+  InsertBenchmark(ScoreCollector collector, {this.totalItems = 500})
+      : super("Insert $totalItems", collector);
 
   late RTree<String> tree;
   late List<RTreeDatum<String>> datum;
 
   void run() {
-    tree = RTree<String>(BRANCH_FACTOR);
+    tree = RTree<String>(branchFactor);
     for (var data in datum) {
       tree.insert(data);
     }
   }
 
   void setup() {
-    Random rand = Random();
+    Random rand = Random(randomSeed);
     datum = <RTreeDatum<String>>[];
-    for (int i = 0; i < 5000; i++) {
-      int x = rand.nextInt(100000);
-      int y = rand.nextInt(100000);
+    for (int i = 0; i < totalItems; i++) {
+      int x = rand.nextInt(1000);
+      int y = rand.nextInt(1000);
       int height = rand.nextInt(100);
       int width = rand.nextInt(100);
       final item =
@@ -75,28 +89,32 @@ class InsertBenchmark extends RTreeBenchmarkBase {
 }
 
 class LoadBenchmark extends RTreeBenchmarkBase {
-  LoadBenchmark(ScoreCollector collector) : super("Load 5k ", collector);
+  final int totalItems;
+
+  LoadBenchmark(ScoreCollector collector, {required this.totalItems})
+      : super("Load $totalItems ", collector);
 
   late RTree<String> tree;
   late List<RTreeDatum<String>> datum;
 
   void run() {
-    tree = RTree<String>(BRANCH_FACTOR);
+    tree = RTree<String>(branchFactor);
     tree.load(datum);
   }
 
   void setup() {
-    Random rand = Random();
+    Random rand = Random(randomSeed);
     datum = <RTreeDatum<String>>[];
-    for (int i = 0; i < 5000; i++) {
-      int x = rand.nextInt(100000);
-      int y = rand.nextInt(100000);
+    for (int i = 0; i < totalItems; i++) {
+      int x = rand.nextInt(1000);
+      int y = rand.nextInt(1000);
       int height = rand.nextInt(100);
       int width = rand.nextInt(100);
       final item =
           RTreeDatum<String>(Rectangle(x, y, width, height), 'item $i');
       datum.add(item);
     }
+    datum.shuffle();
   }
 
   void teardown() {}
@@ -117,7 +135,7 @@ class RemoveBenchmark extends RTreeBenchmarkBase {
   }
 
   void setup() {
-    tree = RTree<String>(BRANCH_FACTOR);
+    tree = RTree<String>(branchFactor);
 
     for (int i = 0; i < 100; i++) {
       for (int j = 0; j < 100; j++) {
@@ -136,25 +154,31 @@ class RemoveBenchmark extends RTreeBenchmarkBase {
   void teardown() {}
 }
 
-class SearchBenchmark1 extends RTreeBenchmarkBase {
+class SearchBenchmark extends RTreeBenchmarkBase {
+  final int totalItems;
+
   /// Allows comparing search performance if the results are iterated or not.
   final bool iterateAll;
 
   /// Allows comparing search performance between trees built out via insert or load
   final bool useLoad;
 
-  SearchBenchmark1(ScoreCollector collector,
-      {this.iterateAll = false, this.useLoad = false})
-      : super(
-            "Search${iterateAll ? '/Iterate' : ''} ${useLoad ? 'using Load' : ''} 5k",
+  SearchBenchmark(
+    ScoreCollector collector, {
+    required this.totalItems,
+    this.iterateAll = false,
+    this.useLoad = false,
+  }) : super(
+            "Search${iterateAll ? '/Iterate' : ''} ${useLoad ? '(using Load)' : '(using Insert)'} ${totalItems}",
             collector);
 
   late RTree<String> tree;
+  late int size;
 
   void run() {
-    for (int i = 0; i < 10; i++) {
-      for (int j = 0; j < 50; j++) {
-        var results = tree.search(Rectangle(i, j, 1, 1));
+    for (int x = 0; x < size; x++) {
+      for (int y = 0; y < size; y++) {
+        var results = tree.search(Rectangle(x, y, 1, 1));
         if (iterateAll) {
           // ignore: unused_local_variable
           for (var result in results) {
@@ -166,7 +190,8 @@ class SearchBenchmark1 extends RTreeBenchmarkBase {
   }
 
   void setup() {
-    tree = RTree(BRANCH_FACTOR);
+    size = sqrt(totalItems).ceil();
+    tree = RTree(branchFactor);
 
     var datum = <RTreeDatum<String>>[];
     for (int i = 0; i < 10; i++) {
@@ -182,58 +207,6 @@ class SearchBenchmark1 extends RTreeBenchmarkBase {
         datum.add(RTreeDatum<String>(rect, 'item8'));
         datum.add(RTreeDatum<String>(rect, 'item9'));
         datum.add(RTreeDatum<String>(rect, 'item10'));
-      }
-    }
-
-    if (useLoad) {
-      tree.load(datum);
-    } else {
-      datum.forEach(tree.insert);
-    }
-  }
-
-  void teardown() {}
-}
-
-class SearchBenchmark2 extends RTreeBenchmarkBase {
-  /// Allows comparing search performance if the results are iterated or not.
-  final bool iterateAll;
-
-  /// Allows comparing search performance between trees built out via insert or load
-  final bool useLoad;
-
-  SearchBenchmark2(ScoreCollector collector,
-      {this.iterateAll = false, this.useLoad = false})
-      : super(
-            "Search${iterateAll ? '/Iterate' : ''} ${useLoad ? 'using Load' : ''} 30k",
-            collector);
-
-  late RTree<String> tree;
-
-  void run() {
-    for (int i = 0; i < 100; i++) {
-      for (int j = 0; j < 50; j++) {
-        var results = tree.search(Rectangle(i, j, 1, 1));
-        if (iterateAll) {
-          // ignore: unused_local_variable
-          for (var result in results) {
-            // nothing to do here, just iterating over every result once
-          }
-        }
-      }
-    }
-  }
-
-  void setup() {
-    tree = RTree<String>(BRANCH_FACTOR);
-
-    var datum = <RTreeDatum<String>>[];
-    for (int i = 0; i < 100; i++) {
-      for (int j = 0; j < 100; j++) {
-        Rectangle rect = Rectangle(i, j, 1, 1);
-        datum.add(RTreeDatum<String>(rect, 'item1 $i:$j'));
-        datum.add(RTreeDatum<String>(rect, 'item2 $i:$j'));
-        datum.add(RTreeDatum<String>(rect, 'item3 $i:$j'));
       }
     }
 
