@@ -171,8 +171,7 @@ class RTree<E> {
 
     if (N <= M) {
       // reached leaf level; return leaf
-      node = LeafNode(_branchFactor, initialItems: items.sublist(left, right + 1));
-      return node;
+      return LeafNode(_branchFactor, initialItems: items.sublist(left, right + 1));
     }
 
     if (height == 0) {
