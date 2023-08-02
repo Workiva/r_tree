@@ -1,8 +1,8 @@
+part of r_tree;
+
 // Copyright (c) 2021 Ilya Zverev, (c) 2018 Vladimir Agafonkin.
 // Port of https://github.com/mourner/quickselect.
 // Use of this code is governed by an ISC license, see the LICENSE file.
-
-import 'dart:math' as math;
 
 // sort an array so that items come in groups of n unsorted items, with groups sorted between each other;
 // combines selection algorithm with binary divide & conquer approach
@@ -55,11 +55,11 @@ _quickSelectStep<T>(List<T> arr, int k, int left, int right, Comparator<T> compa
     if (right - left > 600) {
       final n = right - left + 1;
       final m = k - left + 1;
-      final z = math.log(n);
-      final s = 0.5 * math.exp(2 * z / 3);
-      final sd = 0.5 * math.sqrt(z * s * (n - s) / n) * (m - n / 2 < 0 ? -1 : 1);
-      final newLeft = math.max(left, (k - m * s / n + sd).floor());
-      final newRight = math.min(right, (k + (n - m) * s / n + sd).floor());
+      final z = log(n);
+      final s = 0.5 * exp(2 * z / 3);
+      final sd = 0.5 * sqrt(z * s * (n - s) / n) * (m - n / 2 < 0 ? -1 : 1);
+      final newLeft = max(left, (k - m * s / n + sd).floor());
+      final newRight = min(right, (k + (n - m) * s / n + sd).floor());
       _quickSelectStep(arr, k, newLeft, newRight, compare);
     }
 
