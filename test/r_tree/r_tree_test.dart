@@ -10,8 +10,7 @@ main() {
     group('Insert/Search', () {
       test('insert 1 item', () {
         RTree tree = RTree(3);
-        RTreeDatum<String> item =
-            RTreeDatum<String>(Rectangle(0, 0, 1, 1), 'Item 1');
+        RTreeDatum<String> item = RTreeDatum<String>(Rectangle(0, 0, 1, 1), 'Item 1');
 
         tree.insert(item);
         var items = tree.search(item.rect, shouldInclude: (_) => false);
@@ -50,16 +49,14 @@ main() {
       ];
 
       for (final addMethod in addMethods) {
-        test('search for 1 cell in large format ranges (${addMethod.name})',
-            () {
+        test('search for 1 cell in large format ranges (${addMethod.name})', () {
           RTree tree = RTree(3);
           Map itemMap = Map();
           List<RTreeDatum<String>> itemsToInsert = [];
 
           for (int i = 0; i < 10; i++) {
             String itemId = 'Item $i';
-            itemMap[itemId] =
-                RTreeDatum<String>(Rectangle(i, 0, 10 - i, 10), itemId);
+            itemMap[itemId] = RTreeDatum<String>(Rectangle(i, 0, 10 - i, 10), itemId);
             itemsToInsert.add(itemMap[itemId]);
           }
 
@@ -119,8 +116,7 @@ main() {
 
           for (int i = 0; i < 50; i++) {
             for (int j = 0; j < 50; j++) {
-              RTreeDatum<String> item =
-                  RTreeDatum<String>(Rectangle(i, j, 1, 1), 'Item $i:$j');
+              RTreeDatum<String> item = RTreeDatum<String>(Rectangle(i, j, 1, 1), 'Item $i:$j');
               itemsToInsert.add(item);
             }
           }
@@ -140,8 +136,7 @@ main() {
     group('Remove', () {
       test('remove should only remove first occurance of item', () {
         RTree tree = RTree(3);
-        RTreeDatum<String> item =
-            RTreeDatum<String>(Rectangle(0, 0, 1, 1), 'Item 1');
+        RTreeDatum<String> item = RTreeDatum<String>(Rectangle(0, 0, 1, 1), 'Item 1');
 
         tree.insert(item);
         tree.insert(item);
@@ -197,8 +192,7 @@ main() {
 
         for (int i = 0; i < 50; i++) {
           for (int j = 0; j < 50; j++) {
-            RTreeDatum item =
-                RTreeDatum<String>(Rectangle(i, j, 1, 1), 'Item $i:$j');
+            RTreeDatum item = RTreeDatum<String>(Rectangle(i, j, 1, 1), 'Item $i:$j');
             data.add(item);
             tree.insert(item);
           }
@@ -215,8 +209,7 @@ main() {
         expect(items.length, equals(0));
 
         //test inserting after removal to ensure new root leaf node functions correctly
-        tree.insert(
-            RTreeDatum<String>(Rectangle(0, 0, 1, 1), 'New Initial Item'));
+        tree.insert(RTreeDatum<String>(Rectangle(0, 0, 1, 1), 'New Initial Item'));
 
         items = tree.search(Rectangle(0, 0, 50, 50));
 

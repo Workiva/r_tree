@@ -52,8 +52,7 @@ class RTree<E> {
 
   // Returns all items whose rectangles overlap [searchRect]
   //  Note: Rectangles that share only a border are not considered to overlap
-  Iterable<RTreeDatum<E>> search(Rectangle searchRect,
-      {bool Function(E item)? shouldInclude}) {
+  Iterable<RTreeDatum<E>> search(Rectangle searchRect, {bool Function(E item)? shouldInclude}) {
     shouldInclude ??= (_) => true;
 
     if (_root is LeafNode<E>) {
@@ -123,8 +122,7 @@ class RTree<E> {
     insertPath.forEach((e) => e.updateBoundingRect());
   }
 
-  Node<E> _chooseSubtree(
-      Node<E> inode, Node<E> node, int level, List<Node<E>> path) {
+  Node<E> _chooseSubtree(Node<E> inode, Node<E> node, int level, List<Node<E>> path) {
     while (true) {
       path.add(node);
 
@@ -172,8 +170,7 @@ class RTree<E> {
 
     if (N <= M) {
       // reached leaf level; return leaf
-      node =
-          LeafNode(_branchFactor, initialItems: items.sublist(left, right + 1));
+      node = LeafNode(_branchFactor, initialItems: items.sublist(left, right + 1));
       return node;
     }
 
@@ -224,13 +221,10 @@ class RTree<E> {
 
     Node<E> newNode;
     if (node is LeafNode) {
-      newNode = LeafNode<E>(_branchFactor,
-          initialItems:
-              node.children.cast<RTreeDatum<E>>().sublist(splitIndex));
+      newNode = LeafNode<E>(_branchFactor, initialItems: node.children.cast<RTreeDatum<E>>().sublist(splitIndex));
       node.children.removeRange(splitIndex, node.children.length);
     } else {
-      newNode = NonLeafNode(_branchFactor,
-          initialChildNodes: node.children.cast<Node<E>>().sublist(splitIndex));
+      newNode = NonLeafNode(_branchFactor, initialChildNodes: node.children.cast<Node<E>>().sublist(splitIndex));
       node.children.removeRange(splitIndex, node.children.length);
     }
     newNode.height = node.height;
@@ -310,8 +304,7 @@ class RTree<E> {
     var margin = leftBoundingBox.margin + rightBoundingBox.margin;
 
     for (var i = m; i < M - m; i++) {
-      leftBoundingBox.extend(
-          node is LeafNode ? node.children[i].rect : node.children[i].rect);
+      leftBoundingBox.extend(node is LeafNode ? node.children[i].rect : node.children[i].rect);
       margin += leftBoundingBox.margin;
     }
 
@@ -323,8 +316,7 @@ class RTree<E> {
     return margin;
   }
 
-  Node _boundingBoxForDistribution(
-      Node<E> node, int startChild, int stopChild) {
+  Node _boundingBoxForDistribution(Node<E> node, int startChild, int stopChild) {
     final destNode = LeafNode(_branchFactor);
     destNode._minimumBoundingRect = node.children[0].rect;
 
@@ -339,8 +331,7 @@ class RTree<E> {
   }
 
   void _growTree(Node<E> node1, Node<E> node2) {
-    NonLeafNode<E> newRoot =
-        NonLeafNode<E>(_branchFactor, initialChildNodes: [node1, node2]);
+    NonLeafNode<E> newRoot = NonLeafNode<E>(_branchFactor, initialChildNodes: [node1, node2]);
     newRoot.height = _root.height + 1;
     _root = newRoot;
   }

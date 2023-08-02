@@ -22,8 +22,7 @@ class NonLeafNode<E> extends Node<E> {
   List<Node<E>> _childNodes = [];
   List<Node<E>> get children => _childNodes;
 
-  NonLeafNode(int branchFactor, {List<Node<E>>? initialChildNodes})
-      : super(branchFactor) {
+  NonLeafNode(int branchFactor, {List<Node<E>>? initialChildNodes}) : super(branchFactor) {
     if (initialChildNodes != null) {
       if (initialChildNodes.length > branchFactor) {
         throw ArgumentError.value('too many items');
@@ -37,8 +36,7 @@ class NonLeafNode<E> extends Node<E> {
     return NonLeafNode<E>(branchFactor);
   }
 
-  Iterable<RTreeDatum<E>> search(
-      Rectangle searchRect, bool Function(E item)? shouldInclude) {
+  Iterable<RTreeDatum<E>> search(Rectangle searchRect, bool Function(E item)? shouldInclude) {
     List<RTreeDatum<E>> overlappingLeafs = [];
 
     for (var childNode in _childNodes) {

@@ -6,8 +6,7 @@ import 'dart:math' as math;
 
 // sort an array so that items come in groups of n unsorted items, with groups sorted between each other;
 // combines selection algorithm with binary divide & conquer approach
-multiSelect<E>(
-    List<E> arr, int left, int right, int n, num Function(E) getter) {
+multiSelect<E>(List<E> arr, int left, int right, int n, num Function(E) getter) {
   final stack = [left, right];
   final compare = (E a, E b) => getter(a).compareTo(getter(b));
   while (stack.isNotEmpty) {
@@ -51,16 +50,14 @@ quickSelect<T>(List<T> arr, int k, int left, int right, Comparator<T> compare) {
   _quickSelectStep(arr, k, left, right, compare);
 }
 
-_quickSelectStep<T>(
-    List<T> arr, int k, int left, int right, Comparator<T> compare) {
+_quickSelectStep<T>(List<T> arr, int k, int left, int right, Comparator<T> compare) {
   while (right > left) {
     if (right - left > 600) {
       final n = right - left + 1;
       final m = k - left + 1;
       final z = math.log(n);
       final s = 0.5 * math.exp(2 * z / 3);
-      final sd =
-          0.5 * math.sqrt(z * s * (n - s) / n) * (m - n / 2 < 0 ? -1 : 1);
+      final sd = 0.5 * math.sqrt(z * s * (n - s) / n) * (m - n / 2 < 0 ? -1 : 1);
       final newLeft = math.max(left, (k - m * s / n + sd).floor());
       final newRight = math.min(right, (k + (n - m) * s / n + sd).floor());
       _quickSelectStep(arr, k, newLeft, newRight, compare);
