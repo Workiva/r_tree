@@ -62,7 +62,8 @@ class RTree<E> {
     return _root.search(searchRect, shouldInclude);
   }
 
-  /// Bulk adds all [items] to the rtree
+  /// Bulk adds all [items] to the rtree. This implementation draws heavily from
+  /// https://github.com/mourner/rbush and https://github.com/Zverik/dart_rbush.
   load(List<RTreeDatum<E>> items) {
     if (items.isEmpty) {
       return this;

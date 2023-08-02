@@ -1,8 +1,5 @@
 part of r_tree;
-
-// Copyright (c) 2021 Ilya Zverev, (c) 2018 Vladimir Agafonkin.
 // Port of https://github.com/mourner/quickselect.
-// Use of this code is governed by an ISC license, see the LICENSE file.
 
 // sort an array so that items come in groups of n unsorted items, with groups sorted between each other;
 // combines selection algorithm with binary divide & conquer approach
@@ -65,6 +62,7 @@ void _quickSelectStep<T>(List<T> arr, int k, int left, int right, Comparator<T> 
       final sd = 0.5 * sqrt(z * s * (n - s) / n) * (m - n / 2 < 0 ? -1 : 1);
       final newLeft = max(left, (k - m * s / n + sd).floor());
       final newRight = min(right, (k + (n - m) * s / n + sd).floor());
+
       _quickSelectStep(arr, k, newLeft, newRight, compare);
     }
 
@@ -73,14 +71,24 @@ void _quickSelectStep<T>(List<T> arr, int k, int left, int right, Comparator<T> 
     var j = right;
 
     _swap(arr, left, k);
-    if (compare(arr[right], t) > 0) _swap(arr, left, right);
+
+    if (compare(arr[right], t) > 0) {
+      _swap(arr, left, right);
+    }
 
     while (i < j) {
       _swap(arr, i, j);
+
       i++;
       j--;
-      while (compare(arr[i], t) < 0) i++;
-      while (compare(arr[j], t) > 0) j--;
+
+      while (compare(arr[i], t) < 0) {
+        i++;
+      }
+
+      while (compare(arr[j], t) > 0) {
+        j--;
+      }
     }
 
     if (compare(arr[left], t) == 0) {
@@ -90,8 +98,12 @@ void _quickSelectStep<T>(List<T> arr, int k, int left, int right, Comparator<T> 
       _swap(arr, j, right);
     }
 
-    if (j <= k) left = j + 1;
-    if (k <= j) right = j - 1;
+    if (j <= k) {
+      left = j + 1;
+    }
+    if (k <= j) {
+      right = j - 1;
+    }
   }
 }
 
