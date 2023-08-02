@@ -4,7 +4,7 @@ import 'package:benchmark_harness/benchmark_harness.dart';
 
 import 'package:r_tree/r_tree.dart';
 
-final int branchFactor = 8;
+final int branchFactor = 16;
 final int randomSeed = 3;
 main() {
   print('Running benchmarks...');
