@@ -9,10 +9,15 @@ part of r_tree;
 multiSelect<E>(List<E> arr, int left, int right, int n, num Function(E) getter) {
   final stack = [left, right];
   final compare = (E a, E b) => getter(a).compareTo(getter(b));
+
   while (stack.isNotEmpty) {
     right = stack.removeLast();
     left = stack.removeLast();
-    if (right - left <= n) continue;
+
+    if (right - left <= n) {
+      continue;
+    }
+
     final mid = left + ((right - left).toDouble() / n / 2).ceil() * n;
     quickSelect(arr, mid, left, right, compare);
     stack.addAll([left, mid, mid, right]);
