@@ -206,4 +206,4 @@ class _Seeds {
   const _Seeds(this.seed1, this.seed2);
 }
 
-num _area(Rectangle rect) => (rect.right - rect.left) * (rect.bottom - rect.top);
+num _area(Rectangle rect) => rect.width * rect.height;
