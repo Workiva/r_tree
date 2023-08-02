@@ -24,7 +24,7 @@ jobs:
       - name: Validate dependencies
         run: dart run dependency_validator
       - name: Check formatting
-        run: dart format --output=none --set-exit-if-changed .
+        run: dart format -l 120 --output=none --set-exit-if-changed .
         if: ${{ matrix.sdk == '2.18.7' }}
       - name: Analyze project source
         run: dart analyze
