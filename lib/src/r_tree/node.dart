@@ -118,7 +118,7 @@ abstract class Node<E> extends RTreeContributor {
 
     removeChild(seeds.seed1);
     removeChild(seeds.seed2);
-    List<RTreeContributor> remainingChildren = children;
+    List<RTreeContributor> remainingChildren = children.toList();
 
     clearChildren();
     addChild(seeds.seed1);

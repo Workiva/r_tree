@@ -19,7 +19,7 @@ part of r_tree;
 /// A [Node] that is not a leaf end of the [RTree]. These are created automatically
 /// by [RTree] when inserting/removing items from the tree.
 class NonLeafNode<E> extends Node<E> {
-  List<Node<E>> _childNodes = [];
+  late final List<Node<E>> _childNodes;
   List<Node<E>> get children => _childNodes;
 
   NonLeafNode(int branchFactor, {List<Node<E>>? initialChildNodes}) : super(branchFactor) {
@@ -29,6 +29,8 @@ class NonLeafNode<E> extends Node<E> {
       }
       _childNodes = initialChildNodes;
       updateBoundingRect();
+    } else {
+      _childNodes = [];
     }
   }
 
@@ -94,7 +96,7 @@ class NonLeafNode<E> extends Node<E> {
   }
 
   clearChildren() {
-    _childNodes = [];
+    _childNodes.clear();
     _minimumBoundingRect = Rectangle(0, 0, 0, 0);
   }
 

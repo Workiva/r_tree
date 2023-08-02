@@ -19,7 +19,7 @@ part of r_tree;
 /// A [Node] that is a leaf node of the tree.  These are created automatically
 /// by [RTree] when inserting/removing items from the tree.
 class LeafNode<E> extends Node<E> {
-  List<RTreeDatum<E>> _items = [];
+  late final List<RTreeDatum<E>> _items;
   List<RTreeDatum<E>> get children => _items;
 
   LeafNode(int branchFactor, {List<RTreeDatum<E>>? initialItems}) : super(branchFactor) {
@@ -30,6 +30,8 @@ class LeafNode<E> extends Node<E> {
       _items = initialItems;
 
       updateBoundingRect();
+    } else {
+      _items = [];
     }
   }
 
@@ -55,7 +57,7 @@ class LeafNode<E> extends Node<E> {
   }
 
   clearChildren() {
-    _items = [];
+    _items.clear();
     _minimumBoundingRect = Rectangle(0, 0, 0, 0);
   }
 }
