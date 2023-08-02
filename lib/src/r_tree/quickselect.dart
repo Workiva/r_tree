@@ -47,7 +47,7 @@ multiSelect<E>(List<E> arr, int left, int right, int n, num Function(E) getter) 
 /// // arr is [39, 28, 28, 33, 21, 12, 22, 50, 53, 56, 59, 65, 90, 77, 95]
 /// //                                         ^^ middle index
 /// ```
-quickSelect<T>(List<T> arr, int k, int left, int right, Comparator<T> compare) {
+void quickSelect<T>(List<T> arr, int k, int left, int right, Comparator<T> compare) {
   if (arr.isEmpty) {
     return;
   }
@@ -55,7 +55,7 @@ quickSelect<T>(List<T> arr, int k, int left, int right, Comparator<T> compare) {
   _quickSelectStep(arr, k, left, right, compare);
 }
 
-_quickSelectStep<T>(List<T> arr, int k, int left, int right, Comparator<T> compare) {
+void _quickSelectStep<T>(List<T> arr, int k, int left, int right, Comparator<T> compare) {
   while (right > left) {
     if (right - left > 600) {
       final n = right - left + 1;
@@ -95,7 +95,7 @@ _quickSelectStep<T>(List<T> arr, int k, int left, int right, Comparator<T> compa
   }
 }
 
-_swap<T>(List<T> arr, i, j) {
+void _swap<T>(List<T> arr, i, j) {
   final tmp = arr[i];
   arr[i] = arr[j];
   arr[j] = tmp;
