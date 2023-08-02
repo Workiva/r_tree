@@ -106,7 +106,7 @@ abstract class Node<E> extends RTreeContributor {
     return _minimumBoundingRect;
   }
 
-  extend(Rectangle b) {
+  void extend(Rectangle b) {
     _minimumBoundingRect = _minimumBoundingRect.boundingBox(b);
   }
 
