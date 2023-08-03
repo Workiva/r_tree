@@ -30,9 +30,9 @@ multiSelect<E>(List<E> arr, int left, int right, int n, num Function(E) getter) 
 ///
 /// - [arr]: the list to partially sort (in place)
 /// - [k]: middle index for partial sorting (as defined above)
-/// - [left]: left index of the range to sort (`0` by default)
-/// - [right]: right index (last index of the array by default)
-/// - [compare]: compare function, if items in the list are not `Comparable`.
+/// - [left]: left index of the range to sort
+/// - [right]: right index of the range to sort
+/// - [compare]: compare function
 ///
 /// Example:
 ///
