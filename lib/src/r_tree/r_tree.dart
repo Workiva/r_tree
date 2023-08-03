@@ -64,9 +64,9 @@ class RTree<E> {
 
   /// Bulk adds all [items] to the rtree. This implementation draws heavily from
   /// https://github.com/mourner/rbush and https://github.com/Zverik/dart_rbush.
-  load(List<RTreeDatum<E>> items) {
+  void load(List<RTreeDatum<E>> items) {
     if (items.isEmpty) {
-      return this;
+      return;
     }
 
     if (items.length < _minEntries) {
