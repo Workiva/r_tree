@@ -25,7 +25,7 @@ class NonLeafNode<E> extends Node<E> {
   NonLeafNode(int branchFactor, {List<Node<E>>? initialChildNodes}) : super(branchFactor) {
     if (initialChildNodes != null) {
       if (initialChildNodes.length > branchFactor) {
-        throw ArgumentError.value('too many items');
+        throw ArgumentError('too many items');
       }
       _childNodes = initialChildNodes;
       updateBoundingRect();

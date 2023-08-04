@@ -25,7 +25,7 @@ class LeafNode<E> extends Node<E> {
   LeafNode(int branchFactor, {List<RTreeDatum<E>>? initialItems}) : super(branchFactor) {
     if (initialItems != null) {
       if (initialItems.length > branchFactor) {
-        throw ArgumentError.value('too many items');
+        throw ArgumentError('too many items');
       }
       _items = initialItems;
 
