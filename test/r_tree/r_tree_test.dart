@@ -10,8 +10,7 @@ main() {
     group('Insert/Search', () {
       test('insert 1 item', () {
         RTree tree = RTree(3);
-        RTreeDatum<String> item =
-            RTreeDatum<String>(Rectangle(0, 0, 1, 1), 'Item 1');
+        RTreeDatum<String> item = RTreeDatum<String>(Rectangle(0, 0, 1, 1), 'Item 1');
 
         tree.insert(item);
         var items = tree.search(item.rect, shouldInclude: (_) => false);
@@ -40,87 +39,104 @@ main() {
         expect(items.isEmpty, isTrue);
       });
 
-      test('search for 1 cell in large format ranges', () {
-        RTree tree = RTree(3);
-        Map itemMap = Map();
+      final addMethods = [
+        _InsertCase('insert', (RTree tree, Iterable<RTreeDatum<String>> toAdd) {
+          toAdd.forEach(tree.insert);
+        }),
+        _InsertCase('load', (RTree tree, Iterable<RTreeDatum<String>> toAdd) {
+          tree.load(toAdd.toList());
+        })
+      ];
 
-        for (int i = 0; i < 10; i++) {
-          String itemId = 'Item $i';
-          itemMap[itemId] =
-              RTreeDatum<String>(Rectangle(i, 0, 10 - i, 10), itemId);
-          tree.insert(itemMap[itemId]);
-        }
+      for (final addMethod in addMethods) {
+        test('search for 1 cell in large format ranges (${addMethod.name})', () {
+          RTree tree = RTree(3);
+          Map itemMap = Map();
+          List<RTreeDatum<String>> itemsToInsert = [];
 
-        var items = tree.search(Rectangle(0, 0, 1, 3)); // A1:A3
-        expect(items.length, equals(1));
-        expect(items.contains(itemMap['Item 0']), equals(true));
-
-        items = tree.search(Rectangle(0, 3, 1, 10)); // A3:A13
-        expect(items.length, equals(1));
-        expect(items.contains(itemMap['Item 0']), equals(true));
-
-        items = tree.search(Rectangle(4, 4, 1, 1)); // E5
-        expect(items.length, equals(5));
-        expect(items.contains(itemMap['Item 0']), equals(true));
-        expect(items.contains(itemMap['Item 1']), equals(true));
-        expect(items.contains(itemMap['Item 2']), equals(true));
-        expect(items.contains(itemMap['Item 3']), equals(true));
-        expect(items.contains(itemMap['Item 4']), equals(true));
-      });
-
-      test('insert enough items to cause split', () {
-        RTree tree = RTree(3);
-        Map itemMap = Map();
-
-        for (int i = 0; i < 5; i++) {
-          String itemId = 'Item $i';
-          itemMap[itemId] = RTreeDatum<String>(Rectangle(0, i, 1, 1), itemId);
-          tree.insert(itemMap[itemId]);
-        }
-
-        var items = tree.search(Rectangle(0, 2, 1, 1));
-        expect(items.length, equals(1));
-        expect(items.contains(itemMap['Item 2']), equals(true));
-
-        items = tree.search(Rectangle(0, 1, 1, 2));
-        expect(items.length, equals(2));
-        expect(items.contains(itemMap['Item 1']), equals(true));
-        expect(items.contains(itemMap['Item 2']), equals(true));
-
-        items = tree.search(Rectangle(0, 0, 1, 5));
-        expect(items.length, equals(5));
-        expect(items.contains(itemMap['Item 0']), equals(true));
-        expect(items.contains(itemMap['Item 1']), equals(true));
-        expect(items.contains(itemMap['Item 2']), equals(true));
-        expect(items.contains(itemMap['Item 3']), equals(true));
-        expect(items.contains(itemMap['Item 4']), equals(true));
-      });
-
-      test('insert large amount of items', () {
-        RTree tree = RTree(16);
-
-        for (int i = 0; i < 50; i++) {
-          for (int j = 0; j < 50; j++) {
-            RTreeDatum<String> item =
-                RTreeDatum<String>(Rectangle(i, j, 1, 1), 'Item $i:$j');
-            tree.insert(item);
+          for (int i = 0; i < 10; i++) {
+            String itemId = 'Item $i';
+            itemMap[itemId] = RTreeDatum<String>(Rectangle(i, 0, 10 - i, 10), itemId);
+            itemsToInsert.add(itemMap[itemId]);
           }
-        }
 
-        var items = tree.search(Rectangle(31, 27, 1, 1));
-        expect(items.length, equals(1));
-        expect(items.elementAt(0).value, equals('Item 31:27'));
+          addMethod.method(tree, itemsToInsert);
 
-        items = tree.search(Rectangle(0, 0, 2, 50));
-        expect(items.length, equals(100));
-      });
+          var items = tree.search(Rectangle(0, 0, 1, 3)); // A1:A3
+          expect(items.length, equals(1));
+          expect(items.contains(itemMap['Item 0']), equals(true));
+
+          items = tree.search(Rectangle(0, 3, 1, 10)); // A3:A13
+          expect(items.length, equals(1));
+          expect(items.contains(itemMap['Item 0']), equals(true));
+
+          items = tree.search(Rectangle(4, 4, 1, 1)); // E5
+          expect(items.length, equals(5));
+          expect(items.contains(itemMap['Item 0']), equals(true));
+          expect(items.contains(itemMap['Item 1']), equals(true));
+          expect(items.contains(itemMap['Item 2']), equals(true));
+          expect(items.contains(itemMap['Item 3']), equals(true));
+          expect(items.contains(itemMap['Item 4']), equals(true));
+        });
+
+        test('insert enough items to cause split (${addMethod.name})', () {
+          RTree tree = RTree(3);
+          Map itemMap = Map();
+          List<RTreeDatum<String>> itemsToInsert = [];
+
+          for (int i = 0; i < 5; i++) {
+            String itemId = 'Item $i';
+            itemMap[itemId] = RTreeDatum<String>(Rectangle(0, i, 1, 1), itemId);
+            itemsToInsert.add(itemMap[itemId]);
+          }
+
+          addMethod.method(tree, itemsToInsert);
+
+          var items = tree.search(Rectangle(0, 2, 1, 1));
+          expect(items.length, equals(1));
+          expect(items.contains(itemMap['Item 2']), equals(true));
+
+          items = tree.search(Rectangle(0, 1, 1, 2));
+          expect(items.length, equals(2));
+          expect(items.contains(itemMap['Item 1']), equals(true));
+          expect(items.contains(itemMap['Item 2']), equals(true));
+
+          items = tree.search(Rectangle(0, 0, 1, 5));
+          expect(items.length, equals(5));
+          expect(items.contains(itemMap['Item 0']), equals(true));
+          expect(items.contains(itemMap['Item 1']), equals(true));
+          expect(items.contains(itemMap['Item 2']), equals(true));
+          expect(items.contains(itemMap['Item 3']), equals(true));
+          expect(items.contains(itemMap['Item 4']), equals(true));
+        });
+
+        test('insert large amount of items (${addMethod.name})', () {
+          RTree tree = RTree(16);
+          List<RTreeDatum<String>> itemsToInsert = [];
+
+          for (int i = 0; i < 50; i++) {
+            for (int j = 0; j < 50; j++) {
+              RTreeDatum<String> item = RTreeDatum<String>(Rectangle(i, j, 1, 1), 'Item $i:$j');
+              itemsToInsert.add(item);
+            }
+          }
+
+          addMethod.method(tree, itemsToInsert);
+
+          var items = tree.search(Rectangle(31, 27, 1, 1));
+          expect(items.length, equals(1));
+          expect(items.elementAt(0).value, equals('Item 31:27'));
+
+          items = tree.search(Rectangle(0, 0, 2, 50));
+          expect(items.length, equals(100));
+        });
+      }
     });
 
     group('Remove', () {
       test('remove should only remove first occurance of item', () {
         RTree tree = RTree(3);
-        RTreeDatum<String> item =
-            RTreeDatum<String>(Rectangle(0, 0, 1, 1), 'Item 1');
+        RTreeDatum<String> item = RTreeDatum<String>(Rectangle(0, 0, 1, 1), 'Item 1');
 
         tree.insert(item);
         tree.insert(item);
@@ -176,8 +192,7 @@ main() {
 
         for (int i = 0; i < 50; i++) {
           for (int j = 0; j < 50; j++) {
-            RTreeDatum item =
-                RTreeDatum<String>(Rectangle(i, j, 1, 1), 'Item $i:$j');
+            RTreeDatum item = RTreeDatum<String>(Rectangle(i, j, 1, 1), 'Item $i:$j');
             data.add(item);
             tree.insert(item);
           }
@@ -194,8 +209,7 @@ main() {
         expect(items.length, equals(0));
 
         //test inserting after removal to ensure new root leaf node functions correctly
-        tree.insert(
-            RTreeDatum<String>(Rectangle(0, 0, 1, 1), 'New Initial Item'));
+        tree.insert(RTreeDatum<String>(Rectangle(0, 0, 1, 1), 'New Initial Item'));
 
         items = tree.search(Rectangle(0, 0, 50, 50));
 
@@ -205,4 +219,11 @@ main() {
       });
     });
   });
+}
+
+class _InsertCase {
+  final Function(RTree tree, Iterable<RTreeDatum<String>> toAdd) method;
+  final String name;
+
+  _InsertCase(this.name, this.method);
 }

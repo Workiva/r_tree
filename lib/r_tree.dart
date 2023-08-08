@@ -31,6 +31,7 @@ import 'dart:math';
 part 'src/r_tree/leaf_node.dart';
 part 'src/r_tree/non_leaf_node.dart';
 part 'src/r_tree/node.dart';
+part 'src/r_tree/quickselect.dart';
 part 'src/r_tree/r_tree.dart';
 part 'src/r_tree/r_tree_datum.dart';
 part 'src/r_tree/r_tree_contributor.dart';

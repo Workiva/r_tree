@@ -36,8 +36,7 @@ main() {
 
         LeafNode splitNode = leafNode.splitIfNecessary() as LeafNode<dynamic>;
 
-        Iterable<RTreeDatum?> items =
-            leafNode.search(Rectangle(0, 0, 1, 10), (_) => true);
+        Iterable<RTreeDatum?> items = leafNode.search(Rectangle(0, 0, 1, 10), (_) => true);
         expect(items.length, equals(leafNode.size));
         expect(leafNode.size, equals(2));
         expect(items.contains(itemMap['Item 0']), equals(true));
@@ -64,8 +63,7 @@ main() {
 
         LeafNode splitNode = leafNode.splitIfNecessary() as LeafNode<dynamic>;
 
-        Iterable<RTreeDatum?> items =
-            leafNode.search(Rectangle(0, 0, 10, 1), (_) => true);
+        Iterable<RTreeDatum?> items = leafNode.search(Rectangle(0, 0, 10, 1), (_) => true);
         expect(items.length, equals(leafNode.size));
         expect(leafNode.size, equals(2));
         expect(items.contains(itemMap['Item 0']), equals(true));
@@ -92,8 +90,7 @@ main() {
 
         LeafNode splitNode = leafNode.splitIfNecessary() as LeafNode<dynamic>;
 
-        Iterable<RTreeDatum?> items =
-            leafNode.search(Rectangle(0, 0, 10, 1), (_) => true);
+        Iterable<RTreeDatum?> items = leafNode.search(Rectangle(0, 0, 10, 1), (_) => true);
         expect(items.length, equals(leafNode.size));
         expect(leafNode.size, equals(2));
         expect(items.contains(itemMap['Item 0']), equals(true));
@@ -111,20 +108,16 @@ main() {
       test('expansionCost correctly calculated', () {
         LeafNode node = LeafNode(3);
 
-        expect(node.expansionCost(RTreeDatum(Rectangle(0, 0, 1, 1), '')),
-            equals(1));
+        expect(node.expansionCost(RTreeDatum(Rectangle(0, 0, 1, 1), '')), equals(1));
 
         node.addChild(RTreeDatum(Rectangle(0, 0, 1, 1), ''));
 
-        expect(node.expansionCost(RTreeDatum(Rectangle(0, 0, 1, 1), '')),
-            equals(0));
-        expect(node.expansionCost(RTreeDatum(Rectangle(1, 1, 1, 1), '')),
-            equals(3));
+        expect(node.expansionCost(RTreeDatum(Rectangle(0, 0, 1, 1), '')), equals(0));
+        expect(node.expansionCost(RTreeDatum(Rectangle(1, 1, 1, 1), '')), equals(3));
 
         node.addChild(RTreeDatum(Rectangle(2, 2, 1, 1), ''));
 
-        expect(node.expansionCost(RTreeDatum(Rectangle(1, 1, 3, 3), '')),
-            equals(7));
+        expect(node.expansionCost(RTreeDatum(Rectangle(1, 1, 3, 3), '')), equals(7));
       });
     });
   });

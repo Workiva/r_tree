@@ -19,20 +19,32 @@ part of r_tree;
 /// A [Node] that is a leaf node of the tree.  These are created automatically
 /// by [RTree] when inserting/removing items from the tree.
 class LeafNode<E> extends Node<E> {
-  List<RTreeDatum<E>> _items = [];
+  late final List<RTreeDatum<E>> _items;
   List<RTreeDatum<E>> get children => _items;
 
-  LeafNode(int branchFactor) : super(branchFactor);
+  LeafNode(int branchFactor, {List<RTreeDatum<E>>? initialItems}) : super(branchFactor) {
+    if (initialItems != null) {
+      if (initialItems.length > branchFactor) {
+        throw ArgumentError('too many items');
+      }
+      _items = initialItems;
+
+      updateBoundingRect();
+    } else {
+      _items = [];
+    }
+  }
+
+  @override
+  int get height => 1;
 
   Node<E> createNewNode() {
     return LeafNode<E>(branchFactor);
   }
 
-  Iterable<RTreeDatum<E>> search(
-      Rectangle searchRect, bool Function(E item)? shouldInclude) {
-    return _items.where((RTreeDatum<E> item) =>
-        item.overlaps(searchRect) &&
-        (shouldInclude == null || shouldInclude(item.value)));
+  Iterable<RTreeDatum<E>> search(Rectangle searchRect, bool Function(E item)? shouldInclude) {
+    return _items.where(
+        (RTreeDatum<E> item) => item.overlaps(searchRect) && (shouldInclude == null || shouldInclude(item.value)));
   }
 
   Node<E>? insert(RTreeDatum<E> item) {
@@ -45,7 +57,7 @@ class LeafNode<E> extends Node<E> {
   }
 
   clearChildren() {
-    _items = [];
+    _items.clear();
     _minimumBoundingRect = Rectangle(0, 0, 0, 0);
   }
 }
