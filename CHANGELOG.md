@@ -1,3 +1,7 @@
+## [2.1.0](https://github.com/Workiva/r_tree/compare/2.0.0...2.1.0)
+
+- Added a new "load" API for bulk inserting items into an rtree
+  
 ## [2.0.0](https://github.com/Workiva/r_tree/compare/1.1.0...2.0.0)
 
 - Null safety migration
