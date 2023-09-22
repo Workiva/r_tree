@@ -17,7 +17,7 @@
 part of r_tree;
 
 /// An [RTreeContributor] that has a piece of data attached to it
-class RTreeDatum<E> extends RTreeContributor {
+class RTreeDatum<E> implements RTreeContributor {
   final Rectangle rect;
   final E value;
 
