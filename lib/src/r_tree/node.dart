@@ -38,7 +38,8 @@ abstract class Node<E> extends RTreeContributor {
       return _minimumBoundingRect!;
     }
 
-    return updateBoundingRect();
+    updateBoundingRect();
+    return _minimumBoundingRect ?? noMBR;
   }
 
   Node(this.branchFactor);
@@ -97,10 +98,10 @@ abstract class Node<E> extends RTreeContributor {
   }
 
   /// Recalculated the bounding rectangle of this node
-  Rectangle updateBoundingRect() {
+  void updateBoundingRect() {
     if (children.isEmpty) {
       _minimumBoundingRect = null;
-      return noMBR;
+      return;
     }
 
     var newBoundingRect = children.first.rect;
@@ -109,7 +110,7 @@ abstract class Node<E> extends RTreeContributor {
     }
 
     _minimumBoundingRect = newBoundingRect;
-    return newBoundingRect;
+    return;
   }
 
   void extend(Rectangle b) {

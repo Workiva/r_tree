@@ -23,7 +23,7 @@ main() {
       test('adding/clearing children updates the rect', () {
         LeafNode leaf = LeafNode(3);
 
-        expect(leaf.rect, equals(null));
+        expect(leaf.rect, equals(noMBR));
         expect(leaf.size, equals(0));
 
         leaf.addChild(RTreeDatum(Rectangle(0, 0, 1, 1), 'Item 1'));
@@ -45,7 +45,7 @@ main() {
 
         leaf.clearChildren();
 
-        expect(leaf.rect, equals(null));
+        expect(leaf.rect, equals(noMBR));
         expect(leaf.size, equals(0));
       });
     });
