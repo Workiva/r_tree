@@ -79,6 +79,8 @@ class NonLeafNode<E> extends Node<E> {
     for (var child in childrenToRemove) {
       removeChild(child);
     }
+
+    _recalculateHeight();
   }
 
   addChild(Node<E> child) {
@@ -93,6 +95,8 @@ class NonLeafNode<E> extends Node<E> {
     if (_childNodes.length == 0) {
       _convertToLeafNode();
     }
+
+    _recalculateHeight();
   }
 
   clearChildren() {
@@ -123,5 +127,11 @@ class NonLeafNode<E> extends Node<E> {
     newLeafNode.include(this);
     nonLeafParent.removeChild(this);
     nonLeafParent.addChild(newLeafNode);
+  }
+
+  _recalculateHeight() {
+    height = 1 + _childNodes.fold(0, (int greatestHeight, childNode) {
+      return max(greatestHeight, childNode.height);
+    });
   }
 }
