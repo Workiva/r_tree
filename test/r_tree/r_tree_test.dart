@@ -240,18 +240,27 @@ main() {
       test('remove all items and then reload', () {
         final tree = RTree(3);
 
-        final items = <RTreeDatum<String>>[];
+        var items = <RTreeDatum<String>>[];
         for (var i = 0; i < 20; i++) {
           final item = RTreeDatum(Rectangle(0, i, 1, 1), 'Item $i');
           items.add(item);
           tree.insert(item);
         }
 
+        var searchResult = tree.search(Rectangle(0, 0, 1, 20));
+        expect(searchResult, hasLength(20));
+
         for (final item in items) {
           tree.remove(item);
         }
 
+        searchResult = tree.search(Rectangle(0, 0, 1, 20));
+        expect(searchResult, isEmpty);
+
         tree.load(items.sublist(0, 3));
+
+        searchResult = tree.search(Rectangle(0, 0, 1, 20));
+        expect(searchResult, hasLength(3));
       });
     });
   });
@@ -294,12 +303,14 @@ int assertNodeHeightValidity<E>(RTree<E> tree, RTreeContributor contributor) {
   return 0;
 }
 
+// Serializes the tree in a human-readable form for debugging.
 String stringifyTree<E>(RTree<E> tree) {
   final buffer = StringBuffer();
   stringifyNode(buffer, tree.currentRootNode, 0);
   return buffer.toString();
 }
 
+// Serializes the subtree from [contributor] in a humnan-readable form for debugging.
 void stringifyNode<E>(StringBuffer buffer, RTreeContributor contributor, int level) {
   buffer.write('${' ' * level}${contributor.runtimeType}');
   if (contributor is Node<E>) {
