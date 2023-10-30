@@ -236,6 +236,23 @@ main() {
           expect(datum.value, equals('New Initial Item'));
         });
       });
+
+      test('remove all items and then reload', () {
+        final tree = RTree(3);
+
+        final items = <RTreeDatum<String>>[];
+        for (var i = 0; i < 20; i++) {
+          final item = RTreeDatum(Rectangle(0, i, 1, 1), 'Item $i');
+          items.add(item);
+          tree.insert(item);
+        }
+
+        for (final item in items) {
+          tree.remove(item);
+        }
+
+        tree.load(items.sublist(0, 3));
+      });
     });
   });
 }
