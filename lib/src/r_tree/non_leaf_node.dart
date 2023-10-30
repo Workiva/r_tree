@@ -130,8 +130,10 @@ class NonLeafNode<E> extends Node<E> {
   }
 
   _recalculateHeight() {
-    height = 1 + _childNodes.fold(0, (int greatestHeight, childNode) {
+    final maxChildHeight = _childNodes.fold(0, (int greatestHeight, childNode) {
       return max(greatestHeight, childNode.height);
     });
+
+    height = 1 + maxChildHeight;
   }
 }
