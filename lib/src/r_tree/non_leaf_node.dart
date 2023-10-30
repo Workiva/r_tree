@@ -97,7 +97,7 @@ class NonLeafNode<E> extends Node<E> {
 
   clearChildren() {
     _childNodes.clear();
-    _minimumBoundingRect = noMBR;
+    _minimumBoundingRect = null;
   }
 
   Node<E> _getBestNodeForInsert(RTreeDatum<E> item) {

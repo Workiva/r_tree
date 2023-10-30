@@ -58,6 +58,6 @@ class LeafNode<E> extends Node<E> {
 
   clearChildren() {
     _items.clear();
-    _minimumBoundingRect = noMBR;
+    _minimumBoundingRect = null;
   }
 }
