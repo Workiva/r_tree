@@ -16,7 +16,8 @@
 
 part of r_tree;
 
-const noMBR = const Rectangle(0,0,0,0);
+const noMBR = const Rectangle(0, 0, 0, 0);
+
 /// A [Node] is an entry in the [RTree] for a particular rectangle.  This is an
 /// abstract class, see [LeafNode] and [NonLeafNode] for more information.
 abstract class Node<E> extends RTreeContributor {
