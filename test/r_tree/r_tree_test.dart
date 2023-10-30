@@ -246,6 +246,7 @@ main() {
           items.add(item);
           tree.insert(item);
         }
+        assertTreeHeightValidity(tree);
 
         var searchResult = tree.search(Rectangle(0, 0, 1, 20));
         expect(searchResult, hasLength(20));
@@ -253,11 +254,13 @@ main() {
         for (final item in items) {
           tree.remove(item);
         }
+        assertTreeHeightValidity(tree);
 
         searchResult = tree.search(Rectangle(0, 0, 1, 20));
         expect(searchResult, isEmpty);
 
         tree.load(items.sublist(0, 3));
+        assertTreeHeightValidity(tree);
 
         searchResult = tree.search(Rectangle(0, 0, 1, 20));
         expect(searchResult, hasLength(3));
