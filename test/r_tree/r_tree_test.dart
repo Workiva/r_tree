@@ -13,11 +13,12 @@ main() {
         RTreeDatum<String> item = RTreeDatum<String>(Rectangle(0, 0, 1, 1), 'Item 1');
 
         tree.insert(item);
+        assertTreeHeightValidity(tree);
+
         var items = tree.search(item.rect, shouldInclude: (_) => false);
         expect(items, isEmpty);
 
         items = tree.search(item.rect);
-
         expect(items.length, equals(1));
         expect(items.elementAt(0).value, equals('Item 1'));
 
@@ -27,6 +28,7 @@ main() {
           tree.insert(RTreeDatum<String>(Rectangle(0, 0, 1, 1), 'Item 4'));
           tree.insert(RTreeDatum<String>(Rectangle(0, 0, 1, 1), 'Item 5'));
         });
+        assertTreeHeightValidity(tree);
 
         items = tree.search(item.rect);
         expect(items.length, equals(5));
@@ -34,6 +36,7 @@ main() {
         items.forEach((item) {
           tree.remove(item);
         });
+        assertTreeHeightValidity(tree);
 
         items = tree.search((item.rect));
         expect(items.isEmpty, isTrue);
@@ -61,6 +64,7 @@ main() {
           }
 
           addMethod.method(tree, itemsToInsert);
+          assertTreeHeightValidity(tree);
 
           var items = tree.search(Rectangle(0, 0, 1, 3)); // A1:A3
           expect(items.length, equals(1));
@@ -91,6 +95,7 @@ main() {
           }
 
           addMethod.method(tree, itemsToInsert);
+          assertTreeHeightValidity(tree);
 
           var items = tree.search(Rectangle(0, 2, 1, 1));
           expect(items.length, equals(1));
@@ -122,6 +127,7 @@ main() {
           }
 
           addMethod.method(tree, itemsToInsert);
+          assertTreeHeightValidity(tree);
 
           var items = tree.search(Rectangle(31, 27, 1, 1));
           expect(items.length, equals(1));
@@ -134,25 +140,32 @@ main() {
     });
 
     group('Remove', () {
-      test('remove should only remove first occurance of item', () {
+      test('remove should only remove first occurrence of item', () {
         RTree tree = RTree(3);
         RTreeDatum<String> item = RTreeDatum<String>(Rectangle(0, 0, 1, 1), 'Item 1');
 
         tree.insert(item);
         tree.insert(item);
+        assertTreeHeightValidity(tree);
 
         var items = tree.search(item.rect);
         expect(items.length, equals(2));
 
         tree.remove(item);
+        assertTreeHeightValidity(tree);
+
         items = tree.search(item.rect);
         expect(items.length, equals(1));
 
         tree.remove(item);
+        assertTreeHeightValidity(tree);
+
         items = tree.search(item.rect);
         expect(items.length, equals(0));
 
         tree.insert(item);
+        assertTreeHeightValidity(tree);
+
         items = tree.search(item.rect);
         expect(items.length, equals(1));
       });
@@ -168,11 +181,13 @@ main() {
             tree.insert(itemMap[itemId]);
           }
         }
+        assertTreeHeightValidity(tree);
 
         var items = tree.search(itemMap['Item 0:0'].rect);
         expect(items.length, equals(1));
 
         tree.remove(itemMap['Item 0:0']);
+        assertTreeHeightValidity(tree);
 
         items = tree.search(itemMap['Item 0:0'].rect);
         expect(items.length, equals(0));
@@ -181,6 +196,7 @@ main() {
         expect(items.length, equals(1));
 
         tree.remove(itemMap['Item 13:41']);
+        assertTreeHeightValidity(tree);
 
         items = tree.search(itemMap['Item 13:41'].rect);
         expect(items.length, equals(0));
@@ -197,6 +213,7 @@ main() {
             tree.insert(item);
           }
         }
+        assertTreeHeightValidity(tree);
 
         var items = tree.search(Rectangle(0, 0, 50, 50));
         expect(items.length, equals(2500));
@@ -204,12 +221,14 @@ main() {
         data.forEach((RTreeDatum item) {
           tree.remove(item);
         });
+        assertTreeHeightValidity(tree);
 
         items = tree.search(Rectangle(0, 0, 50, 50));
         expect(items.length, equals(0));
 
         //test inserting after removal to ensure new root leaf node functions correctly
         tree.insert(RTreeDatum<String>(Rectangle(0, 0, 1, 1), 'New Initial Item'));
+        assertTreeHeightValidity(tree);
 
         items = tree.search(Rectangle(0, 0, 50, 50));
 
@@ -219,6 +238,61 @@ main() {
       });
     });
   });
+}
+
+void assertTreeHeightValidity<E>(RTree<E> tree) {
+  try {
+    assertNodeHeightValidity(tree, tree.currentRootNode);
+  } on StateError catch (e) {
+    fail('${e.message}\nTree:\n${stringifyTree(tree)}');
+  }
+}
+
+int assertNodeHeightValidity<E>(RTree<E> tree, RTreeContributor contributor) {
+  if (contributor is LeafNode<E>) {
+    if (contributor.height != 1) {
+      throw StateError('Leaf height of ${contributor.height} should be 1.');
+    }
+
+    return 1;
+  } else if (contributor is NonLeafNode<E>) {
+    var maxChildHeight = 0;
+    if (contributor.children.isNotEmpty) {
+      for (final child in contributor.children) {
+        final childHeight = assertNodeHeightValidity(tree, child);
+        if (childHeight > maxChildHeight) {
+          maxChildHeight = childHeight;
+        }
+      }
+    }
+
+    final actualNodeHeight = 1 + maxChildHeight;
+    if (contributor.height != actualNodeHeight) {
+      throw StateError('Non-leaf height of ${contributor.height} should be $actualNodeHeight.');
+    }
+
+    return actualNodeHeight;
+  }
+
+  return 0;
+}
+
+String stringifyTree<E>(RTree<E> tree) {
+  final buffer = StringBuffer();
+  stringifyNode(buffer, tree.currentRootNode, 0);
+  return buffer.toString();
+}
+
+void stringifyNode<E>(StringBuffer buffer, RTreeContributor contributor, int level) {
+  buffer.write('${' ' * level}${contributor.runtimeType}');
+  if (contributor is Node<E>) {
+    buffer.write('(height=${contributor.height}):\n');
+    for (final child in contributor.children) {
+      stringifyNode(buffer, child, level + 1);
+    }
+  } else if (contributor is RTreeDatum<E>) {
+    buffer.write(': ${contributor.value}\n');
+  }
 }
 
 class _InsertCase {
