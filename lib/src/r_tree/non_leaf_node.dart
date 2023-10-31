@@ -116,9 +116,7 @@ class NonLeafNode<E> extends Node<E> {
   }
 
   _updateHeightAndBounds() {
-    this.height = 1 + _childNodes.fold(0, (int greatestHeight, childNode) {
-      return max(greatestHeight, childNode.height);
-    });;
+    this.height = 1 + _childNodes.fold(0, (int greatest, child) => max(greatest, child.height));
 
     updateBoundingRect();
   }
