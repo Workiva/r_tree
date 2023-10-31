@@ -13,7 +13,7 @@ main() {
         RTreeDatum<String> item = RTreeDatum<String>(Rectangle(0, 0, 1, 1), 'Item 1');
 
         tree.insert(item);
-        assertTreeHeightValidity(tree);
+        assertTreeValidity(tree);
 
         var items = tree.search(item.rect, shouldInclude: (_) => false);
         expect(items, isEmpty);
@@ -28,7 +28,7 @@ main() {
           tree.insert(RTreeDatum<String>(Rectangle(0, 0, 1, 1), 'Item 4'));
           tree.insert(RTreeDatum<String>(Rectangle(0, 0, 1, 1), 'Item 5'));
         });
-        assertTreeHeightValidity(tree);
+        assertTreeValidity(tree);
 
         items = tree.search(item.rect);
         expect(items.length, equals(5));
@@ -36,7 +36,7 @@ main() {
         items.forEach((item) {
           tree.remove(item);
         });
-        assertTreeHeightValidity(tree);
+        assertTreeValidity(tree);
 
         items = tree.search((item.rect));
         expect(items.isEmpty, isTrue);
@@ -64,7 +64,7 @@ main() {
           }
 
           addMethod.method(tree, itemsToInsert);
-          assertTreeHeightValidity(tree);
+          assertTreeValidity(tree);
 
           var items = tree.search(Rectangle(0, 0, 1, 3)); // A1:A3
           expect(items.length, equals(1));
@@ -95,7 +95,7 @@ main() {
           }
 
           addMethod.method(tree, itemsToInsert);
-          assertTreeHeightValidity(tree);
+          assertTreeValidity(tree);
 
           var items = tree.search(Rectangle(0, 2, 1, 1));
           expect(items.length, equals(1));
@@ -127,7 +127,7 @@ main() {
           }
 
           addMethod.method(tree, itemsToInsert);
-          assertTreeHeightValidity(tree);
+          assertTreeValidity(tree);
 
           var items = tree.search(Rectangle(31, 27, 1, 1));
           expect(items.length, equals(1));
@@ -146,25 +146,25 @@ main() {
 
         tree.insert(item);
         tree.insert(item);
-        assertTreeHeightValidity(tree);
+        assertTreeValidity(tree);
 
         var items = tree.search(item.rect);
         expect(items.length, equals(2));
 
         tree.remove(item);
-        assertTreeHeightValidity(tree);
+        assertTreeValidity(tree);
 
         items = tree.search(item.rect);
         expect(items.length, equals(1));
 
         tree.remove(item);
-        assertTreeHeightValidity(tree);
+        assertTreeValidity(tree);
 
         items = tree.search(item.rect);
         expect(items.length, equals(0));
 
         tree.insert(item);
-        assertTreeHeightValidity(tree);
+        assertTreeValidity(tree);
 
         items = tree.search(item.rect);
         expect(items.length, equals(1));
@@ -181,13 +181,13 @@ main() {
             tree.insert(itemMap[itemId]);
           }
         }
-        assertTreeHeightValidity(tree);
+        assertTreeValidity(tree);
 
         var items = tree.search(itemMap['Item 0:0'].rect);
         expect(items.length, equals(1));
 
         tree.remove(itemMap['Item 0:0']);
-        assertTreeHeightValidity(tree);
+        assertTreeValidity(tree);
 
         items = tree.search(itemMap['Item 0:0'].rect);
         expect(items.length, equals(0));
@@ -196,7 +196,7 @@ main() {
         expect(items.length, equals(1));
 
         tree.remove(itemMap['Item 13:41']);
-        assertTreeHeightValidity(tree);
+        assertTreeValidity(tree);
 
         items = tree.search(itemMap['Item 13:41'].rect);
         expect(items.length, equals(0));
@@ -213,7 +213,7 @@ main() {
             tree.insert(item);
           }
         }
-        assertTreeHeightValidity(tree);
+        assertTreeValidity(tree);
 
         var items = tree.search(Rectangle(0, 0, 50, 50));
         expect(items.length, equals(2500));
@@ -221,14 +221,14 @@ main() {
         data.forEach((RTreeDatum item) {
           tree.remove(item);
         });
-        assertTreeHeightValidity(tree);
+        assertTreeValidity(tree);
 
         items = tree.search(Rectangle(0, 0, 50, 50));
         expect(items.length, equals(0));
 
         //test inserting after removal to ensure new root leaf node functions correctly
         tree.insert(RTreeDatum<String>(Rectangle(0, 0, 1, 1), 'New Initial Item'));
-        assertTreeHeightValidity(tree);
+        assertTreeValidity(tree);
 
         items = tree.search(Rectangle(0, 0, 50, 50));
 
@@ -246,7 +246,7 @@ main() {
           items.add(item);
           tree.insert(item);
         }
-        assertTreeHeightValidity(tree);
+        assertTreeValidity(tree);
 
         var searchResult = tree.search(Rectangle(0, 0, 1, 20));
         expect(searchResult, hasLength(20));
@@ -254,13 +254,13 @@ main() {
         for (final item in items) {
           tree.remove(item);
         }
-        assertTreeHeightValidity(tree);
+        assertTreeValidity(tree);
 
         searchResult = tree.search(Rectangle(0, 0, 1, 20));
         expect(searchResult, isEmpty);
 
         tree.load(items.sublist(0, 3));
-        assertTreeHeightValidity(tree);
+        assertTreeValidity(tree);
 
         searchResult = tree.search(Rectangle(0, 0, 1, 20));
         expect(searchResult, hasLength(3));
@@ -269,60 +269,127 @@ main() {
   });
 }
 
-void assertTreeHeightValidity<E>(RTree<E> tree) {
+/// Comprehensively assert the consistency of the specified tree, including node height, parent references, and bounding
+/// rectangles.
+void assertTreeValidity<E>(RTree<E> tree) {
   try {
-    assertNodeHeightValidity(tree, tree.currentRootNode);
+    assertNodeValidity(tree, tree.currentRootNode);
   } on StateError catch (e) {
     fail('${e.message}\nTree:\n${stringifyTree(tree)}');
   }
 }
 
-int assertNodeHeightValidity<E>(RTree<E> tree, RTreeContributor contributor) {
+/// Comprehensively assert the consistency of the specified subtree, including node height, parent references, and
+/// bounding rectangles.
+_SubtreeValidationData assertNodeValidity<E>(RTree<E> tree, RTreeContributor contributor) {
   if (contributor is LeafNode<E>) {
-    if (contributor.height != 1) {
-      throw StateError('Leaf height of ${contributor.height} should be 1.');
-    }
-
-    return 1;
+    return assertLeafNodeValidity(tree, contributor);
   } else if (contributor is NonLeafNode<E>) {
-    var maxChildHeight = 0;
-    if (contributor.children.isNotEmpty) {
-      for (final child in contributor.children) {
-        final childHeight = assertNodeHeightValidity(tree, child);
-        if (childHeight > maxChildHeight) {
-          maxChildHeight = childHeight;
-        }
-      }
-    }
-
-    final actualNodeHeight = 1 + maxChildHeight;
-    if (contributor.height != actualNodeHeight) {
-      throw StateError('Non-leaf height of ${contributor.height} should be $actualNodeHeight.');
-    }
-
-    return actualNodeHeight;
+    return assertNonLeafNodeValidity(tree, contributor);
   }
 
-  return 0;
+  // This is a datum
+  return _SubtreeValidationData(0, contributor.rect);
 }
 
-// Serializes the tree in a human-readable form for debugging.
+/// Comprehensively assert the consistency of the subtree rooted at the specified leaf node, including node height,
+/// parent references, and bounding rectangles.
+_SubtreeValidationData assertLeafNodeValidity<E>(RTree<E> tree, LeafNode<E> node) {
+  if (node.height != 1) {
+    throw StateError('Leaf height of ${node.height} should be 1.');
+  }
+
+  const defaultRect = Rectangle<num>(0, 0, 0, 0);
+  var actualRect = defaultRect;
+
+  if (node.children.isNotEmpty) {
+    for (final child in node.children) {
+      // Expand the node's rect to include this child
+      if (actualRect == defaultRect) {
+        actualRect = child.rect;
+      } else {
+        actualRect = actualRect.boundingBox(child.rect);
+      }
+    }
+  }
+
+  // Assert this node's rect/bounds match its actual structure
+  if (node.rect != actualRect) {
+    throw StateError('Leaf rect ${node.rect} should be $actualRect.');
+  }
+
+  return _SubtreeValidationData(1, actualRect);
+}
+
+/// Comprehensively assert the consistency of the subtree rooted at the specified non-leaf node, including node height,
+/// parent references, and bounding rectangles.
+_SubtreeValidationData assertNonLeafNodeValidity<E>(RTree<E> tree, NonLeafNode<E> node) {
+  const defaultRect = Rectangle<num>(0, 0, 0, 0);
+  var actualRect = defaultRect;
+  int? maxChildHeight;
+
+  if (node.children.isNotEmpty) {
+    for (final child in node.children) {
+      if (child.parent != node) {
+        throw StateError("Non-leaf child's parent reference is incorrect.");
+      }
+
+      // Traverse the tree from this child and collect validation data to propagate upwards
+      final childValidationData = assertNodeValidity(tree, child);
+
+      // Expand the node's rect to include this child
+      final childRect = childValidationData.rect;
+      if (actualRect == defaultRect) {
+        actualRect = childRect;
+      } else {
+        actualRect = actualRect.boundingBox(childRect);
+      }
+
+      // Keep track of the greatest child height
+      if (maxChildHeight == null || childValidationData.height > maxChildHeight) {
+        maxChildHeight = childValidationData.height;
+      }
+    }
+  }
+
+  // Assert this node's height matches its actual structure
+  final actualNodeHeight = 1 + (maxChildHeight ?? 0);
+  if (node.height != actualNodeHeight) {
+    throw StateError('Non-leaf height of ${node.height} should be $actualNodeHeight.');
+  }
+
+  // Assert this node's rect/bounds match its actual structure
+  if (node.rect != actualRect) {
+    throw StateError('Non-leaf rect of ${node.rect} should be $actualRect.');
+  }
+
+  return _SubtreeValidationData(actualNodeHeight, actualRect);
+}
+
+/// Values computed for some subtree to be used for asserting rollup-field accuracy.
+class _SubtreeValidationData {
+  final int height;
+  final Rectangle<num> rect;
+  _SubtreeValidationData(this.height, this.rect);
+}
+
+/// Serializes the tree in a human-readable form for debugging.
 String stringifyTree<E>(RTree<E> tree) {
   final buffer = StringBuffer();
   stringifyNode(buffer, tree.currentRootNode, 0);
   return buffer.toString();
 }
 
-// Serializes the subtree from [contributor] in a humnan-readable form for debugging.
+/// Serializes the subtree from [contributor] in a humnan-readable form for debugging.
 void stringifyNode<E>(StringBuffer buffer, RTreeContributor contributor, int level) {
   buffer.write('${' ' * level}${contributor.runtimeType}');
   if (contributor is Node<E>) {
-    buffer.write('(height=${contributor.height}):\n');
+    buffer.write('(height=${contributor.height}, rect=${contributor.rect}):\n');
     for (final child in contributor.children) {
       stringifyNode(buffer, child, level + 1);
     }
   } else if (contributor is RTreeDatum<E>) {
-    buffer.write(': ${contributor.value}\n');
+    buffer.write('(rect=${contributor.rect}): ${contributor.value}\n');
   }
 }
 
