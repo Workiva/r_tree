@@ -30,7 +30,7 @@ abstract class Node<E> extends RTreeContributor {
   /// Parent node of this node, or null if this is the root node
   Node<E>? parent;
 
-  Rectangle? _minimumBoundingRect = null;
+  Rectangle? _minimumBoundingRect;
 
   /// Returns the rectangle this Node covers
   Rectangle get rect {
