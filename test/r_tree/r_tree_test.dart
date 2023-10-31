@@ -215,6 +215,8 @@ main() {
         }
         assertTreeValidity(tree);
 
+        expect(tree.currentRootNode, isA<NonLeafNode<dynamic>>());
+
         var items = tree.search(Rectangle(0, 0, 50, 50));
         expect(items.length, equals(2500));
 
@@ -225,6 +227,8 @@ main() {
 
         items = tree.search(Rectangle(0, 0, 50, 50));
         expect(items.length, equals(0));
+
+        expect(tree.currentRootNode, isA<LeafNode<dynamic>>());
 
         //test inserting after removal to ensure new root leaf node functions correctly
         tree.insert(RTreeDatum<String>(Rectangle(0, 0, 1, 1), 'New Initial Item'));
