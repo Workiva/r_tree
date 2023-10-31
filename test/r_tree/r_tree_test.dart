@@ -332,7 +332,9 @@ _SubtreeValidationData assertNonLeafNodeValidity<E>(RTree<E> tree, NonLeafNode<E
   var actualRect = defaultRect;
   int? maxChildHeight;
 
-  if (node.children.isNotEmpty) {
+  if (node.children.isEmpty) {
+    throw StateError('Non-leaf nodes must have at least one leaf.');
+  } else {
     for (final child in node.children) {
       if (child.parent != node) {
         throw StateError("Non-leaf child's parent reference is incorrect.");
