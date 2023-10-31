@@ -129,21 +129,10 @@ class NonLeafNode<E> extends Node<E> {
   }
 
   _updateHeightAndBounds() {
-    var height = 1;
-    var minimumBoundingRect = const Rectangle<num>(0, 0, 0, 0);
+    this.height = 1 + _childNodes.fold(0, (int greatestHeight, childNode) {
+      return max(greatestHeight, childNode.height);
+    });;
 
-    if (children.isNotEmpty) {
-      height += _childNodes.fold(0, (int greatestHeight, childNode) {
-        return max(greatestHeight, childNode.height);
-      });
-
-      minimumBoundingRect = children.first.rect;
-      for (final child in children.skip(1)) {
-        minimumBoundingRect = minimumBoundingRect.boundingBox(child.rect);
-      }
-    }
-
-    this.height = height;
-    this.rect = minimumBoundingRect;
+    updateBoundingRect();
   }
 }
