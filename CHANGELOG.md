@@ -1,3 +1,11 @@
+## [2.1.3](https://github.com/Workiva/r_tree/compare/2.1.2...2.1.3)
+
+- Fixed a type error that could result from using load to build the tree
+
+## [2.1.2](https://github.com/Workiva/r_tree/compare/2.1.0...2.1.2)
+
+- Dart 2.19
+  
 ## [2.1.0](https://github.com/Workiva/r_tree/compare/2.0.0...2.1.0)
 
 - Added a new "load" API for bulk inserting items into an rtree
