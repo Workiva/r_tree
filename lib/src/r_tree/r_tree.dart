@@ -108,6 +108,7 @@ class RTree<E> {
 
     node.children.add(inode);
     node.updateBoundingRect();
+    inode.parent = node;
 
     // split on node overflow; propagate upwards if necessary
     while (level >= 0) {
@@ -338,5 +339,7 @@ class RTree<E> {
     NonLeafNode<E> newRoot = NonLeafNode<E>(_branchFactor, initialChildNodes: [node1, node2]);
     newRoot.height = _root.height + 1;
     _root = newRoot;
+    node1.parent = _root;
+    node2.parent = _root;
   }
 }
