@@ -323,7 +323,7 @@ class RTree<E> {
 
   Node _boundingBoxForDistribution(Node<E> node, int startChild, int stopChild) {
     final destNode = LeafNode(_branchFactor);
-    destNode.rect = node.children[0].rect;
+    destNode._minimumBoundingRect = node.children[0].rect;
 
     for (int i = startChild; i < stopChild; i++) {
       destNode.extend(node.children[i].rect);
