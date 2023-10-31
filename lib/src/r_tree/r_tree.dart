@@ -164,14 +164,17 @@ class RTree<E> {
     return node;
   }
 
-  Node<E> _build(List<RTreeDatum<E>> items, int left, int right, int height) {
+  Node<E> _build(List<RTreeDatum<E>> items, int left, int right, int height, [NonLeafNode<E>? parent]) {
     final N = right - left + 1;
     var M = _branchFactor;
-    Node<E> node;
+    NonLeafNode<E> node;
 
     if (N <= M) {
       // reached leaf level; return leaf
-      return LeafNode(_branchFactor, initialItems: items.sublist(left, right + 1));
+      return LeafNode(
+        _branchFactor,
+        initialItems: items.sublist(left, right + 1),
+      )..parent = parent;
     }
 
     if (height == 0) {
@@ -182,8 +185,9 @@ class RTree<E> {
       M = (N / pow(M, height - 1)).ceil();
     }
 
-    node = NonLeafNode(_branchFactor);
-    node.height = height;
+    node = NonLeafNode(_branchFactor)
+      ..height = height
+      ..parent = parent;
 
     // split the items into M mostly square tiles
 
@@ -201,7 +205,7 @@ class RTree<E> {
         final right3 = min(j + N2 - 1, right2);
 
         // pack each entry recursively
-        node.children.add(_build(items, j, right3, height - 1));
+        node.children.add(_build(items, j, right3, height - 1, node));
       }
     }
     node.updateBoundingRect();
