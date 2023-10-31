@@ -131,7 +131,7 @@ abstract class Node<E> extends RTreeContributor {
     addChild(seeds.seed1);
 
     Node<E> splitNode = createNewNode();
-    splitNode.height = height + 1;
+    splitNode.height = height;
     splitNode.addChild(seeds.seed2);
 
     _reassignRemainingChildren(remainingChildren, splitNode);
