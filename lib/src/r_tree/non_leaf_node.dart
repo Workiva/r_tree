@@ -124,7 +124,6 @@ class NonLeafNode<E> extends Node<E> {
     if (nonLeafParent == null) return;
 
     var newLeafNode = LeafNode<E>(this.branchFactor);
-    newLeafNode.include(this);
     nonLeafParent.removeChild(this);
     nonLeafParent.addChild(newLeafNode);
   }
