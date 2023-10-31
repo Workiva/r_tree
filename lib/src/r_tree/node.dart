@@ -28,15 +28,8 @@ abstract class Node<E> extends RTreeContributor {
   /// Parent node of this node, or null if this is the root node
   Node<E>? parent;
 
-  Rectangle _minimumBoundingRect = Rectangle(0, 0, 0, 0);
-
   /// Returns the rectangle this Node covers
-  Rectangle get rect {
-    if (_minimumBoundingRect == Rectangle(0, 0, 0, 0)) {
-      updateBoundingRect();
-    }
-    return _minimumBoundingRect;
-  }
+  Rectangle rect = const Rectangle(0, 0, 0, 0);
 
   Node(this.branchFactor);
 
@@ -76,7 +69,7 @@ abstract class Node<E> extends RTreeContributor {
   /// Calculates the cost (increase to _minimumBoundingRect's area)
   /// of adding a new @item to this Node
   num expansionCost(RTreeContributor item) {
-    if (_minimumBoundingRect == Rectangle(0, 0, 0, 0)) {
+    if (rect == const Rectangle(0, 0, 0, 0)) {
       return _area(item.rect);
     }
 
@@ -90,24 +83,23 @@ abstract class Node<E> extends RTreeContributor {
 
   /// Adds the rectangle containing [item] to this node's covered rectangle
   include(RTreeContributor item) {
-    _minimumBoundingRect = _minimumBoundingRect == Rectangle(0, 0, 0, 0) ? item.rect : rect.boundingBox(item.rect);
+    if (rect == const Rectangle(0, 0, 0, 0)) {
+      rect = item.rect;
+    } else {
+      rect = rect.boundingBox(item.rect);
+    }
   }
 
   /// Recalculated the bounding rectangle of this node
   Rectangle updateBoundingRect() {
-    if (children.isEmpty) {
-      return Rectangle(0, 0, 0, 0);
-    } else {
-      _minimumBoundingRect = Rectangle(0, 0, 0, 0);
-      for (var child in children) {
-        include(child);
-      }
-    }
-    return _minimumBoundingRect;
+    rect = const Rectangle(0, 0, 0, 0);
+    children.forEach(include);
+
+    return rect;
   }
 
   void extend(Rectangle b) {
-    _minimumBoundingRect = _minimumBoundingRect.boundingBox(b);
+    rect = rect.boundingBox(b);
   }
 
   /// Determines if this node needs to be split and returns a new [Node] if so, otherwise returns null

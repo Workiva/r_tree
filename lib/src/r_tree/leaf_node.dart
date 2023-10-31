@@ -58,6 +58,6 @@ class LeafNode<E> extends Node<E> {
 
   clearChildren() {
     _items.clear();
-    _minimumBoundingRect = Rectangle(0, 0, 0, 0);
+    rect = const Rectangle(0, 0, 0, 0);
   }
 }
