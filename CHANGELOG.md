@@ -1,3 +1,7 @@
+## [2.1.4](https://github.com/Workiva/r_tree/compare/2.1.3...2.1.4)
+
+- Update CHANGELOG.md
+
 ## [2.1.3](https://github.com/Workiva/r_tree/compare/2.1.2...2.1.3)
 
 - Fixed a type error that could result from using load to build the tree
