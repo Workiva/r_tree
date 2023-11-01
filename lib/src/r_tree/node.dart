@@ -95,15 +95,8 @@ abstract class Node<E> extends RTreeContributor {
 
   /// Recalculated the bounding rectangle of this node
   Rectangle updateBoundingRect() {
-    if (children.isEmpty) {
-      return Rectangle(0, 0, 0, 0);
-    } else {
-      _minimumBoundingRect = Rectangle(0, 0, 0, 0);
-      for (var child in children) {
-        include(child);
-      }
-    }
-    return _minimumBoundingRect;
+    final updatedBoundingRect = getMinimumBoundingRectangle(children.map((e) => e.rect));
+    return _minimumBoundingRect = updatedBoundingRect ?? const Rectangle(0, 0, 0, 0);
   }
 
   void extend(Rectangle b) {

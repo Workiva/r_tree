@@ -3,6 +3,7 @@ library r_tree;
 import 'dart:math';
 
 import 'package:r_tree/r_tree.dart';
+import 'package:r_tree/src/r_tree/rect_util.dart';
 import 'package:test/test.dart';
 
 main() {
@@ -299,19 +300,10 @@ _SubtreeValidationData assertLeafNodeValidity<E>(RTree<E> tree, LeafNode<E> node
     throw StateError('Leaf height of ${node.height} should be 1.');
   }
 
-  const defaultRect = Rectangle<num>(0, 0, 0, 0);
-  var actualRect = defaultRect;
-
-  if (node.children.isNotEmpty) {
-    for (final child in node.children) {
-      // Expand the node's rect to include this child
-      if (actualRect == defaultRect) {
-        actualRect = child.rect;
-      } else {
-        actualRect = actualRect.boundingBox(child.rect);
-      }
-    }
-  }
+  final actualRect = getMinimumBoundingRectangle(
+        node.children.map((child) => child.rect),
+      ) ??
+      const Rectangle<num>(0, 0, 0, 0);
 
   // Assert this node's rect/bounds match its actual structure
   if (node.rect != actualRect) {
@@ -324,36 +316,26 @@ _SubtreeValidationData assertLeafNodeValidity<E>(RTree<E> tree, LeafNode<E> node
 /// Comprehensively assert the consistency of the subtree rooted at the specified non-leaf node, including node height,
 /// parent references, and bounding rectangles.
 _SubtreeValidationData assertNonLeafNodeValidity<E>(RTree<E> tree, NonLeafNode<E> node) {
-  const defaultRect = Rectangle<num>(0, 0, 0, 0);
-  var actualRect = defaultRect;
-  int? maxChildHeight;
-
-  if (node.children.isNotEmpty) {
-    for (final child in node.children) {
-      if (child.parent != node) {
-        throw StateError("Non-leaf child's parent reference is incorrect.");
-      }
-
-      // Traverse the tree from this child and collect validation data to propagate upwards
-      final childValidationData = assertNodeValidity(tree, child);
-
-      // Expand the node's rect to include this child
-      final childRect = childValidationData.rect;
-      if (actualRect == defaultRect) {
-        actualRect = childRect;
-      } else {
-        actualRect = actualRect.boundingBox(childRect);
-      }
-
-      // Keep track of the greatest child height
-      if (maxChildHeight == null || childValidationData.height > maxChildHeight) {
-        maxChildHeight = childValidationData.height;
-      }
+  // Assert parent references for children point back to this node
+  node.children.forEach((child) {
+    if (child.parent != node) {
+      throw StateError("Non-leaf child's parent reference is incorrect.");
     }
-  }
+  });
+
+  // Traverse the tree from this child and collect validation data to propagate upwards
+  final childrenValidationData = node.children.map((child) => assertNodeValidity(tree, child)).toList();
+
+  // Recalculate the actual bounding rectangle for this subtree using validation data
+  final childrenRects = childrenValidationData.map((childValidationData) => childValidationData.rect);
+  final actualRect = getMinimumBoundingRectangle(childrenRects) ?? const Rectangle<num>(0, 0, 0, 0);
+
+  // Recalculate the actual height for this subtree using validation data
+  final compareMaxWithChild = (int maxHeight, _SubtreeValidationData child) => max(maxHeight, child.height);
+  final maxChildHeight = childrenValidationData.fold(0, compareMaxWithChild);
 
   // Assert this node's height matches its actual structure
-  final actualNodeHeight = 1 + (maxChildHeight ?? 0);
+  final actualNodeHeight = 1 + maxChildHeight;
   if (node.height != actualNodeHeight) {
     throw StateError('Non-leaf height of ${node.height} should be $actualNodeHeight.');
   }
