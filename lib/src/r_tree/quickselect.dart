@@ -3,9 +3,9 @@ part of r_tree;
 
 // sort an array so that items come in groups of n unsorted items, with groups sorted between each other;
 // combines selection algorithm with binary divide & conquer approach
-multiSelect<E>(List<E> arr, int left, int right, int n, num Function(E) getter) {
+multiSelect<E>(
+    List<E> arr, int left, int right, int n, int Function(E a, E b) compare) {
   final stack = [left, right];
-  final compare = (E a, E b) => getter(a).compareTo(getter(b));
 
   while (stack.isNotEmpty) {
     right = stack.removeLast();

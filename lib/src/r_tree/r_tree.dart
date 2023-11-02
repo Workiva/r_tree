@@ -190,12 +190,12 @@ class RTree<E> {
     final N2 = (N.toDouble() / M).ceil();
     final N1 = N2 * sqrt(M).ceil();
 
-    multiSelect(items, left, right, N1, (RTreeDatum item) => item.rect.left);
+    multiSelect(items, left, right, N1, _compareRectLeft);
 
     for (int i = left; i <= right; i += N1) {
       final right2 = min(i + N1 - 1, right);
 
-      multiSelect(items, i, right2, N2, (RTreeDatum item) => item.rect.top);
+      multiSelect(items, i, right2, N2, _compareRectTop);
 
       for (int j = i; j <= right2; j += N2) {
         final right3 = min(j + N2 - 1, right2);
@@ -331,8 +331,26 @@ class RTree<E> {
   }
 
   void _growTree(Node<E> node1, Node<E> node2) {
-    NonLeafNode<E> newRoot = NonLeafNode<E>(_branchFactor, initialChildNodes: [node1, node2]);
+    NonLeafNode<E> newRoot =
+        NonLeafNode<E>(_branchFactor, initialChildNodes: [node1, node2]);
     newRoot.height = _root.height + 1;
     _root = newRoot;
   }
 }
+
+@pragma('vm:prefer-inline')
+int _compareNumber(num a, num b) {
+  if (a == b) {
+    return 0;
+  }
+
+  return a > b ? 1 : -1;
+}
+
+@pragma('vm:prefer-inline')
+int _compareRectTop(RTreeDatum a, RTreeDatum b) =>
+    _compareNumber(a.rect.top, b.rect.top);
+
+@pragma('vm:prefer-inline')
+int _compareRectLeft(RTreeDatum a, RTreeDatum b) =>
+    _compareNumber(a.rect.left, b.rect.left);
