@@ -331,8 +331,7 @@ class RTree<E> {
   }
 
   void _growTree(Node<E> node1, Node<E> node2) {
-    NonLeafNode<E> newRoot =
-        NonLeafNode<E>(_branchFactor, initialChildNodes: [node1, node2]);
+    NonLeafNode<E> newRoot = NonLeafNode<E>(_branchFactor, initialChildNodes: [node1, node2]);
     newRoot.height = _root.height + 1;
     _root = newRoot;
   }
@@ -348,9 +347,7 @@ int _compareNumber(num a, num b) {
 }
 
 @pragma('vm:prefer-inline')
-int _compareRectTop(RTreeDatum a, RTreeDatum b) =>
-    _compareNumber(a.rect.top, b.rect.top);
+int _compareRectTop(RTreeDatum a, RTreeDatum b) => _compareNumber(a.rect.top, b.rect.top);
 
 @pragma('vm:prefer-inline')
-int _compareRectLeft(RTreeDatum a, RTreeDatum b) =>
-    _compareNumber(a.rect.left, b.rect.left);
+int _compareRectLeft(RTreeDatum a, RTreeDatum b) => _compareNumber(a.rect.left, b.rect.left);
