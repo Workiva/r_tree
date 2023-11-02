@@ -42,7 +42,7 @@ class NonLeafNode<E> extends Node<E> {
     List<RTreeDatum<E>> overlappingLeafs = [];
 
     for (var childNode in _childNodes) {
-      if (childNode.overlaps(searchRect)) {
+      if (childNode.rect.overlaps(searchRect)) {
         overlappingLeafs.addAll(childNode.search(searchRect, shouldInclude));
       }
     }
@@ -67,7 +67,7 @@ class NonLeafNode<E> extends Node<E> {
     List<Node<E>> childrenToRemove = [];
 
     for (var childNode in _childNodes) {
-      if (childNode.overlaps(item.rect)) {
+      if (childNode.rect.overlaps(item.rect)) {
         childNode.remove(item);
 
         if (childNode.size == 0) {
@@ -97,7 +97,7 @@ class NonLeafNode<E> extends Node<E> {
 
   clearChildren() {
     _childNodes.clear();
-    _minimumBoundingRect = const Rectangle(0, 0, 0, 0);
+    _minimumBoundingRect = null;
   }
 
   Node<E> _getBestNodeForInsert(RTreeDatum<E> item) {

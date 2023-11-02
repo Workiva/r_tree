@@ -44,7 +44,7 @@ class LeafNode<E> extends Node<E> {
 
   Iterable<RTreeDatum<E>> search(Rectangle searchRect, bool Function(E item)? shouldInclude) {
     return _items.where(
-        (RTreeDatum<E> item) => item.overlaps(searchRect) && (shouldInclude == null || shouldInclude(item.value)));
+        (RTreeDatum<E> item) => item.rect.overlaps(searchRect) && (shouldInclude == null || shouldInclude(item.value)));
   }
 
   Node<E>? insert(RTreeDatum<E> item) {
@@ -58,6 +58,6 @@ class LeafNode<E> extends Node<E> {
 
   clearChildren() {
     _items.clear();
-    _minimumBoundingRect = const Rectangle(0, 0, 0, 0);
+    _minimumBoundingRect = null;
   }
 }

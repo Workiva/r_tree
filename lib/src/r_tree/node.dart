@@ -16,9 +16,11 @@
 
 part of r_tree;
 
+const noMBR = Rectangle<num>(0, 0, 0, 0);
+
 /// A [Node] is an entry in the [RTree] for a particular rectangle.  This is an
 /// abstract class, see [LeafNode] and [NonLeafNode] for more information.
-abstract class Node<E> extends RTreeContributor {
+abstract class Node<E> implements RTreeContributor {
   /// The branch factor this node is configured with, which determines when the node should split
   final int branchFactor;
 
@@ -28,10 +30,10 @@ abstract class Node<E> extends RTreeContributor {
   /// Parent node of this node, or null if this is the root node
   Node<E>? parent;
 
-  Rectangle _minimumBoundingRect = Rectangle(0, 0, 0, 0);
+  Rectangle? _minimumBoundingRect;
 
   /// Returns the rectangle this Node covers
-  Rectangle get rect => _minimumBoundingRect;
+  Rectangle get rect => _minimumBoundingRect ?? noMBR;
 
   Node(this.branchFactor);
 
@@ -71,7 +73,7 @@ abstract class Node<E> extends RTreeContributor {
   /// Calculates the cost (increase to _minimumBoundingRect's area)
   /// of adding a new @item to this Node
   num expansionCost(RTreeContributor item) {
-    if (_minimumBoundingRect == const Rectangle(0, 0, 0, 0)) {
+    if (_minimumBoundingRect == null) {
       return _area(item.rect);
     }
 
@@ -85,13 +87,13 @@ abstract class Node<E> extends RTreeContributor {
 
   /// Adds the rectangle containing [item] to this node's covered rectangle
   include(RTreeContributor item) {
-    _minimumBoundingRect = _minimumBoundingRect == Rectangle(0, 0, 0, 0) ? item.rect : rect.boundingBox(item.rect);
+    _minimumBoundingRect = _minimumBoundingRect == null ? item.rect : rect.boundingBox(item.rect);
   }
 
   /// Recalculated the bounding rectangle of this node
   Rectangle updateBoundingRect() {
     if (children.isEmpty) {
-      return _minimumBoundingRect = const Rectangle(0, 0, 0, 0);
+      return _minimumBoundingRect = noMBR;
     }
 
     var updatedBoundingRect = children.first.rect;
@@ -103,7 +105,7 @@ abstract class Node<E> extends RTreeContributor {
   }
 
   void extend(Rectangle b) {
-    _minimumBoundingRect = _minimumBoundingRect.boundingBox(b);
+    _minimumBoundingRect = rect.boundingBox(b);
   }
 
   /// Determines if this node needs to be split and returns a new [Node] if so, otherwise returns null
