@@ -14,7 +14,11 @@
  * limitations under the License.
  */
 
-part of r_tree;
+import 'dart:math';
+
+import 'package:r_tree/src/r_tree/r_tree_contributor.dart';
+import 'package:r_tree/src/r_tree/r_tree_datum.dart';
+import 'package:r_tree/src/r_tree/rectangle_helper.dart';
 
 const noMBR = Rectangle<num>(0, 0, 0, 0);
 
@@ -42,6 +46,8 @@ abstract class Node<E> implements RTreeContributor {
     return _minimumBoundingRect ?? noMBR;
   }
 
+  void setRect(Rectangle<num> rect) => _minimumBoundingRect = rect;
+
   Node(this.branchFactor);
 
   /// Returns an iterable of all items within [searchRect]
@@ -54,7 +60,9 @@ abstract class Node<E> implements RTreeContributor {
   remove(RTreeDatum<E> item);
 
   /// Remove all children from this node
-  clearChildren();
+  clearChildren() {
+    _minimumBoundingRect = null;
+  }
 
   /// Returns a list of all items in this node
   List<RTreeContributor> get children;
@@ -81,14 +89,14 @@ abstract class Node<E> implements RTreeContributor {
   /// of adding a new @item to this Node
   num expansionCost(RTreeContributor item) {
     if (_minimumBoundingRect == null) {
-      return _area(item.rect);
+      return item.rect.area();
     }
 
     Rectangle newRect = rect.boundingBox(item.rect);
-    return _area(newRect) - _area(rect);
+    return newRect.area() - rect.area();
   }
 
-  num area() => _area(rect);
+  num area() => rect.area();
 
   num get margin => (rect.right - rect.left) + (rect.bottom - rect.top);
 
@@ -212,5 +220,3 @@ class _Seeds {
 
   const _Seeds(this.seed1, this.seed2);
 }
-
-num _area(Rectangle rect) => rect.width * rect.height;

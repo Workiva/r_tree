@@ -1,8 +1,7 @@
-library node_test;
-
 import 'dart:math';
 
 import 'package:r_tree/r_tree.dart';
+import 'package:r_tree/src/r_tree/leaf_node.dart';
 import 'package:test/test.dart';
 
 main() {

@@ -14,7 +14,11 @@
  * limitations under the License.
  */
 
-part of r_tree;
+import 'dart:math';
+
+import 'package:r_tree/src/r_tree/node.dart';
+import 'package:r_tree/src/r_tree/r_tree_datum.dart';
+import 'package:r_tree/src/r_tree/rectangle_helper.dart';
 
 /// A [Node] that is a leaf node of the tree.  These are created automatically
 /// by [RTree] when inserting/removing items from the tree.
@@ -57,7 +61,7 @@ class LeafNode<E> extends Node<E> {
   }
 
   clearChildren() {
+    super.clearChildren();
     _items.clear();
-    _minimumBoundingRect = null;
   }
 }

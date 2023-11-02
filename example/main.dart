@@ -1,7 +1,10 @@
 import 'dart:async';
-import 'dart:html';
+import 'dart:html' hide Node;
 import 'dart:math';
 import 'package:r_tree/r_tree.dart';
+import 'package:r_tree/src/r_tree/leaf_node.dart';
+import 'package:r_tree/src/r_tree/node.dart';
+import 'package:r_tree/src/r_tree/non_leaf_node.dart';
 
 Future main() async {
   var rtree = RTree<String>();

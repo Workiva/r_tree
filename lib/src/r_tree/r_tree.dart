@@ -14,7 +14,14 @@
  * limitations under the License.
  */
 
-part of r_tree;
+import 'dart:math';
+
+import 'package:r_tree/src/r_tree/leaf_node.dart';
+import 'package:r_tree/src/r_tree/node.dart';
+import 'package:r_tree/src/r_tree/non_leaf_node.dart';
+import 'package:r_tree/src/r_tree/quickselect.dart';
+import 'package:r_tree/src/r_tree/r_tree_datum.dart';
+import 'package:r_tree/src/r_tree/rectangle_helper.dart';
 
 /// A two dimensional index of data that allows querying by rectangular areas
 class RTree<E> {
@@ -255,7 +262,7 @@ class RTree<E> {
       final bbox2 = _boundingBoxForDistribution(node, i, M);
 
       final intersection = bbox1.rect.intersection(bbox2.rect);
-      final overlap = intersection != null ? _area(intersection) : 0;
+      final overlap = intersection != null ? intersection.area() : 0;
       final area = bbox1.area() + bbox2.area();
 
       // choose distribution with minimum overlap
@@ -318,7 +325,7 @@ class RTree<E> {
 
   Node _boundingBoxForDistribution(Node<E> node, int startChild, int stopChild) {
     final destNode = LeafNode(_branchFactor);
-    destNode._minimumBoundingRect = node.children[0].rect;
+    destNode.setRect(node.children[0].rect);
 
     for (int i = startChild; i < stopChild; i++) {
       destNode.extend(node.children[i].rect);
