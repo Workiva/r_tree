@@ -30,10 +30,10 @@ abstract class Node<E> implements RTreeContributor {
   /// Parent node of this node, or null if this is the root node
   Node<E>? parent;
 
-  Rectangle? _minimumBoundingRect;
+  Rectangle _minimumBoundingRect = noMBR;
 
   /// Returns the rectangle this Node covers
-  Rectangle get rect => _minimumBoundingRect ?? noMBR;
+  Rectangle get rect => _minimumBoundingRect;
 
   Node(this.branchFactor);
 
@@ -73,7 +73,7 @@ abstract class Node<E> implements RTreeContributor {
   /// Calculates the cost (increase to _minimumBoundingRect's area)
   /// of adding a new @item to this Node
   num expansionCost(RTreeContributor item) {
-    if (_minimumBoundingRect == null) {
+    if (_minimumBoundingRect == noMBR) {
       return _area(item.rect);
     }
 
@@ -87,7 +87,7 @@ abstract class Node<E> implements RTreeContributor {
 
   /// Adds the rectangle containing [item] to this node's covered rectangle
   include(RTreeContributor item) {
-    _minimumBoundingRect = _minimumBoundingRect == null ? item.rect : rect.boundingBox(item.rect);
+    _minimumBoundingRect = _minimumBoundingRect == noMBR ? item.rect : rect.boundingBox(item.rect);
   }
 
   /// Recalculated the bounding rectangle of this node
