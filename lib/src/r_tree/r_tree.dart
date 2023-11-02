@@ -37,8 +37,6 @@ class RTree<E> {
     _resetRoot();
   }
 
-  Node<E> get currentRootNode => _root;
-
   /// Removes [item] from the rtree
   remove(RTreeDatum<E> item) {
     _root.remove(item);
@@ -358,3 +356,6 @@ int _compareRectTop(RTreeDatum a, RTreeDatum b) => _compareNumber(a.rect.top, b.
 
 @pragma('vm:prefer-inline')
 int _compareRectLeft(RTreeDatum a, RTreeDatum b) => _compareNumber(a.rect.left, b.rect.left);
+
+/// Helper for example app to generate GraphViz
+Node getCurrentRootNode(RTree tree) => tree._root;

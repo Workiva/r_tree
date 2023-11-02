@@ -5,6 +5,7 @@ import 'package:r_tree/r_tree.dart';
 import 'package:r_tree/src/r_tree/leaf_node.dart';
 import 'package:r_tree/src/r_tree/node.dart';
 import 'package:r_tree/src/r_tree/non_leaf_node.dart';
+import 'package:r_tree/src/r_tree/r_tree.dart';
 
 Future main() async {
   var rtree = RTree<String>();
@@ -156,7 +157,7 @@ Future main() async {
   querySelector('#graphviz')!.onClick.listen((_) {
     var output = querySelector('#output') as PreElement;
 
-    output.innerHtml = toGraphViz(rtree.currentRootNode);
+    output.innerHtml = toGraphViz(getCurrentRootNode(rtree));
   });
 
   querySelector('#copy')!.onClick.listen((_) async {

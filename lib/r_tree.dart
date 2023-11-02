@@ -26,6 +26,6 @@
 /// rectangles or polygons." - http://en.wikipedia.org/wiki/R-tree
 library r_tree;
 
-export 'src/r_tree/r_tree.dart';
-export 'src/r_tree/r_tree_datum.dart';
-export 'src/r_tree/r_tree_contributor.dart';
+export 'src/r_tree/r_tree.dart' show RTree;
+export 'src/r_tree/r_tree_datum.dart' show RTreeDatum;
+export 'src/r_tree/r_tree_contributor.dart' show RTreeContributor;
