@@ -129,7 +129,12 @@ class NonLeafNode<E> extends Node<E> {
   }
 
   _updateHeightAndBounds() {
-    this.height = 1 + _childNodes.fold(0, (int greatest, child) => max(greatest, child.height));
+    var maxChildHeight = 0;
+    for (final childNode in _childNodes) {
+      maxChildHeight = max(maxChildHeight, childNode.height);
+    }
+    this.height = 1 + maxChildHeight;
+
     updateBoundingRect();
   }
 }
