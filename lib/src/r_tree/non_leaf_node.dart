@@ -101,10 +101,11 @@ class NonLeafNode<E> extends Node<E> {
   }
 
   Node<E> _getBestNodeForInsert(RTreeDatum<E> item) {
-    Node<E> bestNode = _childNodes.first;
+    Node<E> bestNode = _childNodes[0];
     num bestCost = bestNode.expansionCost(item);
 
-    for (var child in _childNodes.skip(1)) {
+    for (var i = 1; i < _childNodes.length; i++) {
+      final child = _childNodes[i];
       final tentativeCost = child.expansionCost(item);
       if (tentativeCost < bestCost) {
         bestCost = tentativeCost;

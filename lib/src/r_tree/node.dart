@@ -96,9 +96,9 @@ abstract class Node<E> implements RTreeContributor {
       return _minimumBoundingRect = noMBR;
     }
 
-    var updatedBoundingRect = children.first.rect;
-    for (final child in children.skip(1)) {
-      updatedBoundingRect = updatedBoundingRect.boundingBox(child.rect);
+    var updatedBoundingRect = children[0].rect;
+    for (var i = 1; i < children.length; i++) {
+      updatedBoundingRect = updatedBoundingRect.boundingBox(children[i].rect);
     }
 
     return _minimumBoundingRect = updatedBoundingRect;
