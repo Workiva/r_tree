@@ -92,16 +92,12 @@ class NonLeafNode<E> extends Node<E> {
     super.removeChild(child);
     child.parent = null;
 
-    if (_childNodes.length == 0) {
-      _convertToLeafNode();
-    }
-
     _updateHeightAndBounds();
   }
 
   clearChildren() {
     _childNodes.clear();
-    _minimumBoundingRect = Rectangle(0, 0, 0, 0);
+    _minimumBoundingRect = const Rectangle(0, 0, 0, 0);
   }
 
   Node<E> _getBestNodeForInsert(RTreeDatum<E> item) {
@@ -117,15 +113,6 @@ class NonLeafNode<E> extends Node<E> {
     }
 
     return bestNode;
-  }
-
-  _convertToLeafNode() {
-    var nonLeafParent = parent as NonLeafNode<E>?;
-    if (nonLeafParent == null) return;
-
-    var newLeafNode = LeafNode<E>(this.branchFactor);
-    nonLeafParent.removeChild(this);
-    nonLeafParent.addChild(newLeafNode);
   }
 
   _updateHeightAndBounds() {

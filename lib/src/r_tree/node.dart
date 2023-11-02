@@ -31,12 +31,7 @@ abstract class Node<E> extends RTreeContributor {
   Rectangle _minimumBoundingRect = Rectangle(0, 0, 0, 0);
 
   /// Returns the rectangle this Node covers
-  Rectangle get rect {
-    if (_minimumBoundingRect == Rectangle(0, 0, 0, 0)) {
-      updateBoundingRect();
-    }
-    return _minimumBoundingRect;
-  }
+  Rectangle get rect => _minimumBoundingRect;
 
   Node(this.branchFactor);
 
@@ -76,7 +71,7 @@ abstract class Node<E> extends RTreeContributor {
   /// Calculates the cost (increase to _minimumBoundingRect's area)
   /// of adding a new @item to this Node
   num expansionCost(RTreeContributor item) {
-    if (_minimumBoundingRect == Rectangle(0, 0, 0, 0)) {
+    if (_minimumBoundingRect == const Rectangle(0, 0, 0, 0)) {
       return _area(item.rect);
     }
 
@@ -103,6 +98,7 @@ abstract class Node<E> extends RTreeContributor {
     for (final child in children.skip(1)) {
       updatedBoundingRect = updatedBoundingRect.boundingBox(child.rect);
     }
+
     return _minimumBoundingRect = updatedBoundingRect;
   }
 

@@ -216,6 +216,8 @@ main() {
         }
         assertTreeValidity(tree);
 
+        expect(tree.currentRootNode, isA<NonLeafNode<dynamic>>());
+
         var items = tree.search(Rectangle(0, 0, 50, 50));
         expect(items.length, equals(2500));
 
@@ -226,6 +228,8 @@ main() {
 
         items = tree.search(Rectangle(0, 0, 50, 50));
         expect(items.length, equals(0));
+
+        expect(tree.currentRootNode, isA<LeafNode<dynamic>>());
 
         //test inserting after removal to ensure new root leaf node functions correctly
         tree.insert(RTreeDatum<String>(Rectangle(0, 0, 1, 1), 'New Initial Item'));
@@ -316,6 +320,10 @@ _SubtreeValidationData assertLeafNodeValidity<E>(RTree<E> tree, LeafNode<E> node
 /// Comprehensively assert the consistency of the subtree rooted at the specified non-leaf node, including node height,
 /// parent references, and bounding rectangles.
 _SubtreeValidationData assertNonLeafNodeValidity<E>(RTree<E> tree, NonLeafNode<E> node) {
+  if (node.children.isEmpty) {
+    throw StateError('Non-leaf nodes must have at least one leaf.');
+  }
+
   // Assert parent references for children point back to this node
   node.children.forEach((child) {
     if (child.parent != node) {
