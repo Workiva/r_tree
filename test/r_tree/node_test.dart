@@ -10,7 +10,7 @@ main() {
     group('splitIfNecessary', () {
       test('split should not occur until branchFactor is exceeded', () {
         LeafNode leafNode = LeafNode(10);
-        Map itemMap = Map();
+        Map itemMap = {};
 
         for (int i = 0; i < 4; i++) {
           String itemId = 'Item $i';
@@ -24,7 +24,7 @@ main() {
 
       test('test that split correctly splits a column', () {
         LeafNode leafNode = LeafNode(3);
-        Map itemMap = Map();
+        Map itemMap = {};
 
         for (int i = 0; i < 4; i++) {
           String itemId = 'Item $i';
@@ -51,7 +51,7 @@ main() {
 
       test('test that split correctly splits a row', () {
         LeafNode leafNode = LeafNode(3);
-        Map itemMap = Map();
+        Map itemMap = {};
 
         for (int i = 0; i < 4; i++) {
           String itemId = 'Item $i';
@@ -78,7 +78,7 @@ main() {
 
       test('test that split correctly splits a random cluster', () {
         LeafNode leafNode = LeafNode(3);
-        Map itemMap = Map();
+        Map itemMap = {};
 
         for (int i = 0; i < 4; i++) {
           String itemId = 'Item $i';

@@ -39,7 +39,7 @@ main() {
   collector.collected.forEach((String name, double value) {
     name += (' ' * (longestName - name.length));
     var valueString = value.toStringAsFixed(2);
-    output += '$name\t${' ' * (longestValue.length - valueString.length)}${valueString}\n';
+    output += '$name\t${' ' * (longestValue.length - valueString.length)}$valueString\n';
   });
 
   print(output);
@@ -53,6 +53,7 @@ class InsertBenchmark extends RTreeBenchmarkBase {
   late RTree<String> tree;
   late List<RTreeDatum<String>> datum;
 
+  @override
   void run() {
     tree = RTree<String>(branchFactor);
     for (var data in datum) {
@@ -60,6 +61,7 @@ class InsertBenchmark extends RTreeBenchmarkBase {
     }
   }
 
+  @override
   void setup() {
     Random rand = Random(randomSeed);
     datum = <RTreeDatum<String>>[];
@@ -73,6 +75,7 @@ class InsertBenchmark extends RTreeBenchmarkBase {
     }
   }
 
+  @override
   void teardown() {}
 }
 
@@ -84,11 +87,13 @@ class LoadBenchmark extends RTreeBenchmarkBase {
   late RTree<String> tree;
   late List<RTreeDatum<String>> datum;
 
+  @override
   void run() {
     tree = RTree<String>(branchFactor);
     tree.load(datum);
   }
 
+  @override
   void setup() {
     Random rand = Random(randomSeed);
     datum = <RTreeDatum<String>>[];
@@ -103,6 +108,7 @@ class LoadBenchmark extends RTreeBenchmarkBase {
     datum.shuffle();
   }
 
+  @override
   void teardown() {}
 }
 
@@ -112,6 +118,7 @@ class RemoveBenchmark extends RTreeBenchmarkBase {
   late RTree<String> tree;
   final items = <List<RTreeDatum<String>>>[];
 
+  @override
   void run() {
     for (int i = 0; i < 100; i++) {
       for (int j = 0; j < 50; j++) {
@@ -120,6 +127,7 @@ class RemoveBenchmark extends RTreeBenchmarkBase {
     }
   }
 
+  @override
   void setup() {
     tree = RTree<String>(branchFactor);
 
@@ -137,6 +145,7 @@ class RemoveBenchmark extends RTreeBenchmarkBase {
     }
   }
 
+  @override
   void teardown() {}
 }
 
@@ -154,12 +163,13 @@ class SearchBenchmark extends RTreeBenchmarkBase {
     required this.totalItems,
     this.iterateAll = false,
     this.useLoad = false,
-  }) : super("Search${iterateAll ? '/Iterate' : ''} ${useLoad ? '(using Load)' : '(using Insert)'} ${totalItems}",
+  }) : super("Search${iterateAll ? '/Iterate' : ''} ${useLoad ? '(using Load)' : '(using Insert)'} $totalItems",
             collector);
 
   late RTree<String> tree;
   late int size;
 
+  @override
   void run() {
     for (int x = 0; x < size; x++) {
       for (int y = 0; y < size; y++) {
@@ -174,6 +184,7 @@ class SearchBenchmark extends RTreeBenchmarkBase {
     }
   }
 
+  @override
   void setup() {
     size = sqrt(totalItems).ceil();
     tree = RTree(branchFactor);
@@ -202,6 +213,7 @@ class SearchBenchmark extends RTreeBenchmarkBase {
     }
   }
 
+  @override
   void teardown() {}
 }
 

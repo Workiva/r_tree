@@ -33,6 +33,7 @@ abstract class Node<E> implements RTreeContributor {
   Rectangle _minimumBoundingRect = noMBR;
 
   /// Returns the rectangle this Node covers
+  @override
   Rectangle get rect => _minimumBoundingRect;
 
   Node(this.branchFactor);

@@ -20,6 +20,7 @@ part of r_tree;
 /// by [RTree] when inserting/removing items from the tree.
 class NonLeafNode<E> extends Node<E> {
   late final List<Node<E>> _childNodes;
+  @override
   List<Node<E>> get children => _childNodes;
 
   NonLeafNode(int branchFactor, {List<Node<E>>? initialChildNodes}) : super(branchFactor) {
@@ -34,10 +35,12 @@ class NonLeafNode<E> extends Node<E> {
     }
   }
 
+  @override
   Node<E> createNewNode() {
     return NonLeafNode<E>(branchFactor);
   }
 
+  @override
   Iterable<RTreeDatum<E>> search(Rectangle searchRect, bool Function(E item)? shouldInclude) {
     List<RTreeDatum<E>> overlappingLeafs = [];
 
@@ -50,6 +53,7 @@ class NonLeafNode<E> extends Node<E> {
     return overlappingLeafs;
   }
 
+  @override
   Node<E>? insert(RTreeDatum<E> item) {
     include(item);
 
@@ -63,6 +67,7 @@ class NonLeafNode<E> extends Node<E> {
     return splitIfNecessary();
   }
 
+  @override
   remove(RTreeDatum<E> item) {
     List<Node<E>> childrenToRemove = [];
 
@@ -83,11 +88,13 @@ class NonLeafNode<E> extends Node<E> {
     _updateHeightAndBounds();
   }
 
+  @override
   addChild(Node<E> child) {
     super.addChild(child);
     child.parent = this;
   }
 
+  @override
   removeChild(Node<E> child) {
     super.removeChild(child);
     child.parent = null;
@@ -95,6 +102,7 @@ class NonLeafNode<E> extends Node<E> {
     _updateHeightAndBounds();
   }
 
+  @override
   clearChildren() {
     _childNodes.clear();
     _minimumBoundingRect = noMBR;
@@ -121,7 +129,7 @@ class NonLeafNode<E> extends Node<E> {
     for (final childNode in _childNodes) {
       maxChildHeight = max(maxChildHeight, childNode.height);
     }
-    this.height = 1 + maxChildHeight;
+    height = 1 + maxChildHeight;
 
     updateBoundingRect();
   }

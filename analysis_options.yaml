@@ -1,4 +1,1 @@
-linter:
-  rules:
-    - cancel_subscriptions
-    - close_sinks
+include: package:lints/recommended.yaml

@@ -13,7 +13,7 @@ Future main() async {
     ..fillRect(0, 0, 640, 480);
 
   int? startX, startY, proposedX, proposedY;
-  final draw = () {
+  draw() {
     canvas.context2D.clearRect(0, 0, 700, 500);
     canvas.context2D.strokeStyle = '';
     rtree.search(Rectangle(0, 0, 700, 500)).forEach((node) {
@@ -26,7 +26,7 @@ Future main() async {
       canvas.context2D.strokeStyle = 'black';
       canvas.context2D.strokeRect(startX!, startY!, proposedX! - startX!, proposedY! - startY!);
     }
-  };
+  }
 
   var isDrawing = false;
   canvas.onMouseDown.listen((MouseEvent event) {
@@ -96,22 +96,25 @@ Future main() async {
   final blueButton = querySelector('#blue')!;
   final searchButton = querySelector('#search')!;
   final allButtons = [redButton, greenButton, blueButton, searchButton];
-  final resetAllButtons = () => allButtons.forEach((element) {
-        element.style.background = '';
-      });
+  resetAllButtons() {
+    for (final element in allButtons) {
+      element.style.background = '';
+    }
+  }
+
   redButton.onClick.listen((_) {
     resetAllButtons();
-    currentBrush = '$red';
+    currentBrush = red;
     redButton.style.background = 'darkgray';
   });
   greenButton.onClick.listen((_) {
     resetAllButtons();
-    currentBrush = '$green';
+    currentBrush = green;
     greenButton.style.background = 'darkgray';
   });
   blueButton.onClick.listen((_) {
     resetAllButtons();
-    currentBrush = '$blue';
+    currentBrush = blue;
     blueButton.style.background = 'darkgray';
   });
   searchButton.onClick.listen((_) {
@@ -120,7 +123,7 @@ Future main() async {
     searchButton.style.background = 'darkgray';
   });
 
-  final makeDataset = () {
+  makeDataset() {
     Random rand = Random();
     var datum = <RTreeDatum<String>>[];
     for (int i = 0; i < 300; i++) {
@@ -133,7 +136,7 @@ Future main() async {
       datum.add(item);
     }
     return datum;
-  };
+  }
 
   querySelector('#insert')!.onClick.listen((_) {
     makeDataset().forEach(rtree.insert);
@@ -173,7 +176,7 @@ const String red = '#ff0000$alpha';
 const String green = '#00ff00$alpha';
 const String blue = '#0000ff$alpha';
 const colors = [red, green, blue];
-String currentBrush = '$red';
+String currentBrush = red;
 
 String toGraphViz(Node root) {
   var output = StringBuffer('''digraph r_tree {

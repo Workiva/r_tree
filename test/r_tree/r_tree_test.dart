@@ -22,20 +22,20 @@ main() {
         expect(items.length, equals(1));
         expect(items.elementAt(0).value, equals('Item 1'));
 
-        items.forEach((item) {
+        for (var i = 0; i < items.length; i++) {
           tree.insert(RTreeDatum<String>(Rectangle(0, 0, 1, 1), 'Item 2'));
           tree.insert(RTreeDatum<String>(Rectangle(0, 0, 1, 1), 'Item 3'));
           tree.insert(RTreeDatum<String>(Rectangle(0, 0, 1, 1), 'Item 4'));
           tree.insert(RTreeDatum<String>(Rectangle(0, 0, 1, 1), 'Item 5'));
-        });
+        }
         assertTreeValidity(tree);
 
         items = tree.search(item.rect);
         expect(items.length, equals(5));
 
-        items.forEach((item) {
+        for (var item in items) {
           tree.remove(item);
-        });
+        }
         assertTreeValidity(tree);
 
         items = tree.search((item.rect));
@@ -54,7 +54,7 @@ main() {
       for (final addMethod in addMethods) {
         test('search for 1 cell in large format ranges (${addMethod.name})', () {
           RTree tree = RTree(3);
-          Map itemMap = Map();
+          Map itemMap = {};
           List<RTreeDatum<String>> itemsToInsert = [];
 
           for (int i = 0; i < 10; i++) {
@@ -85,7 +85,7 @@ main() {
 
         test('insert enough items to cause split (${addMethod.name})', () {
           RTree tree = RTree(3);
-          Map itemMap = Map();
+          Map itemMap = {};
           List<RTreeDatum<String>> itemsToInsert = [];
 
           for (int i = 0; i < 5; i++) {
@@ -172,7 +172,7 @@ main() {
 
       test('remove from large tree', () {
         RTree tree = RTree(16);
-        Map itemMap = Map();
+        Map itemMap = {};
 
         for (int i = 0; i < 50; i++) {
           for (int j = 0; j < 50; j++) {
@@ -220,9 +220,9 @@ main() {
         var items = tree.search(Rectangle(0, 0, 50, 50));
         expect(items.length, equals(2500));
 
-        data.forEach((RTreeDatum item) {
+        for (var item in data) {
           tree.remove(item);
-        });
+        }
         assertTreeValidity(tree);
 
         items = tree.search(Rectangle(0, 0, 50, 50));
@@ -236,9 +236,9 @@ main() {
 
         items = tree.search(Rectangle(0, 0, 50, 50));
 
-        items.forEach((datum) {
+        for (var datum in items) {
           expect(datum.value, equals('New Initial Item'));
-        });
+        }
       });
 
       test('remove all items and then reload', () {
@@ -285,7 +285,7 @@ void assertTreeValidity<E>(RTree<E> tree) {
 
 /// Comprehensively assert the consistency of the specified subtree, including node height, parent references, and
 /// bounding rectangles.
-_SubtreeValidationData assertNodeValidity<E>(RTree<E> tree, RTreeContributor contributor) {
+SubtreeValidationData assertNodeValidity<E>(RTree<E> tree, RTreeContributor contributor) {
   if (contributor is LeafNode<E>) {
     return assertLeafNodeValidity(tree, contributor);
   } else if (contributor is NonLeafNode<E>) {
@@ -293,12 +293,12 @@ _SubtreeValidationData assertNodeValidity<E>(RTree<E> tree, RTreeContributor con
   }
 
   // This is a datum
-  return _SubtreeValidationData(0, contributor.rect);
+  return SubtreeValidationData(0, contributor.rect);
 }
 
 /// Comprehensively assert the consistency of the subtree rooted at the specified leaf node, including node height,
 /// parent references, and bounding rectangles.
-_SubtreeValidationData assertLeafNodeValidity<E>(RTree<E> tree, LeafNode<E> node) {
+SubtreeValidationData assertLeafNodeValidity<E>(RTree<E> tree, LeafNode<E> node) {
   if (node.height != 1) {
     throw StateError('Leaf height of ${node.height} should be 1.');
   }
@@ -313,22 +313,22 @@ _SubtreeValidationData assertLeafNodeValidity<E>(RTree<E> tree, LeafNode<E> node
     throw StateError('Leaf rect ${node.rect} should be $actualRect.');
   }
 
-  return _SubtreeValidationData(1, actualRect);
+  return SubtreeValidationData(1, actualRect);
 }
 
 /// Comprehensively assert the consistency of the subtree rooted at the specified non-leaf node, including node height,
 /// parent references, and bounding rectangles.
-_SubtreeValidationData assertNonLeafNodeValidity<E>(RTree<E> tree, NonLeafNode<E> node) {
+SubtreeValidationData assertNonLeafNodeValidity<E>(RTree<E> tree, NonLeafNode<E> node) {
   if (node.children.isEmpty) {
     throw StateError('Non-leaf nodes must have at least one leaf.');
   }
 
   // Assert parent references for children point back to this node
-  node.children.forEach((child) {
+  for (var child in node.children) {
     if (child.parent != node) {
       throw StateError("Non-leaf child's parent reference is incorrect.");
     }
-  });
+  }
 
   // Traverse the tree from this child and collect validation data to propagate upwards
   final childrenValidationData = node.children.map((child) => assertNodeValidity(tree, child)).toList();
@@ -338,7 +338,7 @@ _SubtreeValidationData assertNonLeafNodeValidity<E>(RTree<E> tree, NonLeafNode<E
   final actualRect = getMinimumBoundingRectangle(childrenRects) ?? const Rectangle<num>(0, 0, 0, 0);
 
   // Recalculate the actual height for this subtree using validation data
-  final compareMaxWithChild = (int maxHeight, _SubtreeValidationData child) => max(maxHeight, child.height);
+  compareMaxWithChild(int maxHeight, SubtreeValidationData child) => max(maxHeight, child.height);
   final maxChildHeight = childrenValidationData.fold(0, compareMaxWithChild);
 
   // Assert this node's height matches its actual structure
@@ -352,14 +352,14 @@ _SubtreeValidationData assertNonLeafNodeValidity<E>(RTree<E> tree, NonLeafNode<E
     throw StateError('Non-leaf rect of ${node.rect} should be $actualRect.');
   }
 
-  return _SubtreeValidationData(actualNodeHeight, actualRect);
+  return SubtreeValidationData(actualNodeHeight, actualRect);
 }
 
 /// Values computed for some subtree to be used for asserting rollup-field accuracy.
-class _SubtreeValidationData {
+class SubtreeValidationData {
   final int height;
   final Rectangle<num> rect;
-  _SubtreeValidationData(this.height, this.rect);
+  SubtreeValidationData(this.height, this.rect);
 }
 
 /// Serializes the tree in a human-readable form for debugging.

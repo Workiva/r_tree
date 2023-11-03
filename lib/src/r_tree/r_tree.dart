@@ -36,7 +36,7 @@ class RTree<E> {
   remove(RTreeDatum<E> item) {
     _root.remove(item);
 
-    if (_root.children.length == 0) {
+    if (_root.children.isEmpty) {
       _resetRoot();
     }
   }
@@ -79,7 +79,7 @@ class RTree<E> {
     // recursively build the tree with the given data from scratch using OMT algorithm
     Node<E> node = _build(items, 0, items.length - 1, 0);
 
-    if (_root.children.length == 0) {
+    if (_root.children.isEmpty) {
       // save as is if tree is empty
       _root = node;
     } else if (_root.height == node.height) {
@@ -121,7 +121,9 @@ class RTree<E> {
     }
 
     // fix all the bounding rectangles along the insertion path
-    insertPath.forEach((e) => e.updateBoundingRect());
+    for (var e in insertPath) {
+      e.updateBoundingRect();
+    }
   }
 
   Node<E> _chooseSubtree(Node<E> inode, Node<E> node, int level, List<Node<E>> path) {
@@ -192,18 +194,18 @@ class RTree<E> {
 
     // split the items into M mostly square tiles
 
-    final N2 = (N.toDouble() / M).ceil();
-    final N1 = N2 * sqrt(M).ceil();
+    final n2 = (N.toDouble() / M).ceil();
+    final n1 = n2 * sqrt(M).ceil();
 
-    multiSelect(items, left, right, N1, _compareRectLeft);
+    multiSelect(items, left, right, n1, _compareRectLeft);
 
-    for (int i = left; i <= right; i += N1) {
-      final right2 = min(i + N1 - 1, right);
+    for (int i = left; i <= right; i += n1) {
+      final right2 = min(i + n1 - 1, right);
 
-      multiSelect(items, i, right2, N2, _compareRectTop);
+      multiSelect(items, i, right2, n2, _compareRectTop);
 
-      for (int j = i; j <= right2; j += N2) {
-        final right3 = min(j + N2 - 1, right2);
+      for (int j = i; j <= right2; j += n2) {
+        final right3 = min(j + n2 - 1, right2);
 
         // pack each entry recursively
         node.children.add(_build(items, j, right3, height - 1, node));

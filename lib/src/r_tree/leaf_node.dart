@@ -20,6 +20,7 @@ part of r_tree;
 /// by [RTree] when inserting/removing items from the tree.
 class LeafNode<E> extends Node<E> {
   late final List<RTreeDatum<E>> _items;
+  @override
   List<RTreeDatum<E>> get children => _items;
 
   LeafNode(int branchFactor, {List<RTreeDatum<E>>? initialItems}) : super(branchFactor) {
@@ -38,24 +39,29 @@ class LeafNode<E> extends Node<E> {
   @override
   int get height => 1;
 
+  @override
   Node<E> createNewNode() {
     return LeafNode<E>(branchFactor);
   }
 
+  @override
   Iterable<RTreeDatum<E>> search(Rectangle searchRect, bool Function(E item)? shouldInclude) {
     return _items.where(
         (RTreeDatum<E> item) => item.rect.overlaps(searchRect) && (shouldInclude == null || shouldInclude(item.value)));
   }
 
+  @override
   Node<E>? insert(RTreeDatum<E> item) {
     addChild(item);
     return splitIfNecessary();
   }
 
+  @override
   remove(RTreeDatum<E> item) {
     removeChild(item);
   }
 
+  @override
   clearChildren() {
     _items.clear();
     _minimumBoundingRect = noMBR;
