@@ -3,7 +3,6 @@ library r_tree;
 import 'dart:math';
 
 import 'package:r_tree/r_tree.dart';
-import 'package:r_tree/src/r_tree/rect_util.dart';
 import 'package:test/test.dart';
 
 main() {
@@ -388,4 +387,18 @@ class _InsertCase {
   final String name;
 
   _InsertCase(this.name, this.method);
+}
+
+/// Compute the minimum bounding rectangles of the specified rectangles. Returns null if no rectangles provided.
+Rectangle<E>? getMinimumBoundingRectangle<E extends num>(Iterable<Rectangle<E>> rectangles) {
+  if (rectangles.isEmpty) {
+    return null;
+  }
+
+  var minimumBoundingRectangle = rectangles.first;
+  for (final rectangle in rectangles) {
+    minimumBoundingRectangle = minimumBoundingRectangle.boundingBox(rectangle);
+  }
+
+  return minimumBoundingRectangle;
 }

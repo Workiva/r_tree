@@ -28,8 +28,6 @@ library r_tree;
 
 import 'dart:math';
 
-import 'package:r_tree/src/r_tree/rect_util.dart';
-
 part 'src/r_tree/leaf_node.dart';
 part 'src/r_tree/non_leaf_node.dart';
 part 'src/r_tree/node.dart';
