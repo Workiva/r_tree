@@ -1,4 +1,4 @@
-# RTree ![example workflow](https://github.com/Workiva/r_tree/actions/workflows/dart_ci.yaml/badge.svg)
+# RTree ![Build Status](https://github.com/Workiva/r_tree/actions/workflows/dart_ci.yaml/badge.svg)
 
 A recursive RTree library written in Dart. This R-tree implementation is used to index and query two-dimensional data. Items are inserted and balanced via the RTree class and can then be queried by Rectangle.  The balancing can be tweaked by modifying the branch factor of the RTree.
 
