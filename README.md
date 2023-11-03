@@ -1,4 +1,4 @@
-# RTree [![Build Status](https://travis-ci.org/Workiva/r_tree.svg)](https://travis-ci.org/Workiva/r_tree)
+# RTree ![Build Status](https://github.com/Workiva/r_tree/actions/workflows/dart_ci.yaml/badge.svg)
 
 A recursive RTree library written in Dart. This R-tree implementation is used to index and query two-dimensional data. Items are inserted and balanced via the RTree class and can then be queried by Rectangle.  The balancing can be tweaked by modifying the branch factor of the RTree.
 
@@ -19,4 +19,12 @@ Run the benchmarks in the command line (Dart VM) using:
 dart benchmark/benchmarks.dart
 ```
 
-You can also run them in a browser using dart2js using `webdev serve benchmark` or `webdev build benchmark` and then serving them with your http server of choice.  Click the run button and observe the output in the browser console.
+You can also run them in a browser using dart2js. This takes an extra step since `webdev` will only build the `web` directory as of this writing. You'll also need some binary for serving a directory on a web server, the example below uses `serve`.
+
+```
+cp -R benchmark/ web
+webdev build
+serve build
+```
+
+Click the run button and observe the output in the browser console.
