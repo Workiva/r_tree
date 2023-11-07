@@ -80,7 +80,7 @@ class NonLeafNode<E> extends Node<E> {
       removeChild(child);
     }
 
-    _recalculateHeight();
+    _updateHeightAndBounds();
   }
 
   addChild(Node<E> child) {
@@ -92,23 +92,20 @@ class NonLeafNode<E> extends Node<E> {
     super.removeChild(child);
     child.parent = null;
 
-    if (_childNodes.length == 0) {
-      _convertToLeafNode();
-    }
-
-    _recalculateHeight();
+    _updateHeightAndBounds();
   }
 
   clearChildren() {
     _childNodes.clear();
-    _minimumBoundingRect = null;
+    _minimumBoundingRect = noMBR;
   }
 
   Node<E> _getBestNodeForInsert(RTreeDatum<E> item) {
-    Node<E> bestNode = _childNodes.first;
+    Node<E> bestNode = _childNodes[0];
     num bestCost = bestNode.expansionCost(item);
 
-    for (var child in _childNodes.skip(1)) {
+    for (var i = 1; i < _childNodes.length; i++) {
+      final child = _childNodes[i];
       final tentativeCost = child.expansionCost(item);
       if (tentativeCost < bestCost) {
         bestCost = tentativeCost;
@@ -119,21 +116,13 @@ class NonLeafNode<E> extends Node<E> {
     return bestNode;
   }
 
-  _convertToLeafNode() {
-    var nonLeafParent = parent as NonLeafNode<E>?;
-    if (nonLeafParent == null) return;
+  _updateHeightAndBounds() {
+    var maxChildHeight = 0;
+    for (final childNode in _childNodes) {
+      maxChildHeight = max(maxChildHeight, childNode.height);
+    }
+    this.height = 1 + maxChildHeight;
 
-    var newLeafNode = LeafNode<E>(this.branchFactor);
-    newLeafNode.include(this);
-    nonLeafParent.removeChild(this);
-    nonLeafParent.addChild(newLeafNode);
-  }
-
-  _recalculateHeight() {
-    final maxChildHeight = _childNodes.fold(0, (int greatestHeight, childNode) {
-      return max(greatestHeight, childNode.height);
-    });
-
-    height = 1 + maxChildHeight;
+    updateBoundingRect();
   }
 }

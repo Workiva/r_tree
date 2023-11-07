@@ -51,31 +51,6 @@ main() {
         expect(node.rect, equals(noMBR));
         expect(node.size, equals(0));
       });
-
-      test('converting an empty NonLeafNode to a LeafNode', () {
-        NonLeafNode parentNode = NonLeafNode(3);
-        NonLeafNode node = NonLeafNode(3);
-        node.parent = parentNode;
-        parentNode.addChild(node);
-        LeafNode leaf = LeafNode(3);
-        node.addChild(leaf);
-
-        var datum1 = RTreeDatum(Rectangle(0, 0, 1, 1), '');
-        var datum2 = RTreeDatum(Rectangle(0, 0, 1, 2), '');
-        node.insert(datum1);
-        node.insert(datum2);
-
-        parentNode.children.forEach((node) {
-          expect(node, isA<NonLeafNode>());
-        });
-
-        node.remove(datum1);
-        node.remove(datum2);
-
-        parentNode.children.forEach((node) {
-          expect(node, isA<LeafNode>());
-        });
-      });
     });
   });
 }
