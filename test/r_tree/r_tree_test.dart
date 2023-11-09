@@ -289,6 +289,34 @@ main() {
         tree.load(otherItems);
         assertTreeValidity(tree);
       });
+
+      test('has correct parents and bounds after multiple _splits', () {
+        final tree = RTree(3);
+
+        var items = <RTreeDatum<String>>[];
+        for (var i = 0; i < 1; i++) {
+          final item = RTreeDatum(Rectangle(0, i, 1, 1), 'Item $i');
+          items.add(item);
+        }
+        tree.load(items);
+        assertTreeValidity(tree);
+
+        var otherItems = <RTreeDatum<String>>[];
+        for (var i = 0; i < 20; i++) {
+          final item = RTreeDatum(Rectangle(i+10, 0, 1, 1), 'Item $i');
+          otherItems.add(item);
+        }
+        tree.load(otherItems);
+        assertTreeValidity(tree);
+
+        var secondItems = <RTreeDatum<String>>[];
+        for (var i = 0; i < 3; i++) {
+          final item = RTreeDatum(Rectangle(0, i+10, 1, 1), 'Item $i');
+          secondItems.add(item);
+        }
+        tree.load(secondItems);
+        assertTreeValidity(tree);
+      });
     });
   });
 }

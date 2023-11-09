@@ -121,7 +121,7 @@ class RTree<E> {
     }
 
     // fix all the bounding rectangles along the insertion path
-    insertPath.forEach((e) => e.updateBoundingRect());
+    insertPath.reversed.forEach((e) => e.updateBoundingRect());
   }
 
   Node<E> _chooseSubtree(Node<E> inode, Node<E> node, int level, List<Node<E>> path) {
