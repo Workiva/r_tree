@@ -293,28 +293,75 @@ main() {
       test('has correct parents and bounds after multiple _splits', () {
         final tree = RTree(3);
 
-        var items = <RTreeDatum<String>>[];
-        for (var i = 0; i < 1; i++) {
-          final item = RTreeDatum(Rectangle(0, i, 1, 1), 'Item $i');
-          items.add(item);
-        }
+        var items = <RTreeDatum<String>>[RTreeDatum(Rectangle(0, 0, 1, 1), 'Item 0')];
         tree.load(items);
         assertTreeValidity(tree);
 
-        var otherItems = <RTreeDatum<String>>[];
-        for (var i = 0; i < 20; i++) {
-          final item = RTreeDatum(Rectangle(i + 10, 0, 1, 1), 'Item $i');
-          otherItems.add(item);
-        }
-        tree.load(otherItems);
+        items = List<RTreeDatum<String>>.generate(
+          20,
+          (index) => RTreeDatum(
+            Rectangle(index + 10, 0, 1, 1),
+            'Item $index',
+          ),
+        );
+        ;
+        tree.load(items);
         assertTreeValidity(tree);
 
-        var secondItems = <RTreeDatum<String>>[];
-        for (var i = 0; i < 3; i++) {
-          final item = RTreeDatum(Rectangle(0, i + 10, 1, 1), 'Item $i');
-          secondItems.add(item);
-        }
-        tree.load(secondItems);
+        items = List<RTreeDatum<String>>.generate(
+          3,
+          (index) => RTreeDatum(
+            Rectangle(0, index + 10, 1, 1),
+            'Item $index',
+          ),
+        );
+        tree.load(items);
+        expect(tree.search(Rectangle(0, 0, 50, 50)), hasLength(24));
+        assertTreeValidity(tree);
+      });
+
+      test('returns correct items after multiple load calls', () {
+        final tree = RTree(3);
+
+        var items = <RTreeDatum<String>>[
+          RTreeDatum(
+            Rectangle(0, 0, 1, 1),
+            'Item 0',
+          )
+        ];
+        tree.load(items);
+
+        items = List<RTreeDatum<String>>.generate(
+          20,
+          (i) => RTreeDatum(
+            Rectangle(i, 0, 1, 1),
+            'Item $i',
+          ),
+        );
+        tree.load(items);
+
+        items = List<RTreeDatum<String>>.generate(
+          30,
+          (i) => RTreeDatum(
+            Rectangle(i, 0, 1, 1),
+            'Item $i',
+          ),
+        );
+        tree.load(items);
+
+        items = List<RTreeDatum<String>>.generate(
+          3,
+          (i) => RTreeDatum(
+            Rectangle(0, i, 1, 1),
+            'Item $i',
+          ),
+        );
+        tree.load(items);
+
+        // the test is a bit convoluted but the key here is the search rectangle
+        // intersects what the subtree's rectangle should be but not what it is
+        // if it wasn't recalculated after its children
+        expect(tree.search(Rectangle(0, 1, 20, 100)), hasLength(2));
         assertTreeValidity(tree);
       });
     });
