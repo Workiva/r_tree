@@ -269,6 +269,26 @@ main() {
         searchResult = tree.search(Rectangle(0, 0, 1, 20));
         expect(searchResult, hasLength(3));
       });
+
+      test('has correct parents after _split', () {
+        final tree = RTree(3);
+
+        var items = <RTreeDatum<String>>[];
+        for (var i = 0; i < 1; i++) {
+          final item = RTreeDatum(Rectangle(0, i, 1, 1), 'Item $i');
+          items.add(item);
+        }
+        tree.load(items);
+        assertTreeValidity(tree);
+
+        var otherItems = <RTreeDatum<String>>[];
+        for (var i = 0; i < 20; i++) {
+          final item = RTreeDatum(Rectangle(i+10, 0, 1, 1), 'Item $i');
+          otherItems.add(item);
+        }
+        tree.load(otherItems);
+        assertTreeValidity(tree);
+      });
     });
   });
 }
