@@ -283,7 +283,7 @@ main() {
 
         var otherItems = <RTreeDatum<String>>[];
         for (var i = 0; i < 20; i++) {
-          final item = RTreeDatum(Rectangle(i+10, 0, 1, 1), 'Item $i');
+          final item = RTreeDatum(Rectangle(i + 10, 0, 1, 1), 'Item $i');
           otherItems.add(item);
         }
         tree.load(otherItems);
@@ -303,7 +303,7 @@ main() {
 
         var otherItems = <RTreeDatum<String>>[];
         for (var i = 0; i < 20; i++) {
-          final item = RTreeDatum(Rectangle(i+10, 0, 1, 1), 'Item $i');
+          final item = RTreeDatum(Rectangle(i + 10, 0, 1, 1), 'Item $i');
           otherItems.add(item);
         }
         tree.load(otherItems);
@@ -311,7 +311,7 @@ main() {
 
         var secondItems = <RTreeDatum<String>>[];
         for (var i = 0; i < 3; i++) {
-          final item = RTreeDatum(Rectangle(0, i+10, 1, 1), 'Item $i');
+          final item = RTreeDatum(Rectangle(0, i + 10, 1, 1), 'Item $i');
           secondItems.add(item);
         }
         tree.load(secondItems);
