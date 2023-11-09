@@ -28,7 +28,9 @@ class NonLeafNode<E> extends Node<E> {
         throw ArgumentError('too many items');
       }
       _childNodes = initialChildNodes;
-      _childNodes.forEach((element) { element.parent = this; });
+      _childNodes.forEach((element) {
+        element.parent = this;
+      });
       updateBoundingRect();
     } else {
       _childNodes = [];
