@@ -274,7 +274,7 @@ void main() {
       test('has correct parents after _split', () {
         final tree = RTree(3);
 
-        var items = <RTreeDatum<String>>[];
+        final items = <RTreeDatum<String>>[];
         for (var i = 0; i < 1; i++) {
           final item = RTreeDatum(Rectangle(0, i, 1, 1), 'Item $i');
           items.add(item);
@@ -282,7 +282,7 @@ void main() {
         tree.load(items);
         assertTreeValidity(tree);
 
-        var otherItems = <RTreeDatum<String>>[];
+        final otherItems = <RTreeDatum<String>>[];
         for (var i = 0; i < 20; i++) {
           final item = RTreeDatum(Rectangle(i + 10, 0, 1, 1), 'Item $i');
           otherItems.add(item);
@@ -305,7 +305,6 @@ void main() {
             'Item $index',
           ),
         );
-        ;
         tree.load(items);
         assertTreeValidity(tree);
 
