@@ -46,8 +46,8 @@ class LeafNode<E> extends Node<E> {
 
   @override
   Iterable<RTreeDatum<E>> search(Rectangle searchRect, bool Function(E item)? shouldInclude) {
-    return _items.where(
-        (RTreeDatum<E> item) => item.rect.overlaps(searchRect) && (shouldInclude == null || shouldInclude(item.value)));
+    return _items
+        .where((item) => item.rect.overlaps(searchRect) && (shouldInclude == null || shouldInclude(item.value)));
   }
 
   @override
@@ -57,12 +57,12 @@ class LeafNode<E> extends Node<E> {
   }
 
   @override
-  remove(RTreeDatum<E> item) {
+  void remove(RTreeDatum<E> item) {
     removeChild(item);
   }
 
   @override
-  clearChildren() {
+  void clearChildren() {
     _items.clear();
     _minimumBoundingRect = noMBR;
   }

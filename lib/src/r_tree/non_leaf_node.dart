@@ -42,9 +42,9 @@ class NonLeafNode<E> extends Node<E> {
 
   @override
   Iterable<RTreeDatum<E>> search(Rectangle searchRect, bool Function(E item)? shouldInclude) {
-    List<RTreeDatum<E>> overlappingLeafs = [];
+    final overlappingLeafs = <RTreeDatum<E>>[];
 
-    for (var childNode in _childNodes) {
+    for (final childNode in _childNodes) {
       if (childNode.rect.overlaps(searchRect)) {
         overlappingLeafs.addAll(childNode.search(searchRect, shouldInclude));
       }
@@ -57,8 +57,8 @@ class NonLeafNode<E> extends Node<E> {
   Node<E>? insert(RTreeDatum<E> item) {
     include(item);
 
-    Node<E> bestNode = _getBestNodeForInsert(item);
-    Node<E>? splitNode = bestNode.insert(item);
+    final bestNode = _getBestNodeForInsert(item);
+    final splitNode = bestNode.insert(item);
 
     if (splitNode != null) {
       addChild(splitNode);
@@ -68,10 +68,10 @@ class NonLeafNode<E> extends Node<E> {
   }
 
   @override
-  remove(RTreeDatum<E> item) {
-    List<Node<E>> childrenToRemove = [];
+  void remove(RTreeDatum<E> item) {
+    final childrenToRemove = <Node<E>>[];
 
-    for (var childNode in _childNodes) {
+    for (final childNode in _childNodes) {
       if (childNode.rect.overlaps(item.rect)) {
         childNode.remove(item);
 
@@ -81,7 +81,7 @@ class NonLeafNode<E> extends Node<E> {
       }
     }
 
-    for (var child in childrenToRemove) {
+    for (final child in childrenToRemove) {
       removeChild(child);
     }
 
@@ -89,13 +89,13 @@ class NonLeafNode<E> extends Node<E> {
   }
 
   @override
-  addChild(Node<E> child) {
+  void addChild(Node<E> child) {
     super.addChild(child);
     child.parent = this;
   }
 
   @override
-  removeChild(Node<E> child) {
+  void removeChild(Node<E> child) {
     super.removeChild(child);
     child.parent = null;
 
@@ -103,14 +103,14 @@ class NonLeafNode<E> extends Node<E> {
   }
 
   @override
-  clearChildren() {
+  void clearChildren() {
     _childNodes.clear();
     _minimumBoundingRect = noMBR;
   }
 
   Node<E> _getBestNodeForInsert(RTreeDatum<E> item) {
-    Node<E> bestNode = _childNodes[0];
-    num bestCost = bestNode.expansionCost(item);
+    var bestNode = _childNodes[0];
+    var bestCost = bestNode.expansionCost(item);
 
     for (var i = 1; i < _childNodes.length; i++) {
       final child = _childNodes[i];
@@ -124,7 +124,7 @@ class NonLeafNode<E> extends Node<E> {
     return bestNode;
   }
 
-  _updateHeightAndBounds() {
+  void _updateHeightAndBounds() {
     var maxChildHeight = 0;
     for (final childNode in _childNodes) {
       maxChildHeight = max(maxChildHeight, childNode.height);

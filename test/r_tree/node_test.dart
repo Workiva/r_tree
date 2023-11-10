@@ -5,15 +5,15 @@ import 'dart:math';
 import 'package:r_tree/r_tree.dart';
 import 'package:test/test.dart';
 
-main() {
+void main() {
   group('Node', () {
     group('splitIfNecessary', () {
       test('split should not occur until branchFactor is exceeded', () {
-        LeafNode leafNode = LeafNode(10);
-        Map itemMap = {};
+        final leafNode = LeafNode(10);
+        final itemMap = {};
 
-        for (int i = 0; i < 4; i++) {
-          String itemId = 'Item $i';
+        for (var i = 0; i < 4; i++) {
+          final itemId = 'Item $i';
           itemMap[itemId] = RTreeDatum<String>(Rectangle(0, i, 1, 1), itemId);
           leafNode.addChild(itemMap[itemId]);
         }
@@ -23,18 +23,18 @@ main() {
       });
 
       test('test that split correctly splits a column', () {
-        LeafNode leafNode = LeafNode(3);
-        Map itemMap = {};
+        final leafNode = LeafNode(3);
+        final itemMap = {};
 
-        for (int i = 0; i < 4; i++) {
-          String itemId = 'Item $i';
+        for (var i = 0; i < 4; i++) {
+          final itemId = 'Item $i';
           itemMap[itemId] = RTreeDatum<String>(Rectangle(0, i, 1, 1), itemId);
           leafNode.addChild(itemMap[itemId]);
         }
 
         expect(leafNode.size, equals(4));
 
-        LeafNode splitNode = leafNode.splitIfNecessary() as LeafNode<dynamic>;
+        final splitNode = leafNode.splitIfNecessary()! as LeafNode<dynamic>;
 
         Iterable<RTreeDatum?> items = leafNode.search(Rectangle(0, 0, 1, 10), (_) => true);
         expect(items.length, equals(leafNode.size));
@@ -50,18 +50,18 @@ main() {
       });
 
       test('test that split correctly splits a row', () {
-        LeafNode leafNode = LeafNode(3);
-        Map itemMap = {};
+        final leafNode = LeafNode(3);
+        final itemMap = {};
 
-        for (int i = 0; i < 4; i++) {
-          String itemId = 'Item $i';
+        for (var i = 0; i < 4; i++) {
+          final itemId = 'Item $i';
           itemMap[itemId] = RTreeDatum<String>(Rectangle(i, 0, 1, 1), itemId);
           leafNode.addChild(itemMap[itemId]);
         }
 
         expect(leafNode.size, equals(4));
 
-        LeafNode splitNode = leafNode.splitIfNecessary() as LeafNode<dynamic>;
+        final splitNode = leafNode.splitIfNecessary()! as LeafNode<dynamic>;
 
         Iterable<RTreeDatum?> items = leafNode.search(Rectangle(0, 0, 10, 1), (_) => true);
         expect(items.length, equals(leafNode.size));
@@ -77,18 +77,18 @@ main() {
       });
 
       test('test that split correctly splits a random cluster', () {
-        LeafNode leafNode = LeafNode(3);
-        Map itemMap = {};
+        final leafNode = LeafNode(3);
+        final itemMap = {};
 
-        for (int i = 0; i < 4; i++) {
-          String itemId = 'Item $i';
+        for (var i = 0; i < 4; i++) {
+          final itemId = 'Item $i';
           itemMap[itemId] = RTreeDatum<String>(Rectangle(i, 0, 1, 1), itemId);
           leafNode.addChild(itemMap[itemId]);
         }
 
         expect(leafNode.size, equals(4));
 
-        LeafNode splitNode = leafNode.splitIfNecessary() as LeafNode<dynamic>;
+        final splitNode = leafNode.splitIfNecessary()! as LeafNode<dynamic>;
 
         Iterable<RTreeDatum?> items = leafNode.search(Rectangle(0, 0, 10, 1), (_) => true);
         expect(items.length, equals(leafNode.size));
@@ -106,7 +106,7 @@ main() {
 
     group('expansionCost', () {
       test('expansionCost correctly calculated', () {
-        LeafNode node = LeafNode(3);
+        final node = LeafNode(3);
 
         expect(node.expansionCost(RTreeDatum(Rectangle(0, 0, 1, 1), '')), equals(1));
 

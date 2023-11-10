@@ -33,7 +33,7 @@ class RTree<E> {
   Node<E> get currentRootNode => _root;
 
   /// Removes [item] from the rtree
-  remove(RTreeDatum<E> item) {
+  void remove(RTreeDatum<E> item) {
     _root.remove(item);
 
     if (_root.children.isEmpty) {
@@ -42,7 +42,7 @@ class RTree<E> {
   }
 
   /// Adds [item] to the rtree
-  insert(RTreeDatum<E> item) {
+  void insert(RTreeDatum<E> item) {
     final splitNode = _root.insert(item);
 
     if (splitNode != null) {
@@ -77,7 +77,7 @@ class RTree<E> {
     }
 
     // recursively build the tree with the given data from scratch using OMT algorithm
-    Node<E> node = _build(items, 0, items.length - 1, 0);
+    var node = _build(items, 0, items.length - 1, 0);
 
     if (_root.children.isEmpty) {
       // save as is if tree is empty
@@ -101,7 +101,7 @@ class RTree<E> {
   }
 
   void _insertTree(int level, Node<E> inode) {
-    final List<Node<E>> insertPath = [];
+    final insertPath = <Node<E>>[];
 
     // find the best node for accommodating the item, saving all nodes along the path too
     final node = _chooseSubtree(inode, _root, level, insertPath);
@@ -121,7 +121,7 @@ class RTree<E> {
     }
 
     // fix all the bounding rectangles along the insertion path
-    for (var e in insertPath) {
+    for (final e in insertPath) {
       e.updateBoundingRect();
     }
   }
@@ -199,12 +199,12 @@ class RTree<E> {
 
     multiSelect(items, left, right, n1, _compareRectLeft);
 
-    for (int i = left; i <= right; i += n1) {
+    for (var i = left; i <= right; i += n1) {
       final right2 = min(i + n1 - 1, right);
 
       multiSelect(items, i, right2, n2, _compareRectTop);
 
-      for (int j = i; j <= right2; j += n2) {
+      for (var j = i; j <= right2; j += n2) {
         final right3 = min(j + n2 - 1, right2);
 
         // pack each entry recursively
@@ -327,7 +327,7 @@ class RTree<E> {
     final destNode = LeafNode(_branchFactor);
     destNode._minimumBoundingRect = node.children[0].rect;
 
-    for (int i = startChild; i < stopChild; i++) {
+    for (var i = startChild; i < stopChild; i++) {
       destNode.extend(node.children[i].rect);
     }
     return destNode;
@@ -338,7 +338,7 @@ class RTree<E> {
   }
 
   void _growTree(Node<E> node1, Node<E> node2) {
-    NonLeafNode<E> newRoot = NonLeafNode<E>(_branchFactor, initialChildNodes: [node1, node2]);
+    final newRoot = NonLeafNode<E>(_branchFactor, initialChildNodes: [node1, node2]);
     newRoot.height = _root.height + 1;
     _root = newRoot;
     node1.parent = _root;

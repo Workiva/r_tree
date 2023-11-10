@@ -45,10 +45,10 @@ abstract class Node<E> implements RTreeContributor {
   Node<E>? insert(RTreeDatum<E> item);
 
   /// Removes [item] from this node
-  remove(RTreeDatum<E> item);
+  void remove(RTreeDatum<E> item);
 
   /// Remove all children from this node
-  clearChildren();
+  void clearChildren();
 
   /// Returns a list of all items in this node
   List<RTreeContributor> get children;
@@ -60,13 +60,13 @@ abstract class Node<E> implements RTreeContributor {
   int get size => children.length;
 
   /// Adds [child] to this node
-  addChild(covariant RTreeContributor child) {
+  void addChild(covariant RTreeContributor child) {
     include(child);
     children.add(child);
   }
 
   /// Removes [child] from this node
-  removeChild(covariant RTreeContributor child) {
+  void removeChild(covariant RTreeContributor child) {
     children.remove(child);
     updateBoundingRect();
   }
@@ -78,7 +78,7 @@ abstract class Node<E> implements RTreeContributor {
       return _area(item.rect);
     }
 
-    Rectangle newRect = rect.boundingBox(item.rect);
+    final newRect = rect.boundingBox(item.rect);
     return _area(newRect) - _area(rect);
   }
 
@@ -87,7 +87,7 @@ abstract class Node<E> implements RTreeContributor {
   num get margin => (rect.right - rect.left) + (rect.bottom - rect.top);
 
   /// Adds the rectangle containing [item] to this node's covered rectangle
-  include(RTreeContributor item) {
+  void include(RTreeContributor item) {
     _minimumBoundingRect = _minimumBoundingRect == noMBR ? item.rect : rect.boundingBox(item.rect);
   }
 
@@ -113,16 +113,16 @@ abstract class Node<E> implements RTreeContributor {
   Node<E>? splitIfNecessary() => size > branchFactor ? _split() : null;
 
   Node<E> _split() {
-    _Seeds seeds = _pickSeeds();
+    final seeds = _pickSeeds();
 
     removeChild(seeds.seed1);
     removeChild(seeds.seed2);
-    List<RTreeContributor> remainingChildren = children.toList();
+    final remainingChildren = children.toList();
 
     clearChildren();
     addChild(seeds.seed1);
 
-    Node<E> splitNode = createNewNode();
+    final splitNode = createNewNode();
     splitNode.height = height;
     splitNode.addChild(seeds.seed2);
 
@@ -132,9 +132,9 @@ abstract class Node<E> implements RTreeContributor {
   }
 
   void _reassignRemainingChildren(List<RTreeContributor> remainingChildren, Node<E> splitNode) {
-    for (var child in remainingChildren) {
-      num thisExpansionCost = expansionCost(child);
-      num splitExpansionCost = splitNode.expansionCost(child);
+    for (final child in remainingChildren) {
+      final thisExpansionCost = expansionCost(child);
+      final splitExpansionCost = splitNode.expansionCost(child);
 
       if (thisExpansionCost < splitExpansionCost) {
         this.addChild(child);
@@ -152,12 +152,12 @@ abstract class Node<E> implements RTreeContributor {
     RTreeContributor seed1;
     RTreeContributor seed2;
 
-    RTreeContributor leftmost = children.elementAt(0);
-    RTreeContributor rightmost = children.elementAt(0);
-    RTreeContributor topmost = children.elementAt(0);
-    RTreeContributor bottommost = children.elementAt(0);
+    var leftmost = children.elementAt(0);
+    var rightmost = children.elementAt(0);
+    var topmost = children.elementAt(0);
+    var bottommost = children.elementAt(0);
 
-    for (var child in children) {
+    for (final child in children) {
       if (child.rect.right < leftmost.rect.right) leftmost = child;
       if (child.rect.left > rightmost.rect.left) rightmost = child;
       if (child.rect.top > bottommost.rect.top) bottommost = child;

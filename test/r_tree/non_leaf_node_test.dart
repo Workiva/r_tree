@@ -5,14 +5,14 @@ import 'dart:math';
 import 'package:r_tree/r_tree.dart';
 import 'package:test/test.dart';
 
-main() {
+void main() {
   group('NonLeafNode', () {
     group('createNewNode', () {
       test('test that the right type of Node is created', () {
-        NonLeafNode node = NonLeafNode(10);
+        final node = NonLeafNode(10);
         node.addChild(LeafNode(10));
 
-        Node newNode = node.createNewNode();
+        final newNode = node.createNewNode();
         expect(newNode is NonLeafNode, equals(true));
         expect(newNode.size, equals(0));
         expect(newNode.branchFactor, equals(10));
@@ -21,19 +21,19 @@ main() {
 
     group('addChild/removeChild', () {
       test('adding/clearing children updates the rect', () {
-        NonLeafNode node = NonLeafNode(3);
+        final node = NonLeafNode(3);
 
         expect(node.rect, equals(noMBR));
         expect(node.size, equals(0));
 
-        LeafNode leaf = LeafNode(3);
+        final leaf = LeafNode(3);
         leaf.addChild(RTreeDatum(Rectangle(0, 0, 1, 1), ''));
         node.addChild(leaf);
 
         expect(node.rect, equals(Rectangle(0, 0, 1, 1)));
         expect(node.size, equals(1));
 
-        LeafNode nextChild = LeafNode(3);
+        final nextChild = LeafNode(3);
         nextChild.addChild(RTreeDatum(Rectangle(1, 1, 1, 1), ''));
         node.addChild(nextChild);
 
