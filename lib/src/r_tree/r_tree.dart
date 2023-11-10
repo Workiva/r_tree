@@ -30,6 +30,7 @@ class RTree<E> {
     _resetRoot();
   }
 
+  @Deprecated('For internal use only, removed in next major release')
   Node<E> get currentRootNode => _root;
 
   /// Removes [item] from the rtree

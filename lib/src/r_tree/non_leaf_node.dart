@@ -18,6 +18,7 @@ part of r_tree;
 
 /// A [Node] that is not a leaf end of the [RTree]. These are created automatically
 /// by [RTree] when inserting/removing items from the tree.
+@Deprecated('For internal use only, removed in next major release')
 class NonLeafNode<E> extends Node<E> {
   final List<Node<E>> _childNodes = [];
   List<Node<E>> get children => _childNodes;
