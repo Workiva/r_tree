@@ -33,6 +33,15 @@ class RTree<E> {
   @Deprecated('For internal use only, removed in next major release')
   Node<E> get currentRootNode => _root;
 
+  void add(List<RTreeDatum<E>> items) {
+    if (items.length == 1) {
+      insert(items.first);
+      return;
+    }
+
+    load(items);
+  }
+
   /// Removes [item] from the rtree
   remove(RTreeDatum<E> item) {
     _root.remove(item);
@@ -43,6 +52,7 @@ class RTree<E> {
   }
 
   /// Adds [item] to the rtree
+  @Deprecated('Use add')
   insert(RTreeDatum<E> item) {
     final splitNode = _root.insert(item);
 
@@ -65,6 +75,7 @@ class RTree<E> {
 
   /// Bulk adds all [items] to the rtree. This implementation draws heavily from
   /// https://github.com/mourner/rbush and https://github.com/Zverik/dart_rbush.
+  @Deprecated('Use add')
   void load(List<RTreeDatum<E>> items) {
     if (items.isEmpty) {
       return;
