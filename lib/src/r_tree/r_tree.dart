@@ -265,7 +265,7 @@ class RTree<E> {
     _root.height = node.height + 1;
   }
 
-  int _chooseSplitIndex(Node<E> node, m, M) {
+  int _chooseSplitIndex(Node<E> node, int m, int M) {
     int? index;
     num minOverlap = double.infinity;
     num minArea = double.infinity;
@@ -296,7 +296,7 @@ class RTree<E> {
     return index ?? M - m;
   }
 
-  void _chooseSplitAxis(node, m, M) {
+  void _chooseSplitAxis(Node<E> node, int m, int M) {
     final xMargin = _allDistributionMargins(node, m, M, true);
     final yMargin = _allDistributionMargins(node, m, M, false);
 

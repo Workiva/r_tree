@@ -1,5 +1,5 @@
 include: package:workiva_analysis_options/v2.recommended.yaml
-#analyzer:
-#  strong-mode:
-#    implicit-casts: false
-#    implicit-dynamic: true
+analyzer:
+  strong-mode:
+    implicit-casts: false
+    implicit-dynamic: true

@@ -14,8 +14,9 @@ void main() {
 
         for (var i = 0; i < 4; i++) {
           final itemId = 'Item $i';
-          itemMap[itemId] = RTreeDatum<String>(Rectangle(0, i, 1, 1), itemId);
-          leafNode.addChild(itemMap[itemId]);
+          final item = RTreeDatum<String>(Rectangle(0, i, 1, 1), itemId);
+          itemMap[itemId] = item;
+          leafNode.addChild(item);
         }
 
         expect(leafNode.size, equals(4));
@@ -28,8 +29,9 @@ void main() {
 
         for (var i = 0; i < 4; i++) {
           final itemId = 'Item $i';
-          itemMap[itemId] = RTreeDatum<String>(Rectangle(0, i, 1, 1), itemId);
-          leafNode.addChild(itemMap[itemId]);
+          final item = RTreeDatum<String>(Rectangle(0, i, 1, 1), itemId);
+          itemMap[itemId] = item;
+          leafNode.addChild(item);
         }
 
         expect(leafNode.size, equals(4));
@@ -55,8 +57,9 @@ void main() {
 
         for (var i = 0; i < 4; i++) {
           final itemId = 'Item $i';
-          itemMap[itemId] = RTreeDatum<String>(Rectangle(i, 0, 1, 1), itemId);
-          leafNode.addChild(itemMap[itemId]);
+          final item = RTreeDatum<String>(Rectangle(i, 0, 1, 1), itemId);
+          itemMap[itemId] = item;
+          leafNode.addChild(item);
         }
 
         expect(leafNode.size, equals(4));
@@ -82,8 +85,9 @@ void main() {
 
         for (var i = 0; i < 4; i++) {
           final itemId = 'Item $i';
-          itemMap[itemId] = RTreeDatum<String>(Rectangle(i, 0, 1, 1), itemId);
-          leafNode.addChild(itemMap[itemId]);
+          final item = RTreeDatum<String>(Rectangle(i, 0, 1, 1), itemId);
+          itemMap[itemId] = item;
+          leafNode.addChild(item);
         }
 
         expect(leafNode.size, equals(4));

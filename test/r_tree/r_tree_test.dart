@@ -59,8 +59,9 @@ void main() {
 
           for (var i = 0; i < 10; i++) {
             final itemId = 'Item $i';
-            itemMap[itemId] = RTreeDatum<String>(Rectangle(i, 0, 10 - i, 10), itemId);
-            itemsToInsert.add(itemMap[itemId]);
+            final item = RTreeDatum<String>(Rectangle(i, 0, 10 - i, 10), itemId);
+            itemMap[itemId] = item;
+            itemsToInsert.add(item);
           }
 
           addMethod.method(tree, itemsToInsert);
@@ -172,34 +173,35 @@ void main() {
       });
 
       test('remove from large tree', () {
-        final tree = RTree(16);
-        final itemMap = {};
+        final tree = RTree<String>(16);
+        final itemMap = <String, RTreeDatum<String>>{};
 
         for (var i = 0; i < 50; i++) {
           for (var j = 0; j < 50; j++) {
             final itemId = 'Item $i:$j';
-            itemMap[itemId] = RTreeDatum<String>(Rectangle(i, j, 1, 1), itemId);
-            tree.insert(itemMap[itemId]);
+            final item = RTreeDatum<String>(Rectangle(i, j, 1, 1), itemId);
+            itemMap[itemId] = item;
+            tree.insert(item);
           }
         }
         assertTreeValidity(tree);
 
-        var items = tree.search(itemMap['Item 0:0'].rect);
+        var items = tree.search(itemMap['Item 0:0']!.rect);
         expect(items.length, equals(1));
 
-        tree.remove(itemMap['Item 0:0']);
+        tree.remove(itemMap['Item 0:0']!);
         assertTreeValidity(tree);
 
-        items = tree.search(itemMap['Item 0:0'].rect);
+        items = tree.search(itemMap['Item 0:0']!.rect);
         expect(items.length, equals(0));
 
-        items = tree.search(itemMap['Item 13:41'].rect);
+        items = tree.search(itemMap['Item 13:41']!.rect);
         expect(items.length, equals(1));
 
-        tree.remove(itemMap['Item 13:41']);
+        tree.remove(itemMap['Item 13:41']!);
         assertTreeValidity(tree);
 
-        items = tree.search(itemMap['Item 13:41'].rect);
+        items = tree.search(itemMap['Item 13:41']!.rect);
         expect(items.length, equals(0));
       });
 
