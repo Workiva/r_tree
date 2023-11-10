@@ -16,6 +16,7 @@
 
 part of r_tree;
 
+@Deprecated('For internal use only, removed in next major release')
 const noMBR = Rectangle<num>(0, 0, 0, 0);
 
 /// A [Node] is an entry in the [RTree] for a particular rectangle.  This is an
