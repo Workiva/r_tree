@@ -16,10 +16,12 @@
 
 part of r_tree;
 
+@Deprecated('For internal use only, removed in next major release')
 const noMBR = Rectangle<num>(0, 0, 0, 0);
 
 /// A [Node] is an entry in the [RTree] for a particular rectangle.  This is an
 /// abstract class, see [LeafNode] and [NonLeafNode] for more information.
+@Deprecated('For internal use only, removed in next major release')
 abstract class Node<E> implements RTreeContributor {
   /// The branch factor this node is configured with, which determines when the node should split
   final int branchFactor;
@@ -94,7 +96,8 @@ abstract class Node<E> implements RTreeContributor {
   /// Recalculated the bounding rectangle of this node
   Rectangle updateBoundingRect() {
     if (children.isEmpty) {
-      return _minimumBoundingRect = noMBR;
+      _minimumBoundingRect = noMBR;
+      return _minimumBoundingRect;
     }
 
     var updatedBoundingRect = children[0].rect;
@@ -102,7 +105,8 @@ abstract class Node<E> implements RTreeContributor {
       updatedBoundingRect = updatedBoundingRect.boundingBox(children[i].rect);
     }
 
-    return _minimumBoundingRect = updatedBoundingRect;
+    _minimumBoundingRect = updatedBoundingRect;
+    return _minimumBoundingRect;
   }
 
   void extend(Rectangle b) {

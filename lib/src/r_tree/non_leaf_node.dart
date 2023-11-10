@@ -18,20 +18,19 @@ part of r_tree;
 
 /// A [Node] that is not a leaf end of the [RTree]. These are created automatically
 /// by [RTree] when inserting/removing items from the tree.
+@Deprecated('For internal use only, removed in next major release')
 class NonLeafNode<E> extends Node<E> {
-  late final List<Node<E>> _childNodes;
+  final List<Node<E>> _childNodes = [];
   @override
   List<Node<E>> get children => _childNodes;
 
-  NonLeafNode(int branchFactor, {List<Node<E>>? initialChildNodes}) : super(branchFactor) {
-    if (initialChildNodes != null) {
-      if (initialChildNodes.length > branchFactor) {
-        throw ArgumentError('too many items');
-      }
-      _childNodes = initialChildNodes;
-      updateBoundingRect();
-    } else {
-      _childNodes = [];
+  NonLeafNode(int branchFactor, {List<Node<E>> initialChildNodes = const []}) : super(branchFactor) {
+    if (initialChildNodes.length > branchFactor) {
+      throw ArgumentError('too many items');
+    }
+
+    for (final child in initialChildNodes) {
+      addChild(child);
     }
   }
 

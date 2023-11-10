@@ -1,3 +1,12 @@
+## [2.1.5](https://github.com/Workiva/r_tree/compare/2.1.4...2.1.5)
+
+- Performance improvements
+- Improved correctness of internal state
+- Included PRs:
+  - [Variety of performance improvements](https://github.com/Workiva/r_tree/pull/58)
+  - [Change updateBoundingRect to be non-breaking](https://github.com/Workiva/r_tree/pull/66)
+  - [DT-23494 DT-23495 Strengthen test assertions and correct internal tree node state](https://github.com/Workiva/r_tree/pull/67)
+  
 ## [2.1.4](https://github.com/Workiva/r_tree/compare/2.1.3...2.1.4)
 
 - Update CHANGELOG.md
