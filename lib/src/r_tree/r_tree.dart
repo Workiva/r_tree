@@ -33,6 +33,7 @@ class RTree<E> {
   @Deprecated('For internal use only, removed in next major release')
   Node<E> get currentRootNode => _root;
 
+  /// Adds all [items] to the rtree
   void add(List<RTreeDatum<E>> items) {
     if (items.length == 1) {
       insert(items.first);
