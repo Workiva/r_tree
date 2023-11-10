@@ -1,3 +1,6 @@
+## [2.1.6](https://github.com/Workiva/r_tree/compare/2.1.5...2.1.6)
+ - Fixed a bug in load that could result in incorrect search results
+ 
 ## [2.1.5](https://github.com/Workiva/r_tree/compare/2.1.4...2.1.5)
 
 - Performance improvements
