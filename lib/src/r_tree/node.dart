@@ -146,11 +146,11 @@ abstract class Node<E> implements RTreeContributor {
       final splitExpansionCost = splitNode.expansionCost(child);
 
       if (thisExpansionCost < splitExpansionCost) {
-        this.addChild(child);
+        addChild(child);
       } else if (splitExpansionCost < thisExpansionCost) {
         splitNode.addChild(child);
       } else if (size < splitNode.size) {
-        this.addChild(child);
+        addChild(child);
       } else {
         splitNode.addChild(child);
       }
