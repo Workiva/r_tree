@@ -1,5 +1,7 @@
 ## [2.1.6](https://github.com/Workiva/r_tree/compare/2.1.5...2.1.6)
  - Fixed a bug in load that could result in incorrect search results
+ - New method "add" consolidates insert and load (now deprecated) into a single entry point
+ - Deprecated symbols that weren't intended to be public, Node, multiselect, etc
  
 ## [2.1.5](https://github.com/Workiva/r_tree/compare/2.1.4...2.1.5)
 
