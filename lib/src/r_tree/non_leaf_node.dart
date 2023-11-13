@@ -20,10 +20,11 @@ import 'package:r_tree/src/r_tree/node.dart';
 import 'package:r_tree/src/r_tree/r_tree_datum.dart';
 import 'package:r_tree/src/r_tree/rectangle_helper.dart';
 
-/// A [Node] that is not a leaf end of the [RTree]. These are created automatically
-/// by [RTree] when inserting/removing items from the tree.
+/// A [Node] that is not a leaf end of the tree. These are created automatically
+/// when inserting/removing items from the tree.
 class NonLeafNode<E> extends Node<E> {
   final List<Node<E>> _childNodes = [];
+  @override
   List<Node<E>> get children => _childNodes;
 
   NonLeafNode(int branchFactor, {List<Node<E>> initialChildNodes = const []}) : super(branchFactor) {
@@ -36,14 +37,16 @@ class NonLeafNode<E> extends Node<E> {
     }
   }
 
+  @override
   Node<E> createNewNode() {
     return NonLeafNode<E>(branchFactor);
   }
 
+  @override
   Iterable<RTreeDatum<E>> search(Rectangle searchRect, bool Function(E item)? shouldInclude) {
-    List<RTreeDatum<E>> overlappingLeafs = [];
+    final overlappingLeafs = <RTreeDatum<E>>[];
 
-    for (var childNode in _childNodes) {
+    for (final childNode in _childNodes) {
       if (childNode.rect.overlaps(searchRect)) {
         overlappingLeafs.addAll(childNode.search(searchRect, shouldInclude));
       }
@@ -52,11 +55,12 @@ class NonLeafNode<E> extends Node<E> {
     return overlappingLeafs;
   }
 
+  @override
   Node<E>? insert(RTreeDatum<E> item) {
     include(item);
 
-    Node<E> bestNode = _getBestNodeForInsert(item);
-    Node<E>? splitNode = bestNode.insert(item);
+    final bestNode = _getBestNodeForInsert(item);
+    final splitNode = bestNode.insert(item);
 
     if (splitNode != null) {
       addChild(splitNode);
@@ -65,10 +69,11 @@ class NonLeafNode<E> extends Node<E> {
     return splitIfNecessary();
   }
 
-  remove(RTreeDatum<E> item) {
-    List<Node<E>> childrenToRemove = [];
+  @override
+  void remove(RTreeDatum<E> item) {
+    final childrenToRemove = <Node<E>>[];
 
-    for (var childNode in _childNodes) {
+    for (final childNode in _childNodes) {
       if (childNode.rect.overlaps(item.rect)) {
         childNode.remove(item);
 
@@ -78,33 +83,36 @@ class NonLeafNode<E> extends Node<E> {
       }
     }
 
-    for (var child in childrenToRemove) {
+    for (final child in childrenToRemove) {
       removeChild(child);
     }
 
     _updateHeightAndBounds();
   }
 
-  addChild(Node<E> child) {
+  @override
+  void addChild(Node<E> child) {
     super.addChild(child);
     child.parent = this;
   }
 
-  removeChild(Node<E> child) {
+  @override
+  void removeChild(Node<E> child) {
     super.removeChild(child);
     child.parent = null;
 
     _updateHeightAndBounds();
   }
 
-  clearChildren() {
+  @override
+  void clearChildren() {
     super.clearChildren();
     _childNodes.clear();
   }
 
   Node<E> _getBestNodeForInsert(RTreeDatum<E> item) {
-    Node<E> bestNode = _childNodes[0];
-    num bestCost = bestNode.expansionCost(item);
+    var bestNode = _childNodes[0];
+    var bestCost = bestNode.expansionCost(item);
 
     for (var i = 1; i < _childNodes.length; i++) {
       final child = _childNodes[i];
@@ -118,12 +126,12 @@ class NonLeafNode<E> extends Node<E> {
     return bestNode;
   }
 
-  _updateHeightAndBounds() {
+  void _updateHeightAndBounds() {
     var maxChildHeight = 0;
     for (final childNode in _childNodes) {
       maxChildHeight = max(maxChildHeight, childNode.height);
     }
-    this.height = 1 + maxChildHeight;
+    height = 1 + maxChildHeight;
 
     updateBoundingRect();
   }

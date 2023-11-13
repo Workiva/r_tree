@@ -2,7 +2,7 @@ import 'dart:html';
 
 import 'benchmarks.dart' as benchmarks;
 
-main() {
+void main() {
   final button = querySelector('#runButton')! as ButtonElement;
   button.onClick.listen((_) async {
     button.disabled = true;

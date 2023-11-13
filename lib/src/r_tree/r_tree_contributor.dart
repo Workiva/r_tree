@@ -16,7 +16,7 @@
 
 import 'dart:math';
 
-/// The base definition of an object that exists in an [RTree]
+/// The base definition of an object that exists in a tree
 abstract class RTreeContributor {
   const RTreeContributor();
 
