@@ -22,20 +22,17 @@ import 'package:r_tree/src/r_tree/rectangle_helper.dart';
 
 /// A [Node] that is a leaf node of the tree.  These are created automatically
 /// by [RTree] when inserting/removing items from the tree.
+@Deprecated('For internal use only, removed in next major release')
 class LeafNode<E> extends Node<E> {
-  late final List<RTreeDatum<E>> _items;
+  final List<RTreeDatum<E>> _items = [];
   List<RTreeDatum<E>> get children => _items;
 
-  LeafNode(int branchFactor, {List<RTreeDatum<E>>? initialItems}) : super(branchFactor) {
-    if (initialItems != null) {
-      if (initialItems.length > branchFactor) {
-        throw ArgumentError('too many items');
-      }
-      _items = initialItems;
-
-      updateBoundingRect();
-    } else {
-      _items = [];
+  LeafNode(int branchFactor, {List<RTreeDatum<E>> initialItems = const []}) : super(branchFactor) {
+    if (initialItems.length > branchFactor) {
+      throw ArgumentError('too many items');
+    }
+    for (final item in initialItems) {
+      addChild(item);
     }
   }
 
@@ -63,5 +60,6 @@ class LeafNode<E> extends Node<E> {
   clearChildren() {
     super.clearChildren();
     _items.clear();
+    _minimumBoundingRect = noMBR;
   }
 }

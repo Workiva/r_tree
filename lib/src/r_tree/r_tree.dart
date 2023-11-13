@@ -37,6 +37,16 @@ class RTree<E> {
     _resetRoot();
   }
 
+  /// Adds all [items] to the rtree
+  void add(List<RTreeDatum<E>> items) {
+    if (items.length == 1) {
+      insert(items.first);
+      return;
+    }
+
+    load(items);
+  }
+
   /// Removes [item] from the rtree
   remove(RTreeDatum<E> item) {
     _root.remove(item);
@@ -47,6 +57,7 @@ class RTree<E> {
   }
 
   /// Adds [item] to the rtree
+  @Deprecated('Use add')
   insert(RTreeDatum<E> item) {
     final splitNode = _root.insert(item);
 
@@ -69,6 +80,7 @@ class RTree<E> {
 
   /// Bulk adds all [items] to the rtree. This implementation draws heavily from
   /// https://github.com/mourner/rbush and https://github.com/Zverik/dart_rbush.
+  @Deprecated('Use add')
   void load(List<RTreeDatum<E>> items) {
     if (items.isEmpty) {
       return;
@@ -113,6 +125,7 @@ class RTree<E> {
 
     node.children.add(inode);
     node.updateBoundingRect();
+    inode.parent = node;
 
     // split on node overflow; propagate upwards if necessary
     while (level >= 0) {
@@ -125,7 +138,7 @@ class RTree<E> {
     }
 
     // fix all the bounding rectangles along the insertion path
-    insertPath.forEach((e) => e.updateBoundingRect());
+    insertPath.reversed.forEach((e) => e.updateBoundingRect());
   }
 
   Node<E> _chooseSubtree(Node<E> inode, Node<E> node, int level, List<Node<E>> path) {
@@ -169,14 +182,17 @@ class RTree<E> {
     return node;
   }
 
-  Node<E> _build(List<RTreeDatum<E>> items, int left, int right, int height) {
+  Node<E> _build(List<RTreeDatum<E>> items, int left, int right, int height, [NonLeafNode<E>? parent]) {
     final N = right - left + 1;
     var M = _branchFactor;
-    Node<E> node;
+    NonLeafNode<E> node;
 
     if (N <= M) {
       // reached leaf level; return leaf
-      return LeafNode(_branchFactor, initialItems: items.sublist(left, right + 1));
+      return LeafNode(
+        _branchFactor,
+        initialItems: items.sublist(left, right + 1),
+      )..parent = parent;
     }
 
     if (height == 0) {
@@ -187,8 +203,9 @@ class RTree<E> {
       M = (N / pow(M, height - 1)).ceil();
     }
 
-    node = NonLeafNode(_branchFactor);
-    node.height = height;
+    node = NonLeafNode(_branchFactor)
+      ..height = height
+      ..parent = parent;
 
     // split the items into M mostly square tiles
 
@@ -206,7 +223,7 @@ class RTree<E> {
         final right3 = min(j + N2 - 1, right2);
 
         // pack each entry recursively
-        node.children.add(_build(items, j, right3, height - 1));
+        node.children.add(_build(items, j, right3, height - 1, node));
       }
     }
     node.updateBoundingRect();
@@ -339,6 +356,8 @@ class RTree<E> {
     NonLeafNode<E> newRoot = NonLeafNode<E>(_branchFactor, initialChildNodes: [node1, node2]);
     newRoot.height = _root.height + 1;
     _root = newRoot;
+    node1.parent = _root;
+    node2.parent = _root;
   }
 }
 

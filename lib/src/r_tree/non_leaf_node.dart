@@ -23,19 +23,18 @@ import 'package:r_tree/src/r_tree/rectangle_helper.dart';
 
 /// A [Node] that is not a leaf end of the [RTree]. These are created automatically
 /// by [RTree] when inserting/removing items from the tree.
+@Deprecated('For internal use only, removed in next major release')
 class NonLeafNode<E> extends Node<E> {
-  late final List<Node<E>> _childNodes;
+  final List<Node<E>> _childNodes = [];
   List<Node<E>> get children => _childNodes;
 
-  NonLeafNode(int branchFactor, {List<Node<E>>? initialChildNodes}) : super(branchFactor) {
-    if (initialChildNodes != null) {
-      if (initialChildNodes.length > branchFactor) {
-        throw ArgumentError('too many items');
-      }
-      _childNodes = initialChildNodes;
-      updateBoundingRect();
-    } else {
-      _childNodes = [];
+  NonLeafNode(int branchFactor, {List<Node<E>> initialChildNodes = const []}) : super(branchFactor) {
+    if (initialChildNodes.length > branchFactor) {
+      throw ArgumentError('too many items');
+    }
+
+    for (final child in initialChildNodes) {
+      addChild(child);
     }
   }
 
@@ -85,7 +84,7 @@ class NonLeafNode<E> extends Node<E> {
       removeChild(child);
     }
 
-    _recalculateHeight();
+    _updateHeightAndBounds();
   }
 
   addChild(Node<E> child) {
@@ -97,23 +96,21 @@ class NonLeafNode<E> extends Node<E> {
     super.removeChild(child);
     child.parent = null;
 
-    if (_childNodes.length == 0) {
-      _convertToLeafNode();
-    }
-
-    _recalculateHeight();
+    _updateHeightAndBounds();
   }
 
   clearChildren() {
     super.clearChildren();
     _childNodes.clear();
+    _minimumBoundingRect = noMBR;
   }
 
   Node<E> _getBestNodeForInsert(RTreeDatum<E> item) {
-    Node<E> bestNode = _childNodes.first;
+    Node<E> bestNode = _childNodes[0];
     num bestCost = bestNode.expansionCost(item);
 
-    for (var child in _childNodes.skip(1)) {
+    for (var i = 1; i < _childNodes.length; i++) {
+      final child = _childNodes[i];
       final tentativeCost = child.expansionCost(item);
       if (tentativeCost < bestCost) {
         bestCost = tentativeCost;
@@ -124,21 +121,13 @@ class NonLeafNode<E> extends Node<E> {
     return bestNode;
   }
 
-  _convertToLeafNode() {
-    var nonLeafParent = parent as NonLeafNode<E>?;
-    if (nonLeafParent == null) return;
+  _updateHeightAndBounds() {
+    var maxChildHeight = 0;
+    for (final childNode in _childNodes) {
+      maxChildHeight = max(maxChildHeight, childNode.height);
+    }
+    this.height = 1 + maxChildHeight;
 
-    var newLeafNode = LeafNode<E>(this.branchFactor);
-    newLeafNode.include(this);
-    nonLeafParent.removeChild(this);
-    nonLeafParent.addChild(newLeafNode);
-  }
-
-  _recalculateHeight() {
-    final maxChildHeight = _childNodes.fold(0, (int greatestHeight, childNode) {
-      return max(greatestHeight, childNode.height);
-    });
-
-    height = 1 + maxChildHeight;
+    updateBoundingRect();
   }
 }

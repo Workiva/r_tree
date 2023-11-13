@@ -20,10 +20,12 @@ import 'package:r_tree/src/r_tree/r_tree_contributor.dart';
 import 'package:r_tree/src/r_tree/r_tree_datum.dart';
 import 'package:r_tree/src/r_tree/rectangle_helper.dart';
 
+@Deprecated('For internal use only, removed in next major release')
 const noMBR = Rectangle<num>(0, 0, 0, 0);
 
 /// A [Node] is an entry in the [RTree] for a particular rectangle.  This is an
 /// abstract class, see [LeafNode] and [NonLeafNode] for more information.
+@Deprecated('For internal use only, removed in next major release')
 abstract class Node<E> implements RTreeContributor {
   /// The branch factor this node is configured with, which determines when the node should split
   final int branchFactor;
@@ -34,17 +36,10 @@ abstract class Node<E> implements RTreeContributor {
   /// Parent node of this node, or null if this is the root node
   Node<E>? parent;
 
-  Rectangle? _minimumBoundingRect;
+  Rectangle _minimumBoundingRect = noMBR;
 
   /// Returns the rectangle this Node covers
-  Rectangle get rect {
-    if (_minimumBoundingRect != null) {
-      return _minimumBoundingRect!;
-    }
-
-    updateBoundingRect();
-    return _minimumBoundingRect ?? noMBR;
-  }
+  Rectangle get rect => _minimumBoundingRect;
 
   void setRect(Rectangle<num> rect) => _minimumBoundingRect = rect;
 
@@ -88,7 +83,7 @@ abstract class Node<E> implements RTreeContributor {
   /// Calculates the cost (increase to _minimumBoundingRect's area)
   /// of adding a new @item to this Node
   num expansionCost(RTreeContributor item) {
-    if (_minimumBoundingRect == null) {
+    if (_minimumBoundingRect == noMBR) {
       return item.rect.area();
     }
 
@@ -102,23 +97,23 @@ abstract class Node<E> implements RTreeContributor {
 
   /// Adds the rectangle containing [item] to this node's covered rectangle
   include(RTreeContributor item) {
-    _minimumBoundingRect = _minimumBoundingRect == null ? item.rect : rect.boundingBox(item.rect);
+    _minimumBoundingRect = _minimumBoundingRect == noMBR ? item.rect : rect.boundingBox(item.rect);
   }
 
   /// Recalculated the bounding rectangle of this node
-  void updateBoundingRect() {
+  Rectangle updateBoundingRect() {
     if (children.isEmpty) {
-      _minimumBoundingRect = null;
-      return;
+      _minimumBoundingRect = noMBR;
+      return _minimumBoundingRect;
     }
 
-    var newBoundingRect = children.first.rect;
-    for (var child in children.skip(1)) {
-      newBoundingRect = newBoundingRect.boundingBox(child.rect);
+    var updatedBoundingRect = children[0].rect;
+    for (var i = 1; i < children.length; i++) {
+      updatedBoundingRect = updatedBoundingRect.boundingBox(children[i].rect);
     }
 
-    _minimumBoundingRect = newBoundingRect;
-    return;
+    _minimumBoundingRect = updatedBoundingRect;
+    return _minimumBoundingRect;
   }
 
   void extend(Rectangle b) {
