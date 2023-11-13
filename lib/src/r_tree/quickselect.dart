@@ -1,9 +1,8 @@
 import 'dart:math';
 
-// Port of https://github.com/mourner/quickselect.
-
-// sort an array so that items come in groups of n unsorted items, with groups sorted between each other;
-// combines selection algorithm with binary divide & conquer approach
+/// Port of https://github.com/mourner/quickselect.
+/// sort an array so that items come in groups of n unsorted items, with groups sorted between each other;
+/// combines selection algorithm with binary divide & conquer approach
 multiSelect<E>(List<E> arr, int left, int right, int n, int Function(E a, E b) compare) {
   final stack = [left, right];
 
@@ -44,7 +43,6 @@ multiSelect<E>(List<E> arr, int left, int right, int n, int Function(E a, E b) c
 /// // arr is [39, 28, 28, 33, 21, 12, 22, 50, 53, 56, 59, 65, 90, 77, 95]
 /// //                                         ^^ middle index
 /// ```
-@Deprecated('For internal use only, removed in next major release')
 void quickSelect<T>(List<T> arr, int k, int left, int right, Comparator<T> compare) {
   if (arr.isEmpty) {
     return;

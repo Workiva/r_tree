@@ -89,7 +89,7 @@ Future main() async {
         resultList.append(LIElement()..innerHtml = 'No results in $rectangle');
       }
     } else {
-      rtree.insert(RTreeDatum(rectangle, currentBrush));
+      rtree.add([RTreeDatum(rectangle, currentBrush)]);
     }
 
     draw();
@@ -140,12 +140,12 @@ Future main() async {
   };
 
   querySelector('#insert')!.onClick.listen((_) {
-    makeDataset().forEach(rtree.insert);
+    makeDataset().forEach((item) => rtree.add([item]));
     draw();
   });
 
   querySelector('#load')!.onClick.listen((_) {
-    rtree.load(makeDataset());
+    rtree.add(makeDataset());
     draw();
   });
 

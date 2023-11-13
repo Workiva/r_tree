@@ -20,12 +20,10 @@ import 'package:r_tree/src/r_tree/r_tree_contributor.dart';
 import 'package:r_tree/src/r_tree/r_tree_datum.dart';
 import 'package:r_tree/src/r_tree/rectangle_helper.dart';
 
-@Deprecated('For internal use only, removed in next major release')
 const noMBR = Rectangle<num>(0, 0, 0, 0);
 
 /// A [Node] is an entry in the [RTree] for a particular rectangle.  This is an
 /// abstract class, see [LeafNode] and [NonLeafNode] for more information.
-@Deprecated('For internal use only, removed in next major release')
 abstract class Node<E> implements RTreeContributor {
   /// The branch factor this node is configured with, which determines when the node should split
   final int branchFactor;
@@ -56,7 +54,7 @@ abstract class Node<E> implements RTreeContributor {
 
   /// Remove all children from this node
   clearChildren() {
-    _minimumBoundingRect = null;
+    _minimumBoundingRect = noMBR;
   }
 
   /// Returns a list of all items in this node

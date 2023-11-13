@@ -56,7 +56,7 @@ class InsertBenchmark extends RTreeBenchmarkBase {
   void run() {
     tree = RTree<String>(branchFactor);
     for (var data in datum) {
-      tree.insert(data);
+      tree.add([data]);
     }
   }
 
@@ -86,7 +86,7 @@ class LoadBenchmark extends RTreeBenchmarkBase {
 
   void run() {
     tree = RTree<String>(branchFactor);
-    tree.load(datum);
+    tree.add(datum);
   }
 
   void setup() {
@@ -132,7 +132,7 @@ class RemoveBenchmark extends RTreeBenchmarkBase {
         Rectangle rect = Rectangle(i, j, 1, 1);
         final datum = RTreeDatum<String>(rect, 'item $i:$j');
         items[i].add(datum);
-        tree.insert(datum);
+        tree.add([datum]);
       }
     }
   }
@@ -196,9 +196,9 @@ class SearchBenchmark extends RTreeBenchmarkBase {
     }
 
     if (useLoad) {
-      tree.load(datum);
+      tree.add(datum);
     } else {
-      datum.forEach(tree.insert);
+      datum.forEach((item) => tree.add([item]));
     }
   }
 

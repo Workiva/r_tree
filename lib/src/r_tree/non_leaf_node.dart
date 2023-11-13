@@ -16,14 +16,12 @@
 
 import 'dart:math';
 
-import 'package:r_tree/src/r_tree/leaf_node.dart';
 import 'package:r_tree/src/r_tree/node.dart';
 import 'package:r_tree/src/r_tree/r_tree_datum.dart';
 import 'package:r_tree/src/r_tree/rectangle_helper.dart';
 
 /// A [Node] that is not a leaf end of the [RTree]. These are created automatically
 /// by [RTree] when inserting/removing items from the tree.
-@Deprecated('For internal use only, removed in next major release')
 class NonLeafNode<E> extends Node<E> {
   final List<Node<E>> _childNodes = [];
   List<Node<E>> get children => _childNodes;
@@ -102,7 +100,6 @@ class NonLeafNode<E> extends Node<E> {
   clearChildren() {
     super.clearChildren();
     _childNodes.clear();
-    _minimumBoundingRect = noMBR;
   }
 
   Node<E> _getBestNodeForInsert(RTreeDatum<E> item) {
