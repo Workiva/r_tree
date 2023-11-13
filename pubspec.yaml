@@ -4,7 +4,7 @@ description: R-tree implementation to index and query two-dimensional data
 homepage: https://github.com/Workiva/r_tree
 
 environment:
-  sdk: '>=2.12.0 <3.0.0'
+  sdk: '>=2.12.0 <4.0.0'
 
 dev_dependencies:
   benchmark_harness: any
