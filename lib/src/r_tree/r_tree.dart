@@ -58,7 +58,7 @@ class RTree<E> {
 
   /// Adds [item] to the rtree
   void _insert(RTreeDatum<E> item) {
-    final splitNode = this._root.insert(item);
+    final splitNode = _root.insert(item);
 
     if (splitNode != null) {
       _growTree(_root, splitNode);
