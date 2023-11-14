@@ -40,8 +40,6 @@ abstract class Node<E> implements RTreeContributor {
   @override
   Rectangle get rect => _minimumBoundingRect;
 
-  void setRect(Rectangle<num> rect) => _minimumBoundingRect = rect;
-
   Node(this.branchFactor);
 
   /// Returns an iterable of all items within [searchRect]
@@ -91,8 +89,6 @@ abstract class Node<E> implements RTreeContributor {
   }
 
   num area() => rect.area();
-
-  num get margin => (rect.right - rect.left) + (rect.bottom - rect.top);
 
   /// Adds the rectangle containing [item] to this node's covered rectangle
   void include(RTreeContributor item) {

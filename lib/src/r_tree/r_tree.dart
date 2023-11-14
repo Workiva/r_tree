@@ -276,7 +276,7 @@ class RTree<E> {
       final bbox1 = _boundingBoxForDistribution(node, 0, i);
       final bbox2 = _boundingBoxForDistribution(node, i, M);
 
-      final intersection = bbox1.rect.intersection(bbox2.rect);
+      final intersection = bbox1.intersection(bbox2);
       final overlap = intersection != null ? intersection.area() : 0;
       final area = bbox1.area() + bbox2.area();
 
@@ -323,29 +323,28 @@ class RTree<E> {
 
     final leftBoundingBox = _boundingBoxForDistribution(node, 0, m);
     final rightBoundingBox = _boundingBoxForDistribution(node, M - m, M);
-    var margin = leftBoundingBox.margin + rightBoundingBox.margin;
+    num calculateMargin(Rectangle rect) => (rect.right - rect.left) + (rect.bottom - rect.top);
+
+    var margin = calculateMargin(leftBoundingBox) + calculateMargin(rightBoundingBox);
 
     for (var i = m; i < M - m; i++) {
-      leftBoundingBox.extend(node is LeafNode ? node.children[i].rect : node.children[i].rect);
-      margin += leftBoundingBox.margin;
+      leftBoundingBox.boundingBox(node is LeafNode ? node.children[i].rect : node.children[i].rect);
+      margin += calculateMargin(leftBoundingBox);
     }
 
     for (var i = M - m - 1; i >= m; i--) {
-      rightBoundingBox.extend(node.children[i].rect);
-      margin += rightBoundingBox.margin;
+      rightBoundingBox.boundingBox(node.children[i].rect);
+      margin += calculateMargin(rightBoundingBox);
     }
 
     return margin;
   }
 
-  Node _boundingBoxForDistribution(Node<E> node, int startChild, int stopChild) {
-    final destNode = LeafNode(_branchFactor);
-    destNode.setRect(node.children[0].rect);
-
-    for (var i = startChild; i < stopChild; i++) {
-      destNode.extend(node.children[i].rect);
-    }
-    return destNode;
+  Rectangle _boundingBoxForDistribution(Node<E> node, int startChild, int stopChild) {
+    return node.children.sublist(startChild, stopChild).fold(
+          node.children[startChild].rect,
+          (previousValue, element) => previousValue.boundingBox(element.rect),
+        );
   }
 
   void _resetRoot() {
