@@ -43,7 +43,7 @@ abstract class Node<E> implements RTreeContributor {
   Node(this.branchFactor);
 
   /// Returns an iterable of all items within [searchRect]
-  Iterable<RTreeDatum<E>> search(Rectangle searchRect, bool Function(E item)? shouldInclude);
+  List<RTreeDatum<E>> search(Rectangle searchRect, bool Function(E item)? shouldInclude);
 
   /// Inserts [item] into the node. If the insertion causes a split to occur, the split node will be returned, otherwise null is returned.
   Node<E>? insert(RTreeDatum<E> item);

@@ -45,9 +45,10 @@ class LeafNode<E> extends Node<E> {
   }
 
   @override
-  Iterable<RTreeDatum<E>> search(Rectangle searchRect, bool Function(E item)? shouldInclude) {
+  List<RTreeDatum<E>> search(Rectangle searchRect, bool Function(E item)? shouldInclude) {
     return _items
-        .where((item) => item.rect.overlaps(searchRect) && (shouldInclude == null || shouldInclude(item.value)));
+        .where((item) => item.rect.overlaps(searchRect) && (shouldInclude == null || shouldInclude(item.value)))
+        .toList();
   }
 
   @override
