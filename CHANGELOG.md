@@ -1,3 +1,7 @@
+## [3.0.0](https://github.com/Workiva/r_tree/compare/2.1.6...3.0.0)
+ - Removed deprecated symbols from the public API
+ - To migrate, simply switch from using `rtree.insert` or `rtree.load` to `rtree.add`
+   
 ## [2.1.6](https://github.com/Workiva/r_tree/compare/2.1.5...2.1.6)
  - Fixed a bug in load that could result in incorrect search results
  - New method "add" consolidates insert and load (now deprecated) into a single entry point
