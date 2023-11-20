@@ -14,14 +14,16 @@
  * limitations under the License.
  */
 
-part of r_tree;
+import 'dart:math';
 
-@Deprecated('For internal use only, removed in next major release')
+import 'package:r_tree/src/r_tree/r_tree_contributor.dart';
+import 'package:r_tree/src/r_tree/r_tree_datum.dart';
+import 'package:r_tree/src/r_tree/rectangle_helper.dart';
+
 const noMBR = Rectangle<num>(0, 0, 0, 0);
 
-/// A [Node] is an entry in the [RTree] for a particular rectangle.  This is an
-/// abstract class, see [LeafNode] and [NonLeafNode] for more information.
-@Deprecated('For internal use only, removed in next major release')
+/// A [Node] is an entry in a tree for a particular rectangle.  This is an
+/// abstract class, see LeafNode and NonLeafNode for more information.
 abstract class Node<E> implements RTreeContributor {
   /// The branch factor this node is configured with, which determines when the node should split
   final int branchFactor;
@@ -35,21 +37,24 @@ abstract class Node<E> implements RTreeContributor {
   Rectangle _minimumBoundingRect = noMBR;
 
   /// Returns the rectangle this Node covers
+  @override
   Rectangle get rect => _minimumBoundingRect;
 
   Node(this.branchFactor);
 
   /// Returns an iterable of all items within [searchRect]
-  Iterable<RTreeDatum<E>> search(Rectangle searchRect, bool Function(E item)? shouldInclude);
+  List<RTreeDatum<E>> search(Rectangle searchRect, bool Function(E item)? shouldInclude);
 
   /// Inserts [item] into the node. If the insertion causes a split to occur, the split node will be returned, otherwise null is returned.
   Node<E>? insert(RTreeDatum<E> item);
 
   /// Removes [item] from this node
-  remove(RTreeDatum<E> item);
+  void remove(RTreeDatum<E> item);
 
   /// Remove all children from this node
-  clearChildren();
+  void clearChildren() {
+    _minimumBoundingRect = noMBR;
+  }
 
   /// Returns a list of all items in this node
   List<RTreeContributor> get children;
@@ -61,13 +66,13 @@ abstract class Node<E> implements RTreeContributor {
   int get size => children.length;
 
   /// Adds [child] to this node
-  addChild(covariant RTreeContributor child) {
+  void addChild(covariant RTreeContributor child) {
     include(child);
     children.add(child);
   }
 
   /// Removes [child] from this node
-  removeChild(covariant RTreeContributor child) {
+  void removeChild(covariant RTreeContributor child) {
     children.remove(child);
     updateBoundingRect();
   }
@@ -76,35 +81,32 @@ abstract class Node<E> implements RTreeContributor {
   /// of adding a new @item to this Node
   num expansionCost(RTreeContributor item) {
     if (_minimumBoundingRect == noMBR) {
-      return _area(item.rect);
+      return item.rect.area();
     }
 
-    Rectangle newRect = rect.boundingBox(item.rect);
-    return _area(newRect) - _area(rect);
+    final newRect = rect.boundingBox(item.rect);
+    return newRect.area() - rect.area();
   }
 
-  num area() => _area(rect);
-
-  num get margin => (rect.right - rect.left) + (rect.bottom - rect.top);
+  num area() => rect.area();
 
   /// Adds the rectangle containing [item] to this node's covered rectangle
-  include(RTreeContributor item) {
+  void include(RTreeContributor item) {
     _minimumBoundingRect = _minimumBoundingRect == noMBR ? item.rect : rect.boundingBox(item.rect);
   }
 
   /// Recalculated the bounding rectangle of this node
   Rectangle updateBoundingRect() {
+    _minimumBoundingRect = noMBR;
     if (children.isEmpty) {
-      _minimumBoundingRect = noMBR;
       return _minimumBoundingRect;
     }
 
-    var updatedBoundingRect = children[0].rect;
+    _minimumBoundingRect = children[0].rect;
     for (var i = 1; i < children.length; i++) {
-      updatedBoundingRect = updatedBoundingRect.boundingBox(children[i].rect);
+      _minimumBoundingRect = _minimumBoundingRect.boundingBox(children[i].rect);
     }
 
-    _minimumBoundingRect = updatedBoundingRect;
     return _minimumBoundingRect;
   }
 
@@ -116,16 +118,16 @@ abstract class Node<E> implements RTreeContributor {
   Node<E>? splitIfNecessary() => size > branchFactor ? _split() : null;
 
   Node<E> _split() {
-    _Seeds seeds = _pickSeeds();
+    final seeds = _pickSeeds();
 
     removeChild(seeds.seed1);
     removeChild(seeds.seed2);
-    List<RTreeContributor> remainingChildren = children.toList();
+    final remainingChildren = children.toList();
 
     clearChildren();
     addChild(seeds.seed1);
 
-    Node<E> splitNode = createNewNode();
+    final splitNode = createNewNode();
     splitNode.height = height;
     splitNode.addChild(seeds.seed2);
 
@@ -135,16 +137,16 @@ abstract class Node<E> implements RTreeContributor {
   }
 
   void _reassignRemainingChildren(List<RTreeContributor> remainingChildren, Node<E> splitNode) {
-    for (var child in remainingChildren) {
-      num thisExpansionCost = expansionCost(child);
-      num splitExpansionCost = splitNode.expansionCost(child);
+    for (final child in remainingChildren) {
+      final thisExpansionCost = expansionCost(child);
+      final splitExpansionCost = splitNode.expansionCost(child);
 
       if (thisExpansionCost < splitExpansionCost) {
-        this.addChild(child);
+        addChild(child);
       } else if (splitExpansionCost < thisExpansionCost) {
         splitNode.addChild(child);
       } else if (size < splitNode.size) {
-        this.addChild(child);
+        addChild(child);
       } else {
         splitNode.addChild(child);
       }
@@ -155,12 +157,12 @@ abstract class Node<E> implements RTreeContributor {
     RTreeContributor seed1;
     RTreeContributor seed2;
 
-    RTreeContributor leftmost = children.elementAt(0);
-    RTreeContributor rightmost = children.elementAt(0);
-    RTreeContributor topmost = children.elementAt(0);
-    RTreeContributor bottommost = children.elementAt(0);
+    var leftmost = children.elementAt(0);
+    var rightmost = children.elementAt(0);
+    var topmost = children.elementAt(0);
+    var bottommost = children.elementAt(0);
 
-    for (var child in children) {
+    for (final child in children) {
       if (child.rect.right < leftmost.rect.right) leftmost = child;
       if (child.rect.left > rightmost.rect.left) rightmost = child;
       if (child.rect.top > bottommost.rect.top) bottommost = child;
@@ -207,5 +209,3 @@ class _Seeds {
 
   const _Seeds(this.seed1, this.seed2);
 }
-
-num _area(Rectangle rect) => rect.width * rect.height;

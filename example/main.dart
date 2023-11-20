@@ -1,19 +1,23 @@
 import 'dart:async';
-import 'dart:html';
+import 'dart:html' hide Node;
 import 'dart:math';
 import 'package:r_tree/r_tree.dart';
+import 'package:r_tree/src/r_tree/leaf_node.dart';
+import 'package:r_tree/src/r_tree/node.dart';
+import 'package:r_tree/src/r_tree/non_leaf_node.dart';
+import 'package:r_tree/src/r_tree/r_tree.dart';
 
 Future main() async {
   var rtree = RTree<String>();
-  var app = querySelector('#app')!;
-  var canvas = CanvasElement(width: 640, height: 480);
+  final app = querySelector('#app')!;
+  final canvas = CanvasElement(width: 640, height: 480);
   app.append(canvas);
   canvas.context2D
     ..fillStyle = '#ccc'
     ..fillRect(0, 0, 640, 480);
 
   int? startX, startY, proposedX, proposedY;
-  final draw = () {
+  void draw() {
     canvas.context2D.clearRect(0, 0, 700, 500);
     canvas.context2D.strokeStyle = '';
     rtree.search(Rectangle(0, 0, 700, 500)).forEach((node) {
@@ -26,12 +30,12 @@ Future main() async {
       canvas.context2D.strokeStyle = 'black';
       canvas.context2D.strokeRect(startX!, startY!, proposedX! - startX!, proposedY! - startY!);
     }
-  };
+  }
 
   var isDrawing = false;
-  canvas.onMouseDown.listen((MouseEvent event) {
-    var target = event.currentTarget as HtmlElement;
-    var boundingRect = target.getBoundingClientRect();
+  canvas.onMouseDown.listen((event) {
+    final target = event.currentTarget! as HtmlElement;
+    final boundingRect = target.getBoundingClientRect();
     isDrawing = true;
     proposedX = null;
     proposedY = null;
@@ -40,29 +44,29 @@ Future main() async {
     startY = ((event.client.y - boundingRect.top) + target.scrollTop).floor();
   });
 
-  canvas.onMouseMove.listen((MouseEvent event) {
+  canvas.onMouseMove.listen((event) {
     if (!isDrawing || startX == null || startY == null) return;
 
-    var target = event.currentTarget as HtmlElement;
-    var boundingRect = target.getBoundingClientRect();
+    final target = event.currentTarget! as HtmlElement;
+    final boundingRect = target.getBoundingClientRect();
     proposedX = ((event.client.x - boundingRect.left) + target.scrollLeft).floor();
     proposedY = ((event.client.y - boundingRect.top) + target.scrollTop).floor();
 
     draw();
   });
 
-  canvas.onMouseUp.listen((MouseEvent event) {
+  canvas.onMouseUp.listen((event) {
     isDrawing = false;
     if (startX == null || startY == null) return;
 
-    var target = event.currentTarget as HtmlElement;
-    var boundingRect = target.getBoundingClientRect();
-    var endX = ((event.client.x - boundingRect.left) + target.scrollLeft).floor();
-    var endY = ((event.client.y - boundingRect.top) + target.scrollTop).floor();
+    final target = event.currentTarget! as HtmlElement;
+    final boundingRect = target.getBoundingClientRect();
+    final endX = ((event.client.x - boundingRect.left) + target.scrollLeft).floor();
+    final endY = ((event.client.y - boundingRect.top) + target.scrollTop).floor();
 
-    var rectangle = Rectangle.fromPoints(Point(startX!, startY!), Point(endX, endY));
+    final rectangle = Rectangle.fromPoints(Point(startX!, startY!), Point(endX, endY));
     if (currentBrush == 'search') {
-      var resultList = querySelector('#results')!;
+      final resultList = querySelector('#results')!;
       resultList.children = [];
       for (final match in rtree.search(rectangle)) {
         var color = '';
@@ -85,7 +89,7 @@ Future main() async {
         resultList.append(LIElement()..innerHtml = 'No results in $rectangle');
       }
     } else {
-      rtree.insert(RTreeDatum(rectangle, currentBrush));
+      rtree.add([RTreeDatum(rectangle, currentBrush)]);
     }
 
     draw();
@@ -96,22 +100,25 @@ Future main() async {
   final blueButton = querySelector('#blue')!;
   final searchButton = querySelector('#search')!;
   final allButtons = [redButton, greenButton, blueButton, searchButton];
-  final resetAllButtons = () => allButtons.forEach((element) {
-        element.style.background = '';
-      });
+  void resetAllButtons() {
+    for (final element in allButtons) {
+      element.style.background = '';
+    }
+  }
+
   redButton.onClick.listen((_) {
     resetAllButtons();
-    currentBrush = '$red';
+    currentBrush = red;
     redButton.style.background = 'darkgray';
   });
   greenButton.onClick.listen((_) {
     resetAllButtons();
-    currentBrush = '$green';
+    currentBrush = green;
     greenButton.style.background = 'darkgray';
   });
   blueButton.onClick.listen((_) {
     resetAllButtons();
-    currentBrush = '$blue';
+    currentBrush = blue;
     blueButton.style.background = 'darkgray';
   });
   searchButton.onClick.listen((_) {
@@ -120,28 +127,28 @@ Future main() async {
     searchButton.style.background = 'darkgray';
   });
 
-  final makeDataset = () {
-    Random rand = Random();
-    var datum = <RTreeDatum<String>>[];
-    for (int i = 0; i < 300; i++) {
-      int startX = rand.nextInt((canvas.width! / 2).floor());
-      int endX = rand.nextInt((canvas.width! / 2).floor()) * 2;
-      int startY = rand.nextInt((canvas.height! / 2).floor());
-      int endY = rand.nextInt((canvas.width! / 2).floor()) * 2;
-      int color = rand.nextInt(2);
-      var item = RTreeDatum(Rectangle.fromPoints(Point(startX, startY), Point(endX, endY)), colors[color]);
+  List<RTreeDatum<String>> makeDataset() {
+    final rand = Random();
+    final datum = <RTreeDatum<String>>[];
+    for (var i = 0; i < 300; i++) {
+      final startX = rand.nextInt((canvas.width! / 2).floor());
+      final endX = rand.nextInt((canvas.width! / 2).floor()) * 2;
+      final startY = rand.nextInt((canvas.height! / 2).floor());
+      final endY = rand.nextInt((canvas.width! / 2).floor()) * 2;
+      final color = rand.nextInt(2);
+      final item = RTreeDatum(Rectangle.fromPoints(Point(startX, startY), Point(endX, endY)), colors[color]);
       datum.add(item);
     }
     return datum;
-  };
+  }
 
   querySelector('#insert')!.onClick.listen((_) {
-    makeDataset().forEach(rtree.insert);
+    makeDataset().forEach((item) => rtree.add([item]));
     draw();
   });
 
   querySelector('#load')!.onClick.listen((_) {
-    rtree.load(makeDataset());
+    rtree.add(makeDataset());
     draw();
   });
 
@@ -151,14 +158,14 @@ Future main() async {
   });
 
   querySelector('#graphviz')!.onClick.listen((_) {
-    var output = querySelector('#output') as PreElement;
+    final output = querySelector('#output')! as PreElement;
 
-    output.innerHtml = toGraphViz(rtree.currentRootNode);
+    output.innerHtml = toGraphViz(getCurrentRootNode(rtree));
   });
 
   querySelector('#copy')!.onClick.listen((_) async {
     try {
-      await window.navigator.clipboard?.writeText((querySelector('#output') as PreElement).innerText);
+      await window.navigator.clipboard?.writeText((querySelector('#output')! as PreElement).innerText);
       querySelector('#copy')!.style.background = 'green';
       await Future.delayed(Duration(milliseconds: 350));
       querySelector('#copy')!.style.background = '';
@@ -173,10 +180,10 @@ const String red = '#ff0000$alpha';
 const String green = '#00ff00$alpha';
 const String blue = '#0000ff$alpha';
 const colors = [red, green, blue];
-String currentBrush = '$red';
+String currentBrush = red;
 
 String toGraphViz(Node root) {
-  var output = StringBuffer('''digraph r_tree {
+  final output = StringBuffer('''digraph r_tree {
     root [
         color="gray"
         label="root"
@@ -191,9 +198,9 @@ String toGraphViz(Node root) {
 
 void _graphVizRecurse(Node node, String parent, String identifierPrefix, StringBuffer buffer) {
   for (var i = 0; i < node.children.length; i++) {
-    var child = node.children[i];
+    final child = node.children[i];
     if (child is LeafNode) {
-      var id = "${identifierPrefix}LeafNode$i";
+      final id = '${identifierPrefix}LeafNode$i';
       buffer.write('''
       $id [
         color="green"
@@ -202,8 +209,8 @@ void _graphVizRecurse(Node node, String parent, String identifierPrefix, StringB
       $parent -> $id
 ''');
       for (var j = 0; j < child.children.length; j++) {
-        var leafChild = child.children[j];
-        var childId = "${id}LeafChild$j";
+        final leafChild = child.children[j];
+        final childId = '${id}LeafChild$j';
         buffer.write('''
 "$childId" [
   color="orange"
@@ -213,7 +220,7 @@ $id -> "$childId"
 ''');
       }
     } else if (child is NonLeafNode) {
-      var id = "${identifierPrefix}ChildNode$i";
+      final id = '${identifierPrefix}ChildNode$i';
       buffer.write('''
  $id [
   color="brown"
@@ -223,7 +230,7 @@ $id -> "$childId"
 ''');
       _graphVizRecurse(child, id, id, buffer);
     } else if (child is RTreeDatum) {
-      var id = "${identifierPrefix}Datum$i";
+      final id = '${identifierPrefix}Datum$i';
       buffer.write('''
 "$id" [
   color="orange"

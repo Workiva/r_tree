@@ -14,12 +14,15 @@
  * limitations under the License.
  */
 
-part of r_tree;
+import 'dart:math';
+
+import 'package:r_tree/src/r_tree/r_tree_contributor.dart';
 
 /// An [RTreeContributor] that has a piece of data attached to it
 class RTreeDatum<E> implements RTreeContributor {
+  @override
   final Rectangle rect;
   final E value;
 
-  RTreeDatum(Rectangle this.rect, E this.value);
+  RTreeDatum(this.rect, this.value);
 }

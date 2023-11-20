@@ -14,3 +14,4 @@ dev_dependencies:
   dart_style: ^2.2.4
   dependency_validator: ^3.0.0
   test: ^1.15.7
+  workiva_analysis_options: ^1.4.0

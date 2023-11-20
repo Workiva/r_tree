@@ -14,7 +14,14 @@
  * limitations under the License.
  */
 
-part of r_tree;
+import 'dart:math';
+
+import 'package:r_tree/src/r_tree/leaf_node.dart';
+import 'package:r_tree/src/r_tree/node.dart';
+import 'package:r_tree/src/r_tree/non_leaf_node.dart';
+import 'package:r_tree/src/r_tree/quickselect.dart';
+import 'package:r_tree/src/r_tree/r_tree_datum.dart';
+import 'package:r_tree/src/r_tree/rectangle_helper.dart';
 
 /// A two dimensional index of data that allows querying by rectangular areas
 class RTree<E> {
@@ -30,31 +37,27 @@ class RTree<E> {
     _resetRoot();
   }
 
-  @Deprecated('For internal use only, removed in next major release')
-  Node<E> get currentRootNode => _root;
-
   /// Adds all [items] to the rtree
   void add(List<RTreeDatum<E>> items) {
     if (items.length == 1) {
-      insert(items.first);
+      _insert(items.first);
       return;
     }
 
-    load(items);
+    _load(items);
   }
 
   /// Removes [item] from the rtree
-  remove(RTreeDatum<E> item) {
+  void remove(RTreeDatum<E> item) {
     _root.remove(item);
 
-    if (_root.children.length == 0) {
+    if (_root.children.isEmpty) {
       _resetRoot();
     }
   }
 
   /// Adds [item] to the rtree
-  @Deprecated('Use add')
-  insert(RTreeDatum<E> item) {
+  void _insert(RTreeDatum<E> item) {
     final splitNode = _root.insert(item);
 
     if (splitNode != null) {
@@ -62,13 +65,16 @@ class RTree<E> {
     }
   }
 
-  // Returns all items whose rectangles overlap [searchRect]
-  //  Note: Rectangles that share only a border are not considered to overlap
-  Iterable<RTreeDatum<E>> search(Rectangle searchRect, {bool Function(E item)? shouldInclude}) {
+  /// Returns all items whose rectangles overlap [searchRect]
+  /// If [shouldInclude] is specified, each item will be passed to the
+  /// method and excluded if [shouldInclude] evaluates to false.
+  ///
+  /// Note: Rectangles that share only a border are not considered to overlap
+  List<RTreeDatum<E>> search(Rectangle searchRect, {bool Function(E item)? shouldInclude}) {
     shouldInclude ??= (_) => true;
 
     if (_root is LeafNode<E>) {
-      return _root.search(searchRect, shouldInclude).toList();
+      return _root.search(searchRect, shouldInclude);
     }
 
     return _root.search(searchRect, shouldInclude);
@@ -76,23 +82,22 @@ class RTree<E> {
 
   /// Bulk adds all [items] to the rtree. This implementation draws heavily from
   /// https://github.com/mourner/rbush and https://github.com/Zverik/dart_rbush.
-  @Deprecated('Use add')
-  void load(List<RTreeDatum<E>> items) {
+  void _load(List<RTreeDatum<E>> items) {
     if (items.isEmpty) {
       return;
     }
 
     if (items.length < _minEntries) {
       for (final item in items) {
-        insert(item);
+        _insert(item);
       }
       return;
     }
 
     // recursively build the tree with the given data from scratch using OMT algorithm
-    Node<E> node = _build(items, 0, items.length - 1, 0);
+    var node = _build(items, 0, items.length - 1, 0);
 
-    if (_root.children.length == 0) {
+    if (_root.children.isEmpty) {
       // save as is if tree is empty
       _root = node;
     } else if (_root.height == node.height) {
@@ -114,7 +119,7 @@ class RTree<E> {
   }
 
   void _insertTree(int level, Node<E> inode) {
-    final List<Node<E>> insertPath = [];
+    final insertPath = <Node<E>>[];
 
     // find the best node for accommodating the item, saving all nodes along the path too
     final node = _chooseSubtree(inode, _root, level, insertPath);
@@ -134,7 +139,9 @@ class RTree<E> {
     }
 
     // fix all the bounding rectangles along the insertion path
-    insertPath.reversed.forEach((e) => e.updateBoundingRect());
+    for (final e in insertPath.reversed) {
+      e.updateBoundingRect();
+    }
   }
 
   Node<E> _chooseSubtree(Node<E> inode, Node<E> node, int level, List<Node<E>> path) {
@@ -205,18 +212,18 @@ class RTree<E> {
 
     // split the items into M mostly square tiles
 
-    final N2 = (N.toDouble() / M).ceil();
-    final N1 = N2 * sqrt(M).ceil();
+    final n2 = (N.toDouble() / M).ceil();
+    final n1 = n2 * sqrt(M).ceil();
 
-    multiSelect(items, left, right, N1, _compareRectLeft);
+    multiSelect(items, left, right, n1, _compareRectLeft);
 
-    for (int i = left; i <= right; i += N1) {
-      final right2 = min(i + N1 - 1, right);
+    for (var i = left; i <= right; i += n1) {
+      final right2 = min(i + n1 - 1, right);
 
-      multiSelect(items, i, right2, N2, _compareRectTop);
+      multiSelect(items, i, right2, n2, _compareRectTop);
 
-      for (int j = i; j <= right2; j += N2) {
-        final right3 = min(j + N2 - 1, right2);
+      for (var j = i; j <= right2; j += n2) {
+        final right3 = min(j + n2 - 1, right2);
 
         // pack each entry recursively
         node.children.add(_build(items, j, right3, height - 1, node));
@@ -263,7 +270,7 @@ class RTree<E> {
     _root.height = node.height + 1;
   }
 
-  int _chooseSplitIndex(Node<E> node, m, M) {
+  int _chooseSplitIndex(Node<E> node, int m, int M) {
     int? index;
     num minOverlap = double.infinity;
     num minArea = double.infinity;
@@ -272,8 +279,8 @@ class RTree<E> {
       final bbox1 = _boundingBoxForDistribution(node, 0, i);
       final bbox2 = _boundingBoxForDistribution(node, i, M);
 
-      final intersection = bbox1.rect.intersection(bbox2.rect);
-      final overlap = intersection != null ? _area(intersection) : 0;
+      final intersection = bbox1.intersection(bbox2);
+      final overlap = intersection != null ? intersection.area() : 0;
       final area = bbox1.area() + bbox2.area();
 
       // choose distribution with minimum overlap
@@ -294,7 +301,7 @@ class RTree<E> {
     return index ?? M - m;
   }
 
-  void _chooseSplitAxis(node, m, M) {
+  void _chooseSplitAxis(Node<E> node, int m, int M) {
     final xMargin = _allDistributionMargins(node, m, M, true);
     final yMargin = _allDistributionMargins(node, m, M, false);
 
@@ -319,29 +326,28 @@ class RTree<E> {
 
     final leftBoundingBox = _boundingBoxForDistribution(node, 0, m);
     final rightBoundingBox = _boundingBoxForDistribution(node, M - m, M);
-    var margin = leftBoundingBox.margin + rightBoundingBox.margin;
+    num calculateMargin(Rectangle rect) => (rect.right - rect.left) + (rect.bottom - rect.top);
+
+    var margin = calculateMargin(leftBoundingBox) + calculateMargin(rightBoundingBox);
 
     for (var i = m; i < M - m; i++) {
-      leftBoundingBox.extend(node is LeafNode ? node.children[i].rect : node.children[i].rect);
-      margin += leftBoundingBox.margin;
+      leftBoundingBox.boundingBox(node is LeafNode ? node.children[i].rect : node.children[i].rect);
+      margin += calculateMargin(leftBoundingBox);
     }
 
     for (var i = M - m - 1; i >= m; i--) {
-      rightBoundingBox.extend(node.children[i].rect);
-      margin += rightBoundingBox.margin;
+      rightBoundingBox.boundingBox(node.children[i].rect);
+      margin += calculateMargin(rightBoundingBox);
     }
 
     return margin;
   }
 
-  Node _boundingBoxForDistribution(Node<E> node, int startChild, int stopChild) {
-    final destNode = LeafNode(_branchFactor);
-    destNode._minimumBoundingRect = node.children[0].rect;
-
-    for (int i = startChild; i < stopChild; i++) {
-      destNode.extend(node.children[i].rect);
-    }
-    return destNode;
+  Rectangle _boundingBoxForDistribution(Node<E> node, int startChild, int stopChild) {
+    return node.children.sublist(startChild, stopChild).fold(
+          node.children[startChild].rect,
+          (previousValue, element) => previousValue.boundingBox(element.rect),
+        );
   }
 
   void _resetRoot() {
@@ -349,7 +355,7 @@ class RTree<E> {
   }
 
   void _growTree(Node<E> node1, Node<E> node2) {
-    NonLeafNode<E> newRoot = NonLeafNode<E>(_branchFactor, initialChildNodes: [node1, node2]);
+    final newRoot = NonLeafNode<E>(_branchFactor, initialChildNodes: [node1, node2]);
     newRoot.height = _root.height + 1;
     _root = newRoot;
     node1.parent = _root;
@@ -371,3 +377,6 @@ int _compareRectTop(RTreeDatum a, RTreeDatum b) => _compareNumber(a.rect.top, b.
 
 @pragma('vm:prefer-inline')
 int _compareRectLeft(RTreeDatum a, RTreeDatum b) => _compareNumber(a.rect.left, b.rect.left);
+
+/// Helper for example app to generate GraphViz
+Node getCurrentRootNode(RTree tree) => tree._root;

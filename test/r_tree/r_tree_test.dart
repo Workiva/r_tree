@@ -3,16 +3,20 @@ library r_tree;
 import 'dart:math';
 
 import 'package:r_tree/r_tree.dart';
+import 'package:r_tree/src/r_tree/leaf_node.dart';
+import 'package:r_tree/src/r_tree/node.dart';
+import 'package:r_tree/src/r_tree/non_leaf_node.dart';
+import 'package:r_tree/src/r_tree/r_tree.dart';
 import 'package:test/test.dart';
 
-main() {
+void main() {
   group('RTree', () {
     group('Insert/Search', () {
       test('insert 1 item', () {
-        RTree tree = RTree(3);
-        RTreeDatum<String> item = RTreeDatum<String>(Rectangle(0, 0, 1, 1), 'Item 1');
+        final tree = RTree(3);
+        final item = RTreeDatum<String>(Rectangle(0, 0, 1, 1), 'Item 1');
 
-        tree.insert(item);
+        tree.add([item]);
         assertTreeValidity(tree);
 
         var items = tree.search(item.rect, shouldInclude: (_) => false);
@@ -22,130 +26,121 @@ main() {
         expect(items.length, equals(1));
         expect(items.elementAt(0).value, equals('Item 1'));
 
-        items.forEach((item) {
-          tree.insert(RTreeDatum<String>(Rectangle(0, 0, 1, 1), 'Item 2'));
-          tree.insert(RTreeDatum<String>(Rectangle(0, 0, 1, 1), 'Item 3'));
-          tree.insert(RTreeDatum<String>(Rectangle(0, 0, 1, 1), 'Item 4'));
-          tree.insert(RTreeDatum<String>(Rectangle(0, 0, 1, 1), 'Item 5'));
-        });
+        for (var i = 0; i < items.length; i++) {
+          tree.add([RTreeDatum<String>(Rectangle(0, 0, 1, 1), 'Item 2')]);
+          tree.add([RTreeDatum<String>(Rectangle(0, 0, 1, 1), 'Item 3')]);
+          tree.add([RTreeDatum<String>(Rectangle(0, 0, 1, 1), 'Item 4')]);
+          tree.add([RTreeDatum<String>(Rectangle(0, 0, 1, 1), 'Item 5')]);
+        }
         assertTreeValidity(tree);
 
         items = tree.search(item.rect);
         expect(items.length, equals(5));
 
-        items.forEach((item) {
+        for (final item in items) {
           tree.remove(item);
-        });
+        }
         assertTreeValidity(tree);
 
-        items = tree.search((item.rect));
+        items = tree.search(item.rect);
         expect(items.isEmpty, isTrue);
       });
 
-      final addMethods = [
-        _InsertCase('insert', (RTree tree, Iterable<RTreeDatum<String>> toAdd) {
-          toAdd.forEach(tree.insert);
-        }),
-        _InsertCase('load', (RTree tree, Iterable<RTreeDatum<String>> toAdd) {
-          tree.load(toAdd.toList());
-        })
-      ];
+      test('search for 1 cell in large format ranges ', () {
+        final tree = RTree(3);
+        final itemMap = {};
+        final itemsToInsert = <RTreeDatum<String>>[];
 
-      for (final addMethod in addMethods) {
-        test('search for 1 cell in large format ranges (${addMethod.name})', () {
-          RTree tree = RTree(3);
-          Map itemMap = Map();
-          List<RTreeDatum<String>> itemsToInsert = [];
+        for (var i = 0; i < 10; i++) {
+          final itemId = 'Item $i';
+          final item = RTreeDatum<String>(Rectangle(i, 0, 10 - i, 10), itemId);
+          itemMap[itemId] = item;
+          itemsToInsert.add(item);
+        }
 
-          for (int i = 0; i < 10; i++) {
-            String itemId = 'Item $i';
-            itemMap[itemId] = RTreeDatum<String>(Rectangle(i, 0, 10 - i, 10), itemId);
-            itemsToInsert.add(itemMap[itemId]);
+        tree.add(itemsToInsert);
+        assertTreeValidity(tree);
+
+        var items = tree.search(Rectangle(0, 0, 1, 3)); // A1:A3
+        expect(items.length, equals(1));
+        expect(items.contains(itemMap['Item 0']), equals(true));
+
+        items = tree.search(Rectangle(0, 3, 1, 10)); // A3:A13
+        expect(items.length, equals(1));
+        expect(items.contains(itemMap['Item 0']), equals(true));
+
+        items = tree.search(Rectangle(4, 4, 1, 1)); // E5
+        expect(items.length, equals(5));
+        expect(items.contains(itemMap['Item 0']), equals(true));
+        expect(items.contains(itemMap['Item 1']), equals(true));
+        expect(items.contains(itemMap['Item 2']), equals(true));
+        expect(items.contains(itemMap['Item 3']), equals(true));
+        expect(items.contains(itemMap['Item 4']), equals(true));
+      });
+
+      test('insert enough items to cause split', () {
+        final tree = RTree(3);
+        final itemMap = {};
+        final itemsToInsert = <RTreeDatum<String>>[];
+
+        for (var i = 0; i < 5; i++) {
+          final itemId = 'Item $i';
+          final item = RTreeDatum<String>(Rectangle(0, i, 1, 1), itemId);
+          itemMap[itemId] = item;
+          itemsToInsert.add(item);
+        }
+
+        tree.add(itemsToInsert);
+        assertTreeValidity(tree);
+
+        var items = tree.search(Rectangle(0, 2, 1, 1));
+        expect(items.length, equals(1));
+        expect(items.contains(itemMap['Item 2']), equals(true));
+
+        items = tree.search(Rectangle(0, 1, 1, 2));
+        expect(items.length, equals(2));
+        expect(items.contains(itemMap['Item 1']), equals(true));
+        expect(items.contains(itemMap['Item 2']), equals(true));
+
+        items = tree.search(Rectangle(0, 0, 1, 5));
+        expect(items.length, equals(5));
+        expect(items.contains(itemMap['Item 0']), equals(true));
+        expect(items.contains(itemMap['Item 1']), equals(true));
+        expect(items.contains(itemMap['Item 2']), equals(true));
+        expect(items.contains(itemMap['Item 3']), equals(true));
+        expect(items.contains(itemMap['Item 4']), equals(true));
+      });
+
+      test('insert large amount of items', () {
+        final tree = RTree(16);
+        final itemsToInsert = <RTreeDatum<String>>[];
+
+        for (var i = 0; i < 50; i++) {
+          for (var j = 0; j < 50; j++) {
+            final item = RTreeDatum<String>(Rectangle(i, j, 1, 1), 'Item $i:$j');
+            itemsToInsert.add(item);
           }
+        }
 
-          addMethod.method(tree, itemsToInsert);
-          assertTreeValidity(tree);
+        tree.add(itemsToInsert);
+        assertTreeValidity(tree);
 
-          var items = tree.search(Rectangle(0, 0, 1, 3)); // A1:A3
-          expect(items.length, equals(1));
-          expect(items.contains(itemMap['Item 0']), equals(true));
+        var items = tree.search(Rectangle(31, 27, 1, 1));
+        expect(items.length, equals(1));
+        expect(items.elementAt(0).value, equals('Item 31:27'));
 
-          items = tree.search(Rectangle(0, 3, 1, 10)); // A3:A13
-          expect(items.length, equals(1));
-          expect(items.contains(itemMap['Item 0']), equals(true));
-
-          items = tree.search(Rectangle(4, 4, 1, 1)); // E5
-          expect(items.length, equals(5));
-          expect(items.contains(itemMap['Item 0']), equals(true));
-          expect(items.contains(itemMap['Item 1']), equals(true));
-          expect(items.contains(itemMap['Item 2']), equals(true));
-          expect(items.contains(itemMap['Item 3']), equals(true));
-          expect(items.contains(itemMap['Item 4']), equals(true));
-        });
-
-        test('insert enough items to cause split (${addMethod.name})', () {
-          RTree tree = RTree(3);
-          Map itemMap = Map();
-          List<RTreeDatum<String>> itemsToInsert = [];
-
-          for (int i = 0; i < 5; i++) {
-            String itemId = 'Item $i';
-            itemMap[itemId] = RTreeDatum<String>(Rectangle(0, i, 1, 1), itemId);
-            itemsToInsert.add(itemMap[itemId]);
-          }
-
-          addMethod.method(tree, itemsToInsert);
-          assertTreeValidity(tree);
-
-          var items = tree.search(Rectangle(0, 2, 1, 1));
-          expect(items.length, equals(1));
-          expect(items.contains(itemMap['Item 2']), equals(true));
-
-          items = tree.search(Rectangle(0, 1, 1, 2));
-          expect(items.length, equals(2));
-          expect(items.contains(itemMap['Item 1']), equals(true));
-          expect(items.contains(itemMap['Item 2']), equals(true));
-
-          items = tree.search(Rectangle(0, 0, 1, 5));
-          expect(items.length, equals(5));
-          expect(items.contains(itemMap['Item 0']), equals(true));
-          expect(items.contains(itemMap['Item 1']), equals(true));
-          expect(items.contains(itemMap['Item 2']), equals(true));
-          expect(items.contains(itemMap['Item 3']), equals(true));
-          expect(items.contains(itemMap['Item 4']), equals(true));
-        });
-
-        test('insert large amount of items (${addMethod.name})', () {
-          RTree tree = RTree(16);
-          List<RTreeDatum<String>> itemsToInsert = [];
-
-          for (int i = 0; i < 50; i++) {
-            for (int j = 0; j < 50; j++) {
-              RTreeDatum<String> item = RTreeDatum<String>(Rectangle(i, j, 1, 1), 'Item $i:$j');
-              itemsToInsert.add(item);
-            }
-          }
-
-          addMethod.method(tree, itemsToInsert);
-          assertTreeValidity(tree);
-
-          var items = tree.search(Rectangle(31, 27, 1, 1));
-          expect(items.length, equals(1));
-          expect(items.elementAt(0).value, equals('Item 31:27'));
-
-          items = tree.search(Rectangle(0, 0, 2, 50));
-          expect(items.length, equals(100));
-        });
-      }
+        items = tree.search(Rectangle(0, 0, 2, 50));
+        expect(items.length, equals(100));
+      });
     });
 
     group('Remove', () {
       test('remove should only remove first occurrence of item', () {
-        RTree tree = RTree(3);
-        RTreeDatum<String> item = RTreeDatum<String>(Rectangle(0, 0, 1, 1), 'Item 1');
+        final tree = RTree(3);
+        final item = RTreeDatum<String>(Rectangle(0, 0, 1, 1), 'Item 1');
 
-        tree.insert(item);
-        tree.insert(item);
+        tree.add([item]);
+        tree.add([item]);
         assertTreeValidity(tree);
 
         var items = tree.search(item.rect);
@@ -163,7 +158,7 @@ main() {
         items = tree.search(item.rect);
         expect(items.length, equals(0));
 
-        tree.insert(item);
+        tree.add([item]);
         assertTreeValidity(tree);
 
         items = tree.search(item.rect);
@@ -171,84 +166,85 @@ main() {
       });
 
       test('remove from large tree', () {
-        RTree tree = RTree(16);
-        Map itemMap = Map();
+        final tree = RTree<String>(16);
+        final itemMap = <String, RTreeDatum<String>>{};
 
-        for (int i = 0; i < 50; i++) {
-          for (int j = 0; j < 50; j++) {
-            String itemId = 'Item $i:$j';
-            itemMap[itemId] = RTreeDatum<String>(Rectangle(i, j, 1, 1), itemId);
-            tree.insert(itemMap[itemId]);
+        for (var i = 0; i < 50; i++) {
+          for (var j = 0; j < 50; j++) {
+            final itemId = 'Item $i:$j';
+            final item = RTreeDatum<String>(Rectangle(i, j, 1, 1), itemId);
+            itemMap[itemId] = item;
+            tree.add([item]);
           }
         }
         assertTreeValidity(tree);
 
-        var items = tree.search(itemMap['Item 0:0'].rect);
+        var items = tree.search(itemMap['Item 0:0']!.rect);
         expect(items.length, equals(1));
 
-        tree.remove(itemMap['Item 0:0']);
+        tree.remove(itemMap['Item 0:0']!);
         assertTreeValidity(tree);
 
-        items = tree.search(itemMap['Item 0:0'].rect);
+        items = tree.search(itemMap['Item 0:0']!.rect);
         expect(items.length, equals(0));
 
-        items = tree.search(itemMap['Item 13:41'].rect);
+        items = tree.search(itemMap['Item 13:41']!.rect);
         expect(items.length, equals(1));
 
-        tree.remove(itemMap['Item 13:41']);
+        tree.remove(itemMap['Item 13:41']!);
         assertTreeValidity(tree);
 
-        items = tree.search(itemMap['Item 13:41'].rect);
+        items = tree.search(itemMap['Item 13:41']!.rect);
         expect(items.length, equals(0));
       });
 
       test('remove all items from tree', () {
-        RTree tree = RTree(12);
-        List<RTreeDatum> data = [];
+        final tree = RTree(12);
+        final data = <RTreeDatum>[];
 
-        for (int i = 0; i < 50; i++) {
-          for (int j = 0; j < 50; j++) {
-            RTreeDatum item = RTreeDatum<String>(Rectangle(i, j, 1, 1), 'Item $i:$j');
+        for (var i = 0; i < 50; i++) {
+          for (var j = 0; j < 50; j++) {
+            final item = RTreeDatum<String>(Rectangle(i, j, 1, 1), 'Item $i:$j');
             data.add(item);
-            tree.insert(item);
+            tree.add([item]);
           }
         }
         assertTreeValidity(tree);
 
-        expect(tree.currentRootNode, isA<NonLeafNode<dynamic>>());
+        expect(getCurrentRootNode(tree), isA<NonLeafNode<dynamic>>());
 
         var items = tree.search(Rectangle(0, 0, 50, 50));
         expect(items.length, equals(2500));
 
-        data.forEach((RTreeDatum item) {
+        for (final item in data) {
           tree.remove(item);
-        });
+        }
         assertTreeValidity(tree);
 
         items = tree.search(Rectangle(0, 0, 50, 50));
         expect(items.length, equals(0));
 
-        expect(tree.currentRootNode, isA<LeafNode<dynamic>>());
+        expect(getCurrentRootNode(tree), isA<LeafNode<dynamic>>());
 
         //test inserting after removal to ensure new root leaf node functions correctly
-        tree.insert(RTreeDatum<String>(Rectangle(0, 0, 1, 1), 'New Initial Item'));
+        tree.add([RTreeDatum<String>(Rectangle(0, 0, 1, 1), 'New Initial Item')]);
         assertTreeValidity(tree);
 
         items = tree.search(Rectangle(0, 0, 50, 50));
 
-        items.forEach((datum) {
+        for (final datum in items) {
           expect(datum.value, equals('New Initial Item'));
-        });
+        }
       });
 
       test('remove all items and then reload', () {
         final tree = RTree(3);
 
-        var items = <RTreeDatum<String>>[];
+        final items = <RTreeDatum<String>>[];
         for (var i = 0; i < 20; i++) {
           final item = RTreeDatum(Rectangle(0, i, 1, 1), 'Item $i');
           items.add(item);
-          tree.insert(item);
+          tree.add([item]);
         }
         assertTreeValidity(tree);
 
@@ -263,7 +259,7 @@ main() {
         searchResult = tree.search(Rectangle(0, 0, 1, 20));
         expect(searchResult, isEmpty);
 
-        tree.load(items.sublist(0, 3));
+        tree.add(items.sublist(0, 3));
         assertTreeValidity(tree);
 
         searchResult = tree.search(Rectangle(0, 0, 1, 20));
@@ -273,20 +269,20 @@ main() {
       test('has correct parents after _split', () {
         final tree = RTree(3);
 
-        var items = <RTreeDatum<String>>[];
+        final items = <RTreeDatum<String>>[];
         for (var i = 0; i < 1; i++) {
           final item = RTreeDatum(Rectangle(0, i, 1, 1), 'Item $i');
           items.add(item);
         }
-        tree.load(items);
+        tree.add(items);
         assertTreeValidity(tree);
 
-        var otherItems = <RTreeDatum<String>>[];
+        final otherItems = <RTreeDatum<String>>[];
         for (var i = 0; i < 20; i++) {
           final item = RTreeDatum(Rectangle(i + 10, 0, 1, 1), 'Item $i');
           otherItems.add(item);
         }
-        tree.load(otherItems);
+        tree.add(otherItems);
         assertTreeValidity(tree);
       });
 
@@ -294,7 +290,7 @@ main() {
         final tree = RTree(3);
 
         var items = <RTreeDatum<String>>[RTreeDatum(Rectangle(0, 0, 1, 1), 'Item 0')];
-        tree.load(items);
+        tree.add(items);
         assertTreeValidity(tree);
 
         items = List<RTreeDatum<String>>.generate(
@@ -304,8 +300,7 @@ main() {
             'Item $index',
           ),
         );
-        ;
-        tree.load(items);
+        tree.add(items);
         assertTreeValidity(tree);
 
         items = List<RTreeDatum<String>>.generate(
@@ -315,7 +310,7 @@ main() {
             'Item $index',
           ),
         );
-        tree.load(items);
+        tree.add(items);
         expect(tree.search(Rectangle(0, 0, 50, 50)), hasLength(24));
         assertTreeValidity(tree);
       });
@@ -329,7 +324,7 @@ main() {
             'Item 0',
           )
         ];
-        tree.load(items);
+        tree.add(items);
 
         items = List<RTreeDatum<String>>.generate(
           20,
@@ -338,7 +333,7 @@ main() {
             'Item $i',
           ),
         );
-        tree.load(items);
+        tree.add(items);
 
         items = List<RTreeDatum<String>>.generate(
           30,
@@ -347,7 +342,7 @@ main() {
             'Item $i',
           ),
         );
-        tree.load(items);
+        tree.add(items);
 
         items = List<RTreeDatum<String>>.generate(
           3,
@@ -356,7 +351,7 @@ main() {
             'Item $i',
           ),
         );
-        tree.load(items);
+        tree.add(items);
 
         // the test is a bit convoluted but the key here is the search rectangle
         // intersects what the subtree's rectangle should be but not what it is
@@ -372,7 +367,7 @@ main() {
 /// rectangles.
 void assertTreeValidity<E>(RTree<E> tree) {
   try {
-    assertNodeValidity(tree, tree.currentRootNode);
+    assertNodeValidity(tree, getCurrentRootNode(tree));
   } on StateError catch (e) {
     fail('${e.message}\nTree:\n${stringifyTree(tree)}');
   }
@@ -380,7 +375,7 @@ void assertTreeValidity<E>(RTree<E> tree) {
 
 /// Comprehensively assert the consistency of the specified subtree, including node height, parent references, and
 /// bounding rectangles.
-_SubtreeValidationData assertNodeValidity<E>(RTree<E> tree, RTreeContributor contributor) {
+SubtreeValidationData assertNodeValidity<E>(RTree<E> tree, RTreeContributor contributor) {
   if (contributor is LeafNode<E>) {
     return assertLeafNodeValidity(tree, contributor);
   } else if (contributor is NonLeafNode<E>) {
@@ -388,12 +383,12 @@ _SubtreeValidationData assertNodeValidity<E>(RTree<E> tree, RTreeContributor con
   }
 
   // This is a datum
-  return _SubtreeValidationData(0, contributor.rect);
+  return SubtreeValidationData(0, contributor.rect);
 }
 
 /// Comprehensively assert the consistency of the subtree rooted at the specified leaf node, including node height,
 /// parent references, and bounding rectangles.
-_SubtreeValidationData assertLeafNodeValidity<E>(RTree<E> tree, LeafNode<E> node) {
+SubtreeValidationData assertLeafNodeValidity<E>(RTree<E> tree, LeafNode<E> node) {
   if (node.height != 1) {
     throw StateError('Leaf height of ${node.height} should be 1.');
   }
@@ -408,22 +403,22 @@ _SubtreeValidationData assertLeafNodeValidity<E>(RTree<E> tree, LeafNode<E> node
     throw StateError('Leaf rect ${node.rect} should be $actualRect.');
   }
 
-  return _SubtreeValidationData(1, actualRect);
+  return SubtreeValidationData(1, actualRect);
 }
 
 /// Comprehensively assert the consistency of the subtree rooted at the specified non-leaf node, including node height,
 /// parent references, and bounding rectangles.
-_SubtreeValidationData assertNonLeafNodeValidity<E>(RTree<E> tree, NonLeafNode<E> node) {
+SubtreeValidationData assertNonLeafNodeValidity<E>(RTree<E> tree, NonLeafNode<E> node) {
   if (node.children.isEmpty) {
     throw StateError('Non-leaf nodes must have at least one leaf.');
   }
 
   // Assert parent references for children point back to this node
-  node.children.forEach((child) {
+  for (final child in node.children) {
     if (child.parent != node) {
       throw StateError("Non-leaf child's parent reference is incorrect.");
     }
-  });
+  }
 
   // Traverse the tree from this child and collect validation data to propagate upwards
   final childrenValidationData = node.children.map((child) => assertNodeValidity(tree, child)).toList();
@@ -433,7 +428,7 @@ _SubtreeValidationData assertNonLeafNodeValidity<E>(RTree<E> tree, NonLeafNode<E
   final actualRect = getMinimumBoundingRectangle(childrenRects) ?? const Rectangle<num>(0, 0, 0, 0);
 
   // Recalculate the actual height for this subtree using validation data
-  final compareMaxWithChild = (int maxHeight, _SubtreeValidationData child) => max(maxHeight, child.height);
+  int compareMaxWithChild(int maxHeight, SubtreeValidationData child) => max(maxHeight, child.height);
   final maxChildHeight = childrenValidationData.fold(0, compareMaxWithChild);
 
   // Assert this node's height matches its actual structure
@@ -447,20 +442,20 @@ _SubtreeValidationData assertNonLeafNodeValidity<E>(RTree<E> tree, NonLeafNode<E
     throw StateError('Non-leaf rect of ${node.rect} should be $actualRect.');
   }
 
-  return _SubtreeValidationData(actualNodeHeight, actualRect);
+  return SubtreeValidationData(actualNodeHeight, actualRect);
 }
 
 /// Values computed for some subtree to be used for asserting rollup-field accuracy.
-class _SubtreeValidationData {
+class SubtreeValidationData {
   final int height;
   final Rectangle<num> rect;
-  _SubtreeValidationData(this.height, this.rect);
+  SubtreeValidationData(this.height, this.rect);
 }
 
 /// Serializes the tree in a human-readable form for debugging.
 String stringifyTree<E>(RTree<E> tree) {
   final buffer = StringBuffer();
-  stringifyNode(buffer, tree.currentRootNode, 0);
+  stringifyNode(buffer, getCurrentRootNode(tree), 0);
   return buffer.toString();
 }
 
@@ -475,13 +470,6 @@ void stringifyNode<E>(StringBuffer buffer, RTreeContributor contributor, int lev
   } else if (contributor is RTreeDatum<E>) {
     buffer.write('(rect=${contributor.rect}): ${contributor.value}\n');
   }
-}
-
-class _InsertCase {
-  final Function(RTree tree, Iterable<RTreeDatum<String>> toAdd) method;
-  final String name;
-
-  _InsertCase(this.name, this.method);
 }
 
 /// Compute the minimum bounding rectangles of the specified rectangles. Returns null if no rectangles provided.

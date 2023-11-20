@@ -14,13 +14,17 @@
  * limitations under the License.
  */
 
-part of r_tree;
+import 'dart:math';
+
+import 'package:r_tree/src/r_tree/node.dart';
+import 'package:r_tree/src/r_tree/r_tree_datum.dart';
+import 'package:r_tree/src/r_tree/rectangle_helper.dart';
 
 /// A [Node] that is a leaf node of the tree.  These are created automatically
-/// by [RTree] when inserting/removing items from the tree.
-@Deprecated('For internal use only, removed in next major release')
+/// when inserting/removing items from the tree.
 class LeafNode<E> extends Node<E> {
   final List<RTreeDatum<E>> _items = [];
+  @override
   List<RTreeDatum<E>> get children => _items;
 
   LeafNode(int branchFactor, {List<RTreeDatum<E>> initialItems = const []}) : super(branchFactor) {
@@ -35,26 +39,32 @@ class LeafNode<E> extends Node<E> {
   @override
   int get height => 1;
 
+  @override
   Node<E> createNewNode() {
     return LeafNode<E>(branchFactor);
   }
 
-  Iterable<RTreeDatum<E>> search(Rectangle searchRect, bool Function(E item)? shouldInclude) {
-    return _items.where(
-        (RTreeDatum<E> item) => item.rect.overlaps(searchRect) && (shouldInclude == null || shouldInclude(item.value)));
+  @override
+  List<RTreeDatum<E>> search(Rectangle searchRect, bool Function(E item)? shouldInclude) {
+    return _items
+        .where((item) => item.rect.overlaps(searchRect) && (shouldInclude == null || shouldInclude(item.value)))
+        .toList();
   }
 
+  @override
   Node<E>? insert(RTreeDatum<E> item) {
     addChild(item);
     return splitIfNecessary();
   }
 
-  remove(RTreeDatum<E> item) {
+  @override
+  void remove(RTreeDatum<E> item) {
     removeChild(item);
   }
 
-  clearChildren() {
+  @override
+  void clearChildren() {
+    super.clearChildren();
     _items.clear();
-    _minimumBoundingRect = noMBR;
   }
 }
