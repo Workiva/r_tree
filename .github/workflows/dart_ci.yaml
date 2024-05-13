@@ -13,9 +13,9 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        sdk: [ 2.18.7, 2.19.2 ]
+        sdk: [ 2.19.6 ]
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
       - uses: dart-lang/setup-dart@v1
         with:
           sdk: ${{ matrix.sdk }}
@@ -25,8 +25,13 @@ jobs:
         run: dart run dependency_validator
       - name: Check formatting
         run: dart format -l 120 --output=none --set-exit-if-changed .
-        if: ${{ matrix.sdk == '2.18.7' }}
+        if: ${{ matrix.sdk == '2.19.6' }}
       - name: Analyze project source
         run: dart analyze
       - name: Run tests
         run: dart test
+      - name: Publish SBOM to Release Assets
+        uses: anchore/sbom-action@v0
+        with:
+          path: ./
+          format: cyclonedx-json
