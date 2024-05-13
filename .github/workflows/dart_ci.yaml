@@ -30,3 +30,8 @@ jobs:
         run: dart analyze
       - name: Run tests
         run: dart test
+      - name: Publish SBOM to Release Assets
+        uses: anchore/sbom-action@v0
+        with:
+          path: ./
+          format: cyclonedx-json
