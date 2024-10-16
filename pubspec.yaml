@@ -10,7 +10,7 @@ dev_dependencies:
   benchmark_harness: any
   build_runner: ^2.3.3
   build_test: ^2.1.6
-  build_web_compilers: ^3.2.7
+  build_web_compilers: '>=3.2.7 <5.0.0'
   dart_style: ^2.2.4
   dependency_validator: ^3.0.0
   test: ^1.15.7
