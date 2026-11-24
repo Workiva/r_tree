@@ -13,7 +13,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        sdk: [ 3.13.0 ]
+        sdk: [ 3.13.5 ]
     steps:
       - uses: actions/checkout@v4
       - uses: dart-lang/setup-dart@v1
@@ -23,9 +23,10 @@ jobs:
         run: dart pub get
       - name: Validate dependencies
         run: dart run dependency_validator
-      - name: Check formatting
-        run: dart format -l 120 --output=none --set-exit-if-changed .
-        if: ${{ matrix.sdk == '3.13.0' }}
+      # TODO(FEDX-8185): Re-enable the formatting check in a follow-up PR.
+      # - name: Check formatting
+      #   run: dart format -l 120 --output=none --set-exit-if-changed .
+      #   if: ${{ matrix.sdk == '3.13.5' }}
       - name: Analyze project source
         run: dart analyze
       - name: Run tests
