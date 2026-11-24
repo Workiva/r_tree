@@ -27,8 +27,7 @@ class NonLeafNode<E> extends Node<E> {
   @override
   List<Node<E>> get children => _childNodes;
 
-  NonLeafNode(int branchFactor, {List<Node<E>> initialChildNodes = const []})
-    : super(branchFactor) {
+  NonLeafNode(int branchFactor, {List<Node<E>> initialChildNodes = const []}) : super(branchFactor) {
     if (initialChildNodes.length > branchFactor) {
       throw ArgumentError('too many items');
     }
@@ -44,10 +43,7 @@ class NonLeafNode<E> extends Node<E> {
   }
 
   @override
-  List<RTreeDatum<E>> search(
-    Rectangle searchRect,
-    bool Function(E item)? shouldInclude,
-  ) {
+  List<RTreeDatum<E>> search(Rectangle searchRect, bool Function(E item)? shouldInclude) {
     final overlappingLeafs = <RTreeDatum<E>>[];
 
     for (final childNode in _childNodes) {

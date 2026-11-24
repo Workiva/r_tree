@@ -47,10 +47,7 @@ void main() {
 
         expect(node.rect, equals(Rectangle(0, 0, 1, 1)));
         expect(node.size, equals(1));
-        expect(
-          node.search(Rectangle(1, 1, 1, 1), (_) => true).length,
-          equals(0),
-        );
+        expect(node.search(Rectangle(1, 1, 1, 1), (_) => true).length, equals(0));
 
         node.clearChildren();
 

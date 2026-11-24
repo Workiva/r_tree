@@ -23,23 +23,13 @@ Future main() async {
     canvas.context2D.strokeStyle = '';
     rtree.search(Rectangle(0, 0, 700, 500)).forEach((node) {
       canvas.context2D.fillStyle = node.value;
-      canvas.context2D.fillRect(
-        node.rect.left,
-        node.rect.top,
-        node.rect.width,
-        node.rect.height,
-      );
+      canvas.context2D.fillRect(node.rect.left, node.rect.top, node.rect.width, node.rect.height);
     });
 
     if (proposedX != null && proposedY != null) {
       canvas.context2D.fillStyle = '';
       canvas.context2D.strokeStyle = 'black';
-      canvas.context2D.strokeRect(
-        startX!,
-        startY!,
-        proposedX! - startX!,
-        proposedY! - startY!,
-      );
+      canvas.context2D.strokeRect(startX!, startY!, proposedX! - startX!, proposedY! - startY!);
     }
   }
 
@@ -60,10 +50,8 @@ Future main() async {
 
     final target = event.currentTarget! as HtmlElement;
     final boundingRect = target.getBoundingClientRect();
-    proposedX = ((event.client.x - boundingRect.left) + target.scrollLeft)
-        .floor();
-    proposedY = ((event.client.y - boundingRect.top) + target.scrollTop)
-        .floor();
+    proposedX = ((event.client.x - boundingRect.left) + target.scrollLeft).floor();
+    proposedY = ((event.client.y - boundingRect.top) + target.scrollTop).floor();
 
     draw();
   });
@@ -74,15 +62,10 @@ Future main() async {
 
     final target = event.currentTarget! as HtmlElement;
     final boundingRect = target.getBoundingClientRect();
-    final endX = ((event.client.x - boundingRect.left) + target.scrollLeft)
-        .floor();
-    final endY = ((event.client.y - boundingRect.top) + target.scrollTop)
-        .floor();
+    final endX = ((event.client.x - boundingRect.left) + target.scrollLeft).floor();
+    final endY = ((event.client.y - boundingRect.top) + target.scrollTop).floor();
 
-    final rectangle = Rectangle.fromPoints(
-      Point(startX!, startY!),
-      Point(endX, endY),
-    );
+    final rectangle = Rectangle.fromPoints(Point(startX!, startY!), Point(endX, endY));
     if (currentBrush == 'search') {
       final resultList = querySelector('#results')!;
       resultList.children = [];
@@ -154,10 +137,7 @@ Future main() async {
       final startY = rand.nextInt((canvas.height! / 2).floor());
       final endY = rand.nextInt((canvas.width! / 2).floor()) * 2;
       final color = rand.nextInt(2);
-      final item = RTreeDatum(
-        Rectangle.fromPoints(Point(startX, startY), Point(endX, endY)),
-        colors[color],
-      );
+      final item = RTreeDatum(Rectangle.fromPoints(Point(startX, startY), Point(endX, endY)), colors[color]);
       datum.add(item);
     }
     return datum;
@@ -186,9 +166,7 @@ Future main() async {
 
   querySelector('#copy')!.onClick.listen((_) async {
     try {
-      await window.navigator.clipboard?.writeText(
-        (querySelector('#output')! as PreElement).innerText,
-      );
+      await window.navigator.clipboard?.writeText((querySelector('#output')! as PreElement).innerText);
       querySelector('#copy')!.style.background = 'green';
       await Future.delayed(Duration(milliseconds: 350));
       querySelector('#copy')!.style.background = '';
@@ -219,12 +197,7 @@ String toGraphViz(Node root) {
   return output.toString();
 }
 
-void _graphVizRecurse(
-  Node node,
-  String parent,
-  String identifierPrefix,
-  StringBuffer buffer,
-) {
+void _graphVizRecurse(Node node, String parent, String identifierPrefix, StringBuffer buffer) {
   for (var i = 0; i < node.children.length; i++) {
     final child = node.children[i];
     if (child is LeafNode) {

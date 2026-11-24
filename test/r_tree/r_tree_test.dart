@@ -117,10 +117,7 @@ void main() {
 
         for (var i = 0; i < 50; i++) {
           for (var j = 0; j < 50; j++) {
-            final item = RTreeDatum<String>(
-              Rectangle(i, j, 1, 1),
-              'Item $i:$j',
-            );
+            final item = RTreeDatum<String>(Rectangle(i, j, 1, 1), 'Item $i:$j');
             itemsToInsert.add(item);
           }
         }
@@ -207,10 +204,7 @@ void main() {
 
         for (var i = 0; i < 50; i++) {
           for (var j = 0; j < 50; j++) {
-            final item = RTreeDatum<String>(
-              Rectangle(i, j, 1, 1),
-              'Item $i:$j',
-            );
+            final item = RTreeDatum<String>(Rectangle(i, j, 1, 1), 'Item $i:$j');
             data.add(item);
             tree.add([item]);
           }
@@ -233,9 +227,7 @@ void main() {
         expect(getCurrentRootNode(tree), isA<LeafNode<dynamic>>());
 
         //test inserting after removal to ensure new root leaf node functions correctly
-        tree.add([
-          RTreeDatum<String>(Rectangle(0, 0, 1, 1), 'New Initial Item'),
-        ]);
+        tree.add([RTreeDatum<String>(Rectangle(0, 0, 1, 1), 'New Initial Item')]);
         assertTreeValidity(tree);
 
         items = tree.search(Rectangle(0, 0, 50, 50));
@@ -297,9 +289,7 @@ void main() {
       test('has correct parents and bounds after multiple _splits', () {
         final tree = RTree(3);
 
-        var items = <RTreeDatum<String>>[
-          RTreeDatum(Rectangle(0, 0, 1, 1), 'Item 0'),
-        ];
+        var items = <RTreeDatum<String>>[RTreeDatum(Rectangle(0, 0, 1, 1), 'Item 0')];
         tree.add(items);
         assertTreeValidity(tree);
 
@@ -322,27 +312,16 @@ void main() {
       test('returns correct items after multiple load calls', () {
         final tree = RTree(3);
 
-        var items = <RTreeDatum<String>>[
-          RTreeDatum(Rectangle(0, 0, 1, 1), 'Item 0'),
-        ];
+        var items = <RTreeDatum<String>>[RTreeDatum(Rectangle(0, 0, 1, 1), 'Item 0')];
         tree.add(items);
 
-        items = List<RTreeDatum<String>>.generate(
-          20,
-          (i) => RTreeDatum(Rectangle(i, 0, 1, 1), 'Item $i'),
-        );
+        items = List<RTreeDatum<String>>.generate(20, (i) => RTreeDatum(Rectangle(i, 0, 1, 1), 'Item $i'));
         tree.add(items);
 
-        items = List<RTreeDatum<String>>.generate(
-          30,
-          (i) => RTreeDatum(Rectangle(i, 0, 1, 1), 'Item $i'),
-        );
+        items = List<RTreeDatum<String>>.generate(30, (i) => RTreeDatum(Rectangle(i, 0, 1, 1), 'Item $i'));
         tree.add(items);
 
-        items = List<RTreeDatum<String>>.generate(
-          3,
-          (i) => RTreeDatum(Rectangle(0, i, 1, 1), 'Item $i'),
-        );
+        items = List<RTreeDatum<String>>.generate(3, (i) => RTreeDatum(Rectangle(0, i, 1, 1), 'Item $i'));
         tree.add(items);
 
         // the test is a bit convoluted but the key here is the search rectangle
@@ -367,10 +346,7 @@ void assertTreeValidity<E>(RTree<E> tree) {
 
 /// Comprehensively assert the consistency of the specified subtree, including node height, parent references, and
 /// bounding rectangles.
-SubtreeValidationData assertNodeValidity<E>(
-  RTree<E> tree,
-  RTreeContributor contributor,
-) {
+SubtreeValidationData assertNodeValidity<E>(RTree<E> tree, RTreeContributor contributor) {
   if (contributor is LeafNode<E>) {
     return assertLeafNodeValidity(tree, contributor);
   } else if (contributor is NonLeafNode<E>) {
@@ -383,17 +359,13 @@ SubtreeValidationData assertNodeValidity<E>(
 
 /// Comprehensively assert the consistency of the subtree rooted at the specified leaf node, including node height,
 /// parent references, and bounding rectangles.
-SubtreeValidationData assertLeafNodeValidity<E>(
-  RTree<E> tree,
-  LeafNode<E> node,
-) {
+SubtreeValidationData assertLeafNodeValidity<E>(RTree<E> tree, LeafNode<E> node) {
   if (node.height != 1) {
     throw StateError('Leaf height of ${node.height} should be 1.');
   }
 
   final actualRect =
-      getMinimumBoundingRectangle(node.children.map((child) => child.rect)) ??
-      const Rectangle<num>(0, 0, 0, 0);
+      getMinimumBoundingRectangle(node.children.map((child) => child.rect)) ?? const Rectangle<num>(0, 0, 0, 0);
 
   // Assert this node's rect/bounds match its actual structure
   if (node.rect != actualRect) {
@@ -405,10 +377,7 @@ SubtreeValidationData assertLeafNodeValidity<E>(
 
 /// Comprehensively assert the consistency of the subtree rooted at the specified non-leaf node, including node height,
 /// parent references, and bounding rectangles.
-SubtreeValidationData assertNonLeafNodeValidity<E>(
-  RTree<E> tree,
-  NonLeafNode<E> node,
-) {
+SubtreeValidationData assertNonLeafNodeValidity<E>(RTree<E> tree, NonLeafNode<E> node) {
   if (node.children.isEmpty) {
     throw StateError('Non-leaf nodes must have at least one leaf.');
   }
@@ -421,29 +390,20 @@ SubtreeValidationData assertNonLeafNodeValidity<E>(
   }
 
   // Traverse the tree from this child and collect validation data to propagate upwards
-  final childrenValidationData = node.children
-      .map((child) => assertNodeValidity(tree, child))
-      .toList();
+  final childrenValidationData = node.children.map((child) => assertNodeValidity(tree, child)).toList();
 
   // Recalculate the actual bounding rectangle for this subtree using validation data
-  final childrenRects = childrenValidationData.map(
-    (childValidationData) => childValidationData.rect,
-  );
-  final actualRect =
-      getMinimumBoundingRectangle(childrenRects) ??
-      const Rectangle<num>(0, 0, 0, 0);
+  final childrenRects = childrenValidationData.map((childValidationData) => childValidationData.rect);
+  final actualRect = getMinimumBoundingRectangle(childrenRects) ?? const Rectangle<num>(0, 0, 0, 0);
 
   // Recalculate the actual height for this subtree using validation data
-  int compareMaxWithChild(int maxHeight, SubtreeValidationData child) =>
-      max(maxHeight, child.height);
+  int compareMaxWithChild(int maxHeight, SubtreeValidationData child) => max(maxHeight, child.height);
   final maxChildHeight = childrenValidationData.fold(0, compareMaxWithChild);
 
   // Assert this node's height matches its actual structure
   final actualNodeHeight = 1 + maxChildHeight;
   if (node.height != actualNodeHeight) {
-    throw StateError(
-      'Non-leaf height of ${node.height} should be $actualNodeHeight.',
-    );
+    throw StateError('Non-leaf height of ${node.height} should be $actualNodeHeight.');
   }
 
   // Assert this node's rect/bounds match its actual structure
@@ -469,11 +429,7 @@ String stringifyTree<E>(RTree<E> tree) {
 }
 
 /// Serializes the subtree from [contributor] in a humnan-readable form for debugging.
-void stringifyNode<E>(
-  StringBuffer buffer,
-  RTreeContributor contributor,
-  int level,
-) {
+void stringifyNode<E>(StringBuffer buffer, RTreeContributor contributor, int level) {
   buffer.write('${' ' * level}${contributor.runtimeType}');
   if (contributor is Node<E>) {
     buffer.write('(height=${contributor.height}, rect=${contributor.rect}):\n');
@@ -486,9 +442,7 @@ void stringifyNode<E>(
 }
 
 /// Compute the minimum bounding rectangles of the specified rectangles. Returns null if no rectangles provided.
-Rectangle<E>? getMinimumBoundingRectangle<E extends num>(
-  Iterable<Rectangle<E>> rectangles,
-) {
+Rectangle<E>? getMinimumBoundingRectangle<E extends num>(Iterable<Rectangle<E>> rectangles) {
   if (rectangles.isEmpty) {
     return null;
   }

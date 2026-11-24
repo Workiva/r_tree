@@ -70,10 +70,7 @@ class RTree<E> {
   /// method and excluded if [shouldInclude] evaluates to false.
   ///
   /// Note: Rectangles that share only a border are not considered to overlap
-  List<RTreeDatum<E>> search(
-    Rectangle searchRect, {
-    bool Function(E item)? shouldInclude,
-  }) {
+  List<RTreeDatum<E>> search(Rectangle searchRect, {bool Function(E item)? shouldInclude}) {
     shouldInclude ??= (_) => true;
 
     if (_root is LeafNode<E>) {
@@ -147,12 +144,7 @@ class RTree<E> {
     }
   }
 
-  Node<E> _chooseSubtree(
-    Node<E> inode,
-    Node<E> node,
-    int level,
-    List<Node<E>> path,
-  ) {
+  Node<E> _chooseSubtree(Node<E> inode, Node<E> node, int level, List<Node<E>> path) {
     while (true) {
       path.add(node);
 
@@ -193,23 +185,14 @@ class RTree<E> {
     return node;
   }
 
-  Node<E> _build(
-    List<RTreeDatum<E>> items,
-    int left,
-    int right,
-    int height, [
-    NonLeafNode<E>? parent,
-  ]) {
+  Node<E> _build(List<RTreeDatum<E>> items, int left, int right, int height, [NonLeafNode<E>? parent]) {
     final N = right - left + 1;
     var M = _branchFactor;
     NonLeafNode<E> node;
 
     if (N <= M) {
       // reached leaf level; return leaf
-      return LeafNode(
-        _branchFactor,
-        initialItems: items.sublist(left, right + 1),
-      )..parent = parent;
+      return LeafNode(_branchFactor, initialItems: items.sublist(left, right + 1))..parent = parent;
     }
 
     if (height == 0) {
@@ -260,16 +243,10 @@ class RTree<E> {
 
     Node<E> newNode;
     if (node is LeafNode) {
-      newNode = LeafNode<E>(
-        _branchFactor,
-        initialItems: node.children.cast<RTreeDatum<E>>().sublist(splitIndex),
-      );
+      newNode = LeafNode<E>(_branchFactor, initialItems: node.children.cast<RTreeDatum<E>>().sublist(splitIndex));
       node.children.removeRange(splitIndex, node.children.length);
     } else {
-      newNode = NonLeafNode(
-        _branchFactor,
-        initialChildNodes: node.children.cast<Node<E>>().sublist(splitIndex),
-      );
+      newNode = NonLeafNode(_branchFactor, initialChildNodes: node.children.cast<Node<E>>().sublist(splitIndex));
       node.children.removeRange(splitIndex, node.children.length);
     }
     newNode.height = node.height;
@@ -346,16 +323,12 @@ class RTree<E> {
 
     final leftBoundingBox = _boundingBoxForDistribution(node, 0, m);
     final rightBoundingBox = _boundingBoxForDistribution(node, M - m, M);
-    num calculateMargin(Rectangle rect) =>
-        (rect.right - rect.left) + (rect.bottom - rect.top);
+    num calculateMargin(Rectangle rect) => (rect.right - rect.left) + (rect.bottom - rect.top);
 
-    var margin =
-        calculateMargin(leftBoundingBox) + calculateMargin(rightBoundingBox);
+    var margin = calculateMargin(leftBoundingBox) + calculateMargin(rightBoundingBox);
 
     for (var i = m; i < M - m; i++) {
-      leftBoundingBox.boundingBox(
-        node is LeafNode ? node.children[i].rect : node.children[i].rect,
-      );
+      leftBoundingBox.boundingBox(node is LeafNode ? node.children[i].rect : node.children[i].rect);
       margin += calculateMargin(leftBoundingBox);
     }
 
@@ -367,17 +340,10 @@ class RTree<E> {
     return margin;
   }
 
-  Rectangle _boundingBoxForDistribution(
-    Node<E> node,
-    int startChild,
-    int stopChild,
-  ) {
+  Rectangle _boundingBoxForDistribution(Node<E> node, int startChild, int stopChild) {
     return node.children
         .sublist(startChild, stopChild)
-        .fold(
-          node.children[startChild].rect,
-          (previousValue, element) => previousValue.boundingBox(element.rect),
-        );
+        .fold(node.children[startChild].rect, (previousValue, element) => previousValue.boundingBox(element.rect));
   }
 
   void _resetRoot() {
@@ -385,10 +351,7 @@ class RTree<E> {
   }
 
   void _growTree(Node<E> node1, Node<E> node2) {
-    final newRoot = NonLeafNode<E>(
-      _branchFactor,
-      initialChildNodes: [node1, node2],
-    );
+    final newRoot = NonLeafNode<E>(_branchFactor, initialChildNodes: [node1, node2]);
     newRoot.height = _root.height + 1;
     _root = newRoot;
     node1.parent = _root;
@@ -406,12 +369,10 @@ int _compareNumber(num a, num b) {
 }
 
 @pragma('vm:prefer-inline')
-int _compareRectTop(RTreeDatum a, RTreeDatum b) =>
-    _compareNumber(a.rect.top, b.rect.top);
+int _compareRectTop(RTreeDatum a, RTreeDatum b) => _compareNumber(a.rect.top, b.rect.top);
 
 @pragma('vm:prefer-inline')
-int _compareRectLeft(RTreeDatum a, RTreeDatum b) =>
-    _compareNumber(a.rect.left, b.rect.left);
+int _compareRectLeft(RTreeDatum a, RTreeDatum b) => _compareNumber(a.rect.left, b.rect.left);
 
 /// Helper for example app to generate GraphViz
 Node getCurrentRootNode(RTree tree) => tree._root;
