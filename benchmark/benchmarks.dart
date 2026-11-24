@@ -23,23 +23,48 @@ void main() {
   SearchBenchmark(collector, totalItems: 1000, iterateAll: true).report();
   SearchBenchmark(collector, totalItems: 10000, iterateAll: true).report();
 
-  SearchBenchmark(collector, totalItems: 100, iterateAll: true, useLoad: true).report();
-  SearchBenchmark(collector, totalItems: 1000, iterateAll: true, useLoad: true).report();
-  SearchBenchmark(collector, totalItems: 10000, iterateAll: true, useLoad: true).report();
+  SearchBenchmark(
+    collector,
+    totalItems: 100,
+    iterateAll: true,
+    useLoad: true,
+  ).report();
+  SearchBenchmark(
+    collector,
+    totalItems: 1000,
+    iterateAll: true,
+    useLoad: true,
+  ).report();
+  SearchBenchmark(
+    collector,
+    totalItems: 10000,
+    iterateAll: true,
+    useLoad: true,
+  ).report();
 
-  final longestName =
-      collector.collected.keys.reduce((value, element) => value.length > element.length ? value : element).length;
+  final longestName = collector.collected.keys
+      .reduce(
+        (value, element) => value.length > element.length ? value : element,
+      )
+      .length;
   final longestValue = collector.collected.values
-      .reduce((value, element) => value.toStringAsFixed(2).length > element.toStringAsFixed(2).length ? value : element)
+      .reduce(
+        (value, element) =>
+            value.toStringAsFixed(2).length > element.toStringAsFixed(2).length
+            ? value
+            : element,
+      )
       .toStringAsFixed(2);
   const nameHeading = 'Name';
-  final heading = '$nameHeading${' ' * (longestName - nameHeading.length)}\tResult (microseconds)';
+  final heading =
+      '$nameHeading${' ' * (longestName - nameHeading.length)}\tResult (microseconds)';
   final separator = '-' * (heading.length + 5);
   var output = '\n$heading\n$separator\n';
   collector.collected.forEach((name, value) {
     name += ' ' * (longestName - name.length);
     final valueString = value.toStringAsFixed(2);
-    output += '$name\t${' ' * (longestValue.length - valueString.length)}$valueString\n';
+    output +=
+        '$name\t${' ' * (longestValue.length - valueString.length)}$valueString\n';
   });
 
   print(output);
@@ -48,7 +73,8 @@ void main() {
 class InsertBenchmark extends RTreeBenchmarkBase {
   final int totalItems;
 
-  InsertBenchmark(ScoreCollector collector, {this.totalItems = 500}) : super('Insert $totalItems', collector);
+  InsertBenchmark(ScoreCollector collector, {this.totalItems = 500})
+    : super('Insert $totalItems', collector);
 
   late RTree<String> tree;
   late List<RTreeDatum<String>> datum;
@@ -70,7 +96,10 @@ class InsertBenchmark extends RTreeBenchmarkBase {
       final y = rand.nextInt(1000);
       final height = rand.nextInt(100);
       final width = rand.nextInt(100);
-      final item = RTreeDatum<String>(Rectangle(x, y, width, height), 'item $i');
+      final item = RTreeDatum<String>(
+        Rectangle(x, y, width, height),
+        'item $i',
+      );
       datum.add(item);
     }
   }
@@ -82,7 +111,8 @@ class InsertBenchmark extends RTreeBenchmarkBase {
 class LoadBenchmark extends RTreeBenchmarkBase {
   final int totalItems;
 
-  LoadBenchmark(ScoreCollector collector, {required this.totalItems}) : super('Load $totalItems ', collector);
+  LoadBenchmark(ScoreCollector collector, {required this.totalItems})
+    : super('Load $totalItems ', collector);
 
   late RTree<String> tree;
   late List<RTreeDatum<String>> datum;
@@ -102,7 +132,10 @@ class LoadBenchmark extends RTreeBenchmarkBase {
       final y = rand.nextInt(1000);
       final height = rand.nextInt(100);
       final width = rand.nextInt(100);
-      final item = RTreeDatum<String>(Rectangle(x, y, width, height), 'item $i');
+      final item = RTreeDatum<String>(
+        Rectangle(x, y, width, height),
+        'item $i',
+      );
       datum.add(item);
     }
     datum.shuffle();
@@ -163,8 +196,10 @@ class SearchBenchmark extends RTreeBenchmarkBase {
     required this.totalItems,
     this.iterateAll = false,
     this.useLoad = false,
-  }) : super("Search${iterateAll ? '/Iterate' : ''} ${useLoad ? '(using Load)' : '(using Insert)'} $totalItems",
-            collector);
+  }) : super(
+         "Search${iterateAll ? '/Iterate' : ''} ${useLoad ? '(using Load)' : '(using Insert)'} $totalItems",
+         collector,
+       );
 
   late RTree<String> tree;
   late int size;
@@ -222,7 +257,11 @@ class SearchBenchmark extends RTreeBenchmarkBase {
 class RTreeBenchmarkBase extends BenchmarkBase {
   final int iterations;
 
-  RTreeBenchmarkBase(String name, ScoreCollector collector, {this.iterations = 100}) : super(name, emitter: collector);
+  RTreeBenchmarkBase(
+    String name,
+    ScoreCollector collector, {
+    this.iterations = 100,
+  }) : super(name, emitter: collector);
 
   @override
   void exercise() {

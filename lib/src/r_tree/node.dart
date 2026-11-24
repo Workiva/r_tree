@@ -43,7 +43,10 @@ abstract class Node<E> implements RTreeContributor {
   Node(this.branchFactor);
 
   /// Returns an iterable of all items within [searchRect]
-  List<RTreeDatum<E>> search(Rectangle searchRect, bool Function(E item)? shouldInclude);
+  List<RTreeDatum<E>> search(
+    Rectangle searchRect,
+    bool Function(E item)? shouldInclude,
+  );
 
   /// Inserts [item] into the node. If the insertion causes a split to occur, the split node will be returned, otherwise null is returned.
   Node<E>? insert(RTreeDatum<E> item);
@@ -92,7 +95,9 @@ abstract class Node<E> implements RTreeContributor {
 
   /// Adds the rectangle containing [item] to this node's covered rectangle
   void include(RTreeContributor item) {
-    _minimumBoundingRect = _minimumBoundingRect == noMBR ? item.rect : rect.boundingBox(item.rect);
+    _minimumBoundingRect = _minimumBoundingRect == noMBR
+        ? item.rect
+        : rect.boundingBox(item.rect);
   }
 
   /// Recalculated the bounding rectangle of this node
@@ -136,7 +141,10 @@ abstract class Node<E> implements RTreeContributor {
     return splitNode;
   }
 
-  void _reassignRemainingChildren(List<RTreeContributor> remainingChildren, Node<E> splitNode) {
+  void _reassignRemainingChildren(
+    List<RTreeContributor> remainingChildren,
+    Node<E> splitNode,
+  ) {
     for (final child in remainingChildren) {
       final thisExpansionCost = expansionCost(child);
       final splitExpansionCost = splitNode.expansionCost(child);
@@ -170,7 +178,8 @@ abstract class Node<E> implements RTreeContributor {
     }
 
     RTreeContributor? a, b, c, d;
-    if (_horizontalDifference(leftmost, rightmost) > _verticalDifference(topmost, bottommost)) {
+    if (_horizontalDifference(leftmost, rightmost) >
+        _verticalDifference(topmost, bottommost)) {
       a = leftmost;
       b = rightmost;
       c = bottommost;
@@ -196,11 +205,15 @@ abstract class Node<E> implements RTreeContributor {
     return _Seeds(seed1, seed2);
   }
 
-  num _horizontalDifference(RTreeContributor leftmost, RTreeContributor rightmost) =>
-      (rightmost.rect.left - leftmost.rect.right).abs();
+  num _horizontalDifference(
+    RTreeContributor leftmost,
+    RTreeContributor rightmost,
+  ) => (rightmost.rect.left - leftmost.rect.right).abs();
 
-  num _verticalDifference(RTreeContributor topmost, RTreeContributor bottommost) =>
-      (topmost.rect.bottom - bottommost.rect.top).abs();
+  num _verticalDifference(
+    RTreeContributor topmost,
+    RTreeContributor bottommost,
+  ) => (topmost.rect.bottom - bottommost.rect.top).abs();
 }
 
 class _Seeds {

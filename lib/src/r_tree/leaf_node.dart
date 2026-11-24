@@ -27,7 +27,8 @@ class LeafNode<E> extends Node<E> {
   @override
   List<RTreeDatum<E>> get children => _items;
 
-  LeafNode(int branchFactor, {List<RTreeDatum<E>> initialItems = const []}) : super(branchFactor) {
+  LeafNode(int branchFactor, {List<RTreeDatum<E>> initialItems = const []})
+    : super(branchFactor) {
     if (initialItems.length > branchFactor) {
       throw ArgumentError('too many items');
     }
@@ -45,9 +46,16 @@ class LeafNode<E> extends Node<E> {
   }
 
   @override
-  List<RTreeDatum<E>> search(Rectangle searchRect, bool Function(E item)? shouldInclude) {
+  List<RTreeDatum<E>> search(
+    Rectangle searchRect,
+    bool Function(E item)? shouldInclude,
+  ) {
     return _items
-        .where((item) => item.rect.overlaps(searchRect) && (shouldInclude == null || shouldInclude(item.value)))
+        .where(
+          (item) =>
+              item.rect.overlaps(searchRect) &&
+              (shouldInclude == null || shouldInclude(item.value)),
+        )
         .toList();
   }
 
