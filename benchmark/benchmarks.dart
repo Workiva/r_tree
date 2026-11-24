@@ -27,8 +27,9 @@ void main() {
   SearchBenchmark(collector, totalItems: 1000, iterateAll: true, useLoad: true).report();
   SearchBenchmark(collector, totalItems: 10000, iterateAll: true, useLoad: true).report();
 
-  final longestName =
-      collector.collected.keys.reduce((value, element) => value.length > element.length ? value : element).length;
+  final longestName = collector.collected.keys
+      .reduce((value, element) => value.length > element.length ? value : element)
+      .length;
   final longestValue = collector.collected.values
       .reduce((value, element) => value.toStringAsFixed(2).length > element.toStringAsFixed(2).length ? value : element)
       .toStringAsFixed(2);
@@ -158,13 +159,11 @@ class SearchBenchmark extends RTreeBenchmarkBase {
   /// Allows comparing search performance between trees built out via insert or load
   final bool useLoad;
 
-  SearchBenchmark(
-    ScoreCollector collector, {
-    required this.totalItems,
-    this.iterateAll = false,
-    this.useLoad = false,
-  }) : super("Search${iterateAll ? '/Iterate' : ''} ${useLoad ? '(using Load)' : '(using Insert)'} $totalItems",
-            collector);
+  SearchBenchmark(ScoreCollector collector, {required this.totalItems, this.iterateAll = false, this.useLoad = false})
+    : super(
+        "Search${iterateAll ? '/Iterate' : ''} ${useLoad ? '(using Load)' : '(using Insert)'} $totalItems",
+        collector,
+      );
 
   late RTree<String> tree;
   late int size;

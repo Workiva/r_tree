@@ -295,20 +295,14 @@ void main() {
 
         items = List<RTreeDatum<String>>.generate(
           20,
-          (index) => RTreeDatum(
-            Rectangle(index + 10, 0, 1, 1),
-            'Item $index',
-          ),
+          (index) => RTreeDatum(Rectangle(index + 10, 0, 1, 1), 'Item $index'),
         );
         tree.add(items);
         assertTreeValidity(tree);
 
         items = List<RTreeDatum<String>>.generate(
           3,
-          (index) => RTreeDatum(
-            Rectangle(0, index + 10, 1, 1),
-            'Item $index',
-          ),
+          (index) => RTreeDatum(Rectangle(0, index + 10, 1, 1), 'Item $index'),
         );
         tree.add(items);
         expect(tree.search(Rectangle(0, 0, 50, 50)), hasLength(24));
@@ -318,39 +312,16 @@ void main() {
       test('returns correct items after multiple load calls', () {
         final tree = RTree(3);
 
-        var items = <RTreeDatum<String>>[
-          RTreeDatum(
-            Rectangle(0, 0, 1, 1),
-            'Item 0',
-          )
-        ];
+        var items = <RTreeDatum<String>>[RTreeDatum(Rectangle(0, 0, 1, 1), 'Item 0')];
         tree.add(items);
 
-        items = List<RTreeDatum<String>>.generate(
-          20,
-          (i) => RTreeDatum(
-            Rectangle(i, 0, 1, 1),
-            'Item $i',
-          ),
-        );
+        items = List<RTreeDatum<String>>.generate(20, (i) => RTreeDatum(Rectangle(i, 0, 1, 1), 'Item $i'));
         tree.add(items);
 
-        items = List<RTreeDatum<String>>.generate(
-          30,
-          (i) => RTreeDatum(
-            Rectangle(i, 0, 1, 1),
-            'Item $i',
-          ),
-        );
+        items = List<RTreeDatum<String>>.generate(30, (i) => RTreeDatum(Rectangle(i, 0, 1, 1), 'Item $i'));
         tree.add(items);
 
-        items = List<RTreeDatum<String>>.generate(
-          3,
-          (i) => RTreeDatum(
-            Rectangle(0, i, 1, 1),
-            'Item $i',
-          ),
-        );
+        items = List<RTreeDatum<String>>.generate(3, (i) => RTreeDatum(Rectangle(0, i, 1, 1), 'Item $i'));
         tree.add(items);
 
         // the test is a bit convoluted but the key here is the search rectangle
@@ -393,10 +364,8 @@ SubtreeValidationData assertLeafNodeValidity<E>(RTree<E> tree, LeafNode<E> node)
     throw StateError('Leaf height of ${node.height} should be 1.');
   }
 
-  final actualRect = getMinimumBoundingRectangle(
-        node.children.map((child) => child.rect),
-      ) ??
-      const Rectangle<num>(0, 0, 0, 0);
+  final actualRect =
+      getMinimumBoundingRectangle(node.children.map((child) => child.rect)) ?? const Rectangle<num>(0, 0, 0, 0);
 
   // Assert this node's rect/bounds match its actual structure
   if (node.rect != actualRect) {

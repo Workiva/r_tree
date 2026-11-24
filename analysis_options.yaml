@@ -3,3 +3,5 @@ analyzer:
   strong-mode:
     implicit-casts: false
     implicit-dynamic: true
+formatter:
+  page_width: 120

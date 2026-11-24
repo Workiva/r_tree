@@ -192,10 +192,7 @@ class RTree<E> {
 
     if (N <= M) {
       // reached leaf level; return leaf
-      return LeafNode(
-        _branchFactor,
-        initialItems: items.sublist(left, right + 1),
-      )..parent = parent;
+      return LeafNode(_branchFactor, initialItems: items.sublist(left, right + 1))..parent = parent;
     }
 
     if (height == 0) {
@@ -344,10 +341,9 @@ class RTree<E> {
   }
 
   Rectangle _boundingBoxForDistribution(Node<E> node, int startChild, int stopChild) {
-    return node.children.sublist(startChild, stopChild).fold(
-          node.children[startChild].rect,
-          (previousValue, element) => previousValue.boundingBox(element.rect),
-        );
+    return node.children
+        .sublist(startChild, stopChild)
+        .fold(node.children[startChild].rect, (previousValue, element) => previousValue.boundingBox(element.rect));
   }
 
   void _resetRoot() {
